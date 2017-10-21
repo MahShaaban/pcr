@@ -17,5 +17,6 @@ Imports: magrittr,
   readr
 Suggests: testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    covr
 VignetteBuilder: knitr

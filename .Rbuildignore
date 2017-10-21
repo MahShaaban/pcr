@@ -2,3 +2,6 @@
 ^\.Rproj\.user$
 ^\.git/$
 ^\.gitignore$
+^\.travis\.yml$
+^appveyor\.yml$
+^codecov\.yml$
