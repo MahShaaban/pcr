@@ -1,8 +1,11 @@
 Package: pcr
-Title: Normalize ct values of quantitative pcr data
+Title: Processing quantitative PCR data
 Version: 0.0.0.9000
-Authors@R: person("Mahmoud", "Ahmded", email = "mahmoud.s.fahmy@students.kasralainy.edu.eg", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: person("Mahmoud", "Ahmded",
+  email = "mahmoud.s.fahmy@students.kasralainy.edu.eg",
+  role = c("aut", "cre"))
+Description: Provides a number of methods for processing and analyzing data 
+  from quantitative PCR experiments
 Depends: R (>= 3.4.2)
 License: GPL-3
 Encoding: UTF-8
@@ -12,4 +15,7 @@ Imports: magrittr,
   dplyr,
   tidyr,
   readr
-Suggests: testthat
+Suggests: testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

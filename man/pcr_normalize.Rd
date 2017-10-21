@@ -5,7 +5,7 @@
 \title{Normalize PCR experment data}
 \usage{
 pcr_normalize(df, group_var, reference_gene, reference_group,
-  intervals = TRUE)
+  intervals = TRUE, mode = "average_ct")
 }
 \arguments{
 \item{df}{A data.frame of numeric ct value of n genes in columns and m
@@ -21,6 +21,9 @@ recorded in the grouping variable}
 
 \item{intervals}{A logical (default TRUE) to whether or not to calculate the
 error intervals}
+
+\item{mode}{A character string. Possible inputs are "average_ct" or
+"average_dct"}
 }
 \value{
 A tidy data.frame of calculated normalized relative values and

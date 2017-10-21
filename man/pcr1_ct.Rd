@@ -3,12 +3,12 @@
 \docType{data}
 \name{pcr1_ct}
 \alias{pcr1_ct}
-\title{PCR experiment raw data}
+\title{PCR separate wells experiment raw data}
 \format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 12 rows and 3 columns.}
 \usage{
 pcr1_ct
 }
 \description{
-PCR experiment raw data
+PCR separate wells experiment raw data
 }
 \keyword{datasets}

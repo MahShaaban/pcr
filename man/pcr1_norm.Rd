@@ -3,12 +3,12 @@
 \docType{data}
 \name{pcr1_norm}
 \alias{pcr1_norm}
-\title{PCR experiment processed data}
+\title{PCR separate wells experiment processed data}
 \format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 2 rows and 9 columns.}
 \usage{
 pcr1_norm
 }
 \description{
-PCR experiment processed data
+PCR separate wells experiment processed data
 }
 \keyword{datasets}

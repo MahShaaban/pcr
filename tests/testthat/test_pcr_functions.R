@@ -42,4 +42,14 @@ test_that("pcr_normalize returns the proper values in the right format", {
   expect_equal(pcr1_norm$norm_rel, norm_rel$norm_rel)
   expect_equal(pcr1_norm$int_upper, norm_rel$int_upper)
   expect_equal(pcr1_norm$int_lower, norm_rel$int_lower)
+
+  norm_rel <- pcr_normalize(pcr2_ct,
+                            group_var = rep(c('brain', 'kidney'), each = 6),
+                            reference_gene = 'GAPDH',
+                            reference_group = 'brain',
+                            mode = 'average_dct')
+
+  expect_equal(pcr2_norm$norm_rel, norm_rel$norm_rel)
+  expect_equal(pcr2_norm$int_upper, norm_rel$int_upper)
+  expect_equal(pcr2_norm$int_lower, norm_rel$int_lower)
 })

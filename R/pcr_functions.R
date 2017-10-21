@@ -204,6 +204,8 @@ pcr_error <- function(df, reference_gene) {
 #' @inheritParams pcr_ddct
 #' @param intervals A logical (default TRUE) to whether or not to calculate the
 #' error intervals
+#' @param mode A character string. Possible inputs are "average_ct" or
+#' "average_dct"
 #'
 #' @return A tidy data.frame of calculated normalized relative values and
 #' errors
@@ -226,21 +228,33 @@ pcr_error <- function(df, reference_gene) {
 #' @importFrom tidyr gather
 #'
 #' @export
-pcr_normalize <- function(df, group_var, reference_gene, reference_group, intervals = TRUE) {
-  ave <- pcr_ave(df, group_var = group_var)
-  dct <- pcr_dct(ave, reference_gene = reference_gene)
+pcr_normalize <- function(df, group_var, reference_gene, reference_group,
+                          intervals = TRUE, mode = 'average_ct') {
+  if(mode == 'average_ct') {
+    ave <- pcr_ave(df, group_var = group_var)
+    dct <- pcr_dct(ave, reference_gene = reference_gene)
+  } else if(mode == 'average_dct') {
+    dct <- pcr_dct(df, reference_gene = reference_gene)
+    dct <- pcr_ave(dct, group_var = group_var)
+  }
+
   ddct <- pcr_ddct(dct, reference_group = reference_group)
 
   norm_rel <- gather(ddct, gene, ddct, -group) %>%
     mutate(norm_rel = 2 ^ -ddct)
 
   if(intervals == TRUE) {
-    sds <- pcr_sd(df, group_var = group_var)
-    errors <- pcr_error(sds, reference_gene = reference_gene)
-    errors2 <- gather(errors, gene, error, -group)
+    if(mode == 'average_ct') {
+      sds <- pcr_sd(df, group_var = group_var)
+      errors <- pcr_error(sds, reference_gene = reference_gene)
+    } else if(mode == 'average_dct') {
+      dct <- pcr_dct(df, reference_gene = reference_gene)
+      errors <- pcr_sd(dct, group_var = group_var)
+    }
+    errors <- gather(errors, gene, error, -group)
 
     norm_rel <- norm_rel %>%
-      full_join(errors2) %>%
+      full_join(errors) %>%
       mutate(int_lower = 2 ^ - (ddct + error),
              int_upper = 2 ^ - (ddct - error))
   }
