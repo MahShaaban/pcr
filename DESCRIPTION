@@ -7,7 +7,7 @@ Authors@R: person("Mahmoud", "Ahmded",
 Description: Provides a number of methods for processing and analyzing data 
   from quantitative PCR experiments
 Depends: R (>= 3.4.2)
-License: GPL-3
+License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
