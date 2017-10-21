@@ -1,6 +1,7 @@
 # load required libraries
 library(readr)
 library(dplyr)
+library(devtools)
 
 # locate and read file
 fl <- system.file('extdata', 'pcr2_ct.csv', package = 'pcr')
@@ -30,4 +31,4 @@ errors <- pcr2_ct %>%
 pcr2_norm <- left_join(ave, errors) %>%
   mutate(int_lower = 2 ^ -(ddct + error),
          int_upper = 2 ^ -(ddct - error))
-devtools::use_data(pcr2_norm, overwrite = TRUE)
+use_data(pcr2_norm, overwrite = TRUE)
