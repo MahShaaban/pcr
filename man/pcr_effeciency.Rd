@@ -3,12 +3,12 @@
 \docType{data}
 \name{pcr_effeciency}
 \alias{pcr_effeciency}
-\title{PCR effecienty calculated from pcr_dilute}
-\format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 7 rows and 10 columns.}
+\title{PCR effecienty calculated from pcr_dilute_*}
+\format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 7 rows and 5 columns.}
 \usage{
 pcr_effeciency
 }
 \description{
-PCR effecienty calculated from pcr_dilute
+PCR effecienty calculated from pcr_dilute_*
 }
 \keyword{datasets}

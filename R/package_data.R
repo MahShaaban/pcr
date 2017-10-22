@@ -16,10 +16,15 @@
 #' Processed data of two identical houekeeping genes
 "pcr_hk_calib"
 
-#' PCR dilution data
+#' PCR dilution averages
 #'
 #' @references \url{http://www3.appliedbiosystems.com/cms/groups/mcb_support/documents/generaldocuments/cms_040980.pdf}
-"pcr_dilute"
+"pcr_dilute_ave"
 
-#' PCR effecienty calculated from pcr_dilute
+#' PCR dilution errors
+#'
+#' @references \url{http://www3.appliedbiosystems.com/cms/groups/mcb_support/documents/generaldocuments/cms_040980.pdf}
+"pcr_dilute_error"
+
+#' PCR effecienty calculated from pcr_dilute_*
 "pcr_effeciency"
