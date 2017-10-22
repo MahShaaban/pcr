@@ -60,5 +60,13 @@ test_that('pcr_caliberate returns the proper values in the right format', {
                         group_var = group_var,
                         reference_group = 'brain')
 
-  testthat::expect_identical(pcr_hk_calib, rel)
+  expect_identical(pcr_hk_calib, rel)
+})
+
+test_that("pcr_assess retruns the proper values in the right formate", {
+  amount <- c(1, .5, .2, .1, .05, .02, .01)
+  eff <- pcr_assess(pcr_dilute_ave,
+                   error = pcr_dilute_error,
+                   amount = amount)
+  expect_identical(pcr_effeciency, eff)
 })

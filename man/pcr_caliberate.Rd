@@ -31,3 +31,23 @@ A data.frame of caliberated, relative values and errors
 Caliberate ct values of genes to a reference group and obtain the fold-
 change usually for reference genes
 }
+\examples{
+# locate and read file
+fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
+pcr1_ct <- readr::read_csv(fl)
+
+# make a data.frame of two identical columns
+pcr_hk <- data.frame(
+  GAPDH1 = pcr1_ct$GAPDH,
+  GAPDH2 = pcr1_ct$GAPDH
+  )
+
+# add grouping variable
+group_var <- rep(c('brain', 'kidney'), each = 6)
+
+# calculate caliberation
+pcr_caliberate(pcr_hk,
+               group_var = group_var,
+               reference_group = 'brain')
+
+}

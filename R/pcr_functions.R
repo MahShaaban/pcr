@@ -279,6 +279,25 @@ pcr_analyze <- function(df, group_var, reference_gene, reference_group,
 #'
 #' @return A data.frame of caliberated, relative values and errors
 #'
+#' @examples
+#' # locate and read file
+#' fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
+#' pcr1_ct <- readr::read_csv(fl)
+#'
+#' # make a data.frame of two identical columns
+#' pcr_hk <- data.frame(
+#'   GAPDH1 = pcr1_ct$GAPDH,
+#'   GAPDH2 = pcr1_ct$GAPDH
+#'   )
+#'
+#' # add grouping variable
+#' group_var <- rep(c('brain', 'kidney'), each = 6)
+#'
+#' # calculate caliberation
+#' pcr_caliberate(pcr_hk,
+#'                group_var = group_var,
+#'                reference_group = 'brain')
+#'
 #' @importFrom magrittr %>%
 #' @importFrom tidyr gather
 #' @importFrom dplyr mutate full_join
@@ -314,4 +333,64 @@ pcr_caliberate <- function(df, group_var, reference_group, intervals = TRUE,
     }
     return(rel)
   }
+}
+
+#' Assess PCR data quality
+#'
+#' @param df A data.frame of exactly two columns containing average ct values
+#' of a reference gene and another from an experiment run with differen
+#' dilutions (RNA amounts)
+#' @param error An optional data.frame of dimentions equals that of df and
+#' contains an error measure from the same experiments
+#' @param amount A numeric vector of length equals nrow df with RNA amounts
+#' @param mode A character string of assessment mode. Default "effeciency"
+#' @param plot A logical default FALSE of whether plot or return the data
+#'
+#' @return A data.frame of 5 columns
+#'
+#' @examples
+#' # locate and read data
+#' fl <- system.file('extdata', 'pcr_dilute_ave.csv', package = 'pcr')
+#' pcr_dilute_ave <- readr::read_csv(fl)
+#'
+#' fl <- system.file('extdata', 'pcr_dilute_error.csv', package = 'pcr')
+#' pcr_dilute_error <- readr::read_csv(fl)
+#'
+#' # make a vector of RNA amounts
+#' amount <- c(1, .5, .2, .1, .05, .02, .01)
+#'
+#' # calculate effeciencey
+#' pcr_assess(pcr_dilute_ave,
+#'            error = pcr_dilute_error,
+#'            amount = amount)
+#'
+#' @importFrom dplyr data_frame
+#'
+#' @export
+pcr_assess <- function(df, error = NULL, amount, mode = 'effeciency',
+                      plot = FALSE) {
+
+  log_amount <- log10(amount)
+
+  dct <- unlist(df[, 1] - df[, 2], use.names = FALSE)
+
+  if(!is.null(error)) {
+    error <- as.numeric(sqrt((error[, 1] ^ 2) + error[, 2] ^ 2))
+    int_lower = unlist(dct - error)
+    int_upper = unlist(dct + error)
+
+    effeciency <- data_frame(
+      log_amount = log_amount,
+      dct = dct,
+      error = error,
+      int_lower = int_lower,
+      int_upper = int_upper
+    )
+  } else {
+    effeciency <- data_frame(
+      log_amount = log_amount,
+      dct = dct
+    )
+  }
+  return(effeciency)
 }
