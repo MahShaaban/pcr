@@ -36,19 +36,20 @@ pcr_ave <- function(df, group_var) {
     summarise_all(function(x) mean(x))
 }
 
-#' Calculate delta ct value
+#' Normalize ct values to a reference gene
 #'
-#' Takes a data.frame of average ct values for each gene in each condition and
-#' returns the delta ct value (average gene of interest - average reference
-#' gene)
+#' Takes a data.frame of ct values or average ct values for each gene in each
+#' condition and returns the ct values normalized to a reference gene.
 #'
-#' @param df A data.frame of average ct values for each gene in each conditon
-#' in addition to a grouping variable such as the output of \link{pcr_ave}
+#' @param df A data.frame of ct or average values for each gene in each
+#' conditon in addition to a grouping variable such as the output of
+#' \link{pcr_ave}
 #' @param reference_gene A character string of the name of the column
 #' correspoinding to the reference gene
 #'
-#' @return A data.frame of delta ct values for each gene and a grouping
-#' variable. The column corresponding to the reference gene is dropped.
+#' @return A data.frame of normalized ct values for each gene and a
+#' grouping variable. The column corresponding to the reference gene is
+#' dropped.
 #'
 #' @examples
 #' # locate and read raw ct data
@@ -62,12 +63,12 @@ pcr_ave <- function(df, group_var) {
 #' ave <- pcr_ave(pcr1_ct, group_var = group_var)
 #'
 #' # calculate delta ct
-#' pcr_dct(ave, 'GAPDH')
+#' pcr_norm(ave, 'GAPDH')
 #'
 #' @importFrom dplyr select mutate_if starts_with
 #'
 #' @export
-pcr_dct <- function(df, reference_gene) {
+pcr_norm <- function(df, reference_gene) {
   if(!reference_gene %in% names(df)) {
     stop("reference gene should be a character string and one of the column names")
   }
@@ -78,19 +79,20 @@ pcr_dct <- function(df, reference_gene) {
     mutate_if(is.numeric, function(x) x - ref)
 }
 
-#' Calculate delta delta ct value
+#' Caliberate ct values to a reference group
 #'
-#' Takes a data.frame of the delta ct values for each gene in each condition
-#' and returns a data.frame of the delta delta value of each gene (delat ct of
-#' gene of interest - delta ct value of same gene in reference group)
+#' Takes a data.frame of the ct or normalized ct values for each gene in each
+#' condition and returns a data.frame of the caliberated ct value of each gene
+#' e.x. (delat ct of gene of interest - delta ct value of same gene in
+#' reference group)
 #'
-#' @param df A data.frame of delta ct values for each gene and a grouping
-#' variable such as the output of the \link{pcr_dct}
+#' @param df A data.frame of ct or normalized ct values for each gene and a
+#' grouping variable such as the output of the \link{pcr_norm}
 #' @param reference_group A character string of the reference group as it is
 #' recorded in the grouping variable
 #'
-#' @return A data.fram of the delta delta values for each gene in a grouping
-#' variable
+#' @return A data.fram of the caliberated ct values for each gene in a grouping
+#' variable by a reference group
 #'
 #' @examples
 #' # locate and read raw ct data
@@ -104,14 +106,14 @@ pcr_dct <- function(df, reference_gene) {
 #' ave <- pcr_ave(pcr1_ct, group_var = group_var)
 #'
 #' # calculate delta ct
-#' dct <- pcr_dct(ave, 'GAPDH')
+#' dct <- pcr_norm(ave, 'GAPDH')
 #'
 #' # calculate delta delta ct
-#' pcr_ddct(dct, 'brain')
+#' pcr_calib(dct, 'brain')
 #'
 #' @importFrom dplyr filter select mutate_if
 #' @export
-pcr_ddct <- function(df, reference_group) {
+pcr_calib <- function(df, reference_group) {
   if(!reference_group %in% unlist(df$group)) {
     stop("reference_group should be a character string and one of the group variable entries")
   }
@@ -161,7 +163,7 @@ pcr_sd <- function(df, group_var) {
 #' @param df A data.frame of ncol n and nrow equalse the number of unique
 #' grouping variables containing the standard error values of each gene in each
 #' group
-#' @inheritParams pcr_dct
+#' @inheritParams pcr_norm
 #'
 #' @return A data.frame of error values for each gene and a grouping
 #' variable. The column corresponding to the reference gene is dropped.
@@ -194,21 +196,20 @@ pcr_error <- function(df, reference_gene) {
     mutate_if(is.numeric, function(x) sqrt((x^2) + (ref)^2))
 }
 
-#' Normalize PCR experment data
+#' pcr_analyze
 #'
-#' A wrapper function to calculate the normalized relative values of genes of
-#' interest to a reference gene and a reference group.
+#' A wrapper function to perform different analysis methods and modes
 #'
 #' @inheritParams pcr_ave
-#' @inheritParams pcr_dct
-#' @inheritParams pcr_ddct
+#' @inheritParams pcr_norm
+#' @inheritParams pcr_calib
 #' @param intervals A logical (default TRUE) to whether or not to calculate the
 #' error intervals
 #' @param mode A character string. Possible inputs are "average_ct" or
 #' "average_dct"
+#' @param method A character string. Default is "delta_delta_ct"
 #'
-#' @return A tidy data.frame of calculated normalized relative values and
-#' errors
+#' @return A tidy data.frame of calculated expression values and errors
 #'
 #' @examples
 #' # locate and read raw ct data
@@ -219,7 +220,7 @@ pcr_error <- function(df, reference_gene) {
 #' group_var <- rep(c('brain', 'kidney'), each = 6)
 #'
 #' # calculate all values and errors in one step
-#' pcr_normalize(pcr1_ct,
+#' pcr_analyze(pcr1_ct,
 #' group_var = rep(c('brain', 'kidney'), each = 6),
 #' reference_gene = 'GAPDH',
 #' reference_group = 'brain')
@@ -228,35 +229,38 @@ pcr_error <- function(df, reference_gene) {
 #' @importFrom tidyr gather
 #'
 #' @export
-pcr_normalize <- function(df, group_var, reference_gene, reference_group,
-                          intervals = TRUE, mode = 'average_ct') {
-  if(mode == 'average_ct') {
-    ave <- pcr_ave(df, group_var = group_var)
-    dct <- pcr_dct(ave, reference_gene = reference_gene)
-  } else if(mode == 'average_dct') {
-    dct <- pcr_dct(df, reference_gene = reference_gene)
-    dct <- pcr_ave(dct, group_var = group_var)
-  }
-
-  ddct <- pcr_ddct(dct, reference_group = reference_group)
-
-  norm_rel <- gather(ddct, gene, ddct, -group) %>%
-    mutate(norm_rel = 2 ^ -ddct)
-
-  if(intervals == TRUE) {
+pcr_analyze <- function(df, group_var, reference_gene, reference_group,
+                        intervals = TRUE, method = 'delta_delta_ct',
+                        mode = 'average_ct') {
+  if(method == 'delta_delta_ct') {
     if(mode == 'average_ct') {
-      sds <- pcr_sd(df, group_var = group_var)
-      errors <- pcr_error(sds, reference_gene = reference_gene)
+      ave <- pcr_ave(df, group_var = group_var)
+      dct <- pcr_norm(ave, reference_gene = reference_gene)
     } else if(mode == 'average_dct') {
-      dct <- pcr_dct(df, reference_gene = reference_gene)
-      errors <- pcr_sd(dct, group_var = group_var)
+      dct <- pcr_norm(df, reference_gene = reference_gene)
+      dct <- pcr_ave(dct, group_var = group_var)
     }
-    errors <- gather(errors, gene, error, -group)
 
-    norm_rel <- norm_rel %>%
-      full_join(errors) %>%
-      mutate(int_lower = 2 ^ - (ddct + error),
-             int_upper = 2 ^ - (ddct - error))
+    ddct <- pcr_calib(dct, reference_group = reference_group)
+
+    norm_rel <- gather(ddct, gene, ddct, -group) %>%
+      mutate(norm_rel = 2 ^ -ddct)
+
+    if(intervals == TRUE) {
+      if(mode == 'average_ct') {
+        sds <- pcr_sd(df, group_var = group_var)
+        errors <- pcr_error(sds, reference_gene = reference_gene)
+      } else if(mode == 'average_dct') {
+        dct <- pcr_norm(df, reference_gene = reference_gene)
+        errors <- pcr_sd(dct, group_var = group_var)
+      }
+      errors <- gather(errors, gene, error, -group)
+
+      norm_rel <- norm_rel %>%
+        full_join(errors) %>%
+        mutate(int_lower = 2 ^ - (ddct + error),
+               int_upper = 2 ^ - (ddct - error))
+    }
+    return(norm_rel)
   }
-  return(norm_rel)
   }

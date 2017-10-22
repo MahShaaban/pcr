@@ -14,12 +14,12 @@ pcr1_ct$group <- rep(c('brain', 'kidney'), each = 6)
 
 # normalize as separate wells
 ## calculate averages, ddct and normalized relative values
-ave <- pcr1_ct %>%
+norm_rel <- pcr1_ct %>%
   group_by(group) %>%
   summarise_all(function(x) mean(x)) %>%
-  mutate(dct = c_myc - GAPDH) %>%
-  mutate(ddct = dct - .$dct[1]) %>%
-  mutate(norm_rel = 2 ^ -ddct)
+  mutate(norm = c_myc - GAPDH) %>%
+  mutate(norm_calib = norm - .$norm[1]) %>%
+  mutate(norm_rel = 2 ^ -norm_calib)
 
 ## calculate errors
 errors <- pcr1_ct %>%
@@ -29,7 +29,7 @@ errors <- pcr1_ct %>%
   summarise(error = sqrt((c_myc^2) + (GAPDH^2)))
 
 ## propagate errors
-pcr1_norm <- left_join(ave, errors) %>%
-  mutate(int_lower = 2 ^ -(ddct + error),
-         int_upper = 2 ^ -(ddct - error))
+pcr1_norm <- left_join(norm_rel, errors) %>%
+  mutate(int_lower = 2 ^ -(norm_calib + error),
+         int_upper = 2 ^ -(norm_calib - error))
 use_data(pcr1_norm, overwrite = TRUE)
