@@ -225,8 +225,9 @@ pcr_error <- function(df, reference_gene) {
 #' reference_gene = 'GAPDH',
 #' reference_group = 'brain')
 #'
-#' @importFrom dplyr full_join mutate
+#' @importFrom magrittr %>%
 #' @importFrom tidyr gather
+#' @importFrom dplyr full_join mutate
 #'
 #' @export
 pcr_analyze <- function(df, group_var, reference_gene, reference_group,
@@ -263,4 +264,54 @@ pcr_analyze <- function(df, group_var, reference_gene, reference_group,
     }
     return(norm_rel)
   }
+}
+
+#' Caliberate genes to a reference group
+#'
+#' Caliberate ct values of genes to a reference group and obtain the fold-
+#' change usually for reference genes
+#'
+#' @inheritParams pcr_ave
+#' @inheritParams pcr_norm
+#' @inheritParams pcr_calib
+#' @inheritParams pcr_analyze
+#' @param method A character string of calculation method. Default "delta_ct"
+#'
+#' @return A data.frame of caliberated, relative values and errors
+#'
+#' @importFrom magrittr %>%
+#' @importFrom tidyr gather
+#' @importFrom dplyr mutate full_join
+#'
+#' @export
+pcr_caliberate <- function(df, group_var, reference_group, intervals = TRUE,
+                           method = 'delta_ct', mode = 'average_ct') {
+  if(method == 'delta_ct') {
+    if(mode == 'average_ct') {
+      ave <- pcr_ave(df, group_var = group_var)
+      dct <- pcr_calib(ave, reference_group = reference_group)
+    } else if(mode == 'average_dct') {
+      dct <- pcr_calib(df, reference_group = reference_group)
+      dct <- pcr_ave(dct, group_var = group_var)
+    }
+
+    rel <- gather(dct, gene, calib, -group) %>%
+      mutate(rel = 2 ^ -calib)
+
+    if(intervals == TRUE) {
+      if(mode == 'average_ct') {
+        sds <- pcr_sd(df, group_var = group_var)
+      } else if(mode == 'average_dct') {
+        dct <- pcr_calib(df, reference_group = reference_group)
+        sds <- pcr_sd(dct, group_var = group_var)
+      }
+      sds <- gather(sds, gene, sd, -group)
+
+      rel <- rel %>%
+        full_join(sds) %>%
+        mutate(int_lower = 2 ^ - (calib + sd),
+               int_upper = 2 ^ - (calib - sd))
+    }
+    return(rel)
   }
+}

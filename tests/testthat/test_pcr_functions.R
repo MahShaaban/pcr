@@ -53,3 +53,12 @@ test_that("pcr_analyze returns the proper values in the right format", {
   expect_equal(pcr2_norm$int_upper, norm_rel$int_upper)
   expect_equal(pcr2_norm$int_lower, norm_rel$int_lower)
 })
+
+test_that('pcr_caliberate returns the proper values in the right format', {
+  group_var <- rep(c('brain', 'kidney'), each = 6)
+  rel <- pcr_caliberate(pcr_hk,
+                        group_var = group_var,
+                        reference_group = 'brain')
+
+  testthat::expect_identical(pcr_hk_calib, rel)
+})

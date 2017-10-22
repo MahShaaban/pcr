@@ -3,6 +3,7 @@
 export(pcr_analyze)
 export(pcr_ave)
 export(pcr_calib)
+export(pcr_caliberate)
 export(pcr_error)
 export(pcr_norm)
 export(pcr_sd)
