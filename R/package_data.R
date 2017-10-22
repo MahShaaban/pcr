@@ -10,3 +10,8 @@
 #' PCR same wells experment processed data
 "pcr2_norm"
 
+#' Simulated data of two identical housekeeping genes
+"pcr_hk"
+
+#' Processed data of two identical houekeeping genes
+"pcr_hk_calib"
