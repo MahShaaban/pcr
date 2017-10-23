@@ -64,9 +64,8 @@ test_that('pcr_caliberate returns the proper values in the right format', {
 })
 
 test_that("pcr_assess retruns the proper values in the right formate", {
-  amount <- c(1, .5, .2, .1, .05, .02, .01)
-  eff <- pcr_assess(pcr_dilute_ave,
-                   error = pcr_dilute_error,
+  amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
+  eff <- pcr_assess(pcr_dilute,
                    amount = amount)
-  expect_identical(pcr_effeciency, eff)
+  expect_s3_class(eff, 'data.frame')
 })

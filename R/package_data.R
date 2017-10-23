@@ -16,6 +16,11 @@
 #' Processed data of two identical houekeeping genes
 "pcr_hk_calib"
 
+#' Regenerated PCR ct values of different dilutions
+#'
+#' @references \url{http://www3.appliedbiosystems.com/cms/groups/mcb_support/documents/generaldocuments/cms_040980.pdf}
+"pcr_dilute"
+
 #' PCR dilution averages
 #'
 #' @references \url{http://www3.appliedbiosystems.com/cms/groups/mcb_support/documents/generaldocuments/cms_040980.pdf}

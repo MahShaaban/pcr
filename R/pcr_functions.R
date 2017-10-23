@@ -1,3 +1,4 @@
+
 #' Calculate average ct value
 #'
 #' Takes a data.frame of raw ct values and returns the averages in different
@@ -118,11 +119,9 @@ pcr_calib <- function(df, reference_group) {
     stop("reference_group should be a character string and one of the group variable entries")
   }
 
-  ref <- filter(df, group == reference_group) %>%
-    select(-group) %>%
-    unlist(use.names = FALSE)
+  ind <- which(df$group == reference_group)
 
-  mutate_if(df, is.numeric, function(x) x - ref)
+  mutate_if(df, is.numeric, function(x) x - x[ind])
 }
 
 #' Calculate standard error value
@@ -337,11 +336,9 @@ pcr_caliberate <- function(df, group_var, reference_group, intervals = TRUE,
 
 #' Assess PCR data quality
 #'
-#' @param df A data.frame of exactly two columns containing average ct values
-#' of a reference gene and another from an experiment run with differen
-#' dilutions (RNA amounts)
-#' @param error An optional data.frame of dimentions equals that of df and
-#' contains an error measure from the same experiments
+#' @param df A data.frame of exactly two columns containing ct values of a
+#' reference gene and another from an experiment run with differen dilutions
+#' (RNA amounts)
 #' @param amount A numeric vector of length equals nrow df with RNA amounts
 #' @param mode A character string of assessment mode. Default "effeciency"
 #' @param plot A logical default FALSE of whether plot or return the data
@@ -350,47 +347,49 @@ pcr_caliberate <- function(df, group_var, reference_group, intervals = TRUE,
 #'
 #' @examples
 #' # locate and read data
-#' fl <- system.file('extdata', 'pcr_dilute_ave.csv', package = 'pcr')
-#' pcr_dilute_ave <- readr::read_csv(fl)
-#'
-#' fl <- system.file('extdata', 'pcr_dilute_error.csv', package = 'pcr')
-#' pcr_dilute_error <- readr::read_csv(fl)
+#' fl <- system.file('extdata', 'pcr_dilute.csv', package = 'pcr')
+#' pcr_dilute <- readr::read_csv(fl)
 #'
 #' # make a vector of RNA amounts
-#' amount <- c(1, .5, .2, .1, .05, .02, .01)
+#' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 #'
 #' # calculate effeciencey
-#' pcr_assess(pcr_dilute_ave,
-#'            error = pcr_dilute_error,
+#' pcr_assess(pcr_dilute,
 #'            amount = amount)
 #'
-#' @importFrom dplyr data_frame
+#' @importFrom dplyr mutate summarise_all select data_frame
 #'
 #' @export
-pcr_assess <- function(df, error = NULL, amount, mode = 'effeciency',
-                      plot = FALSE) {
+pcr_assess <- function(df, amount, mode = 'effeciency', plot = FALSE) {
 
-  log_amount <- log10(amount)
+  log_amount <- unique(log10(amount))
 
-  dct <- unlist(df[, 1] - df[, 2], use.names = FALSE)
+  ave <- df %>%
+    mutate(amount = amount) %>%
+    group_by(amount) %>%
+    summarise_all(function(x) mean(x)) %>%
+    select(-amount)
 
-  if(!is.null(error)) {
-    error <- as.numeric(sqrt((error[, 1] ^ 2) + error[, 2] ^ 2))
-    int_lower = unlist(dct - error)
-    int_upper = unlist(dct + error)
+  dct <- unlist(ave[, 1] - ave[, 2], use.names = FALSE)
 
-    effeciency <- data_frame(
-      log_amount = log_amount,
-      dct = dct,
-      error = error,
-      int_lower = int_lower,
-      int_upper = int_upper
-    )
-  } else {
-    effeciency <- data_frame(
-      log_amount = log_amount,
-      dct = dct
-    )
-  }
+  error <- df %>%
+    mutate(amount = amount) %>%
+    group_by(amount) %>%
+    summarise_all(function(x) sd(x)) %>%
+    select(-amount)
+
+  error <- as.numeric(sqrt((error[, 1] ^ 2) + error[, 2] ^ 2))
+
+  int_lower = unlist(dct - error)
+  int_upper = unlist(dct + error)
+
+  effeciency <- data_frame(
+    log_amount = log_amount,
+    dct = dct,
+    error = error,
+    int_lower = int_lower,
+    int_upper = int_upper
+  )
+
   return(effeciency)
 }
