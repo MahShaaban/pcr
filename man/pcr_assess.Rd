@@ -7,7 +7,7 @@
 pcr_assess(df, amount, mode = "effeciency", plot = FALSE)
 }
 \arguments{
-\item{df}{A data.frame of exactly two columns containing ct values of a
+\item{df}{A data.frame of one or more columns containing ct values of a
 reference gene and another from an experiment run with differen dilutions
 (RNA amounts)}
 
@@ -18,10 +18,14 @@ reference gene and another from an experiment run with differen dilutions
 \item{plot}{A logical default FALSE of whether plot or return the data}
 }
 \value{
-A data.frame of 5 columns
+When mode == 'effeciency' return a data.frame of 5 columns or a plot
+. when mode == 'standard_curve' retruns a data.frame of intercept and slope
+or a plot for each of the input columns.
 }
 \description{
-Assess PCR data quality
+Assess the quality of a PCR experiment by examining the amplification
+effeciency when using the comparative ct method or calculating the standard
+curve
 }
 \examples{
 # locate and read data
@@ -34,5 +38,10 @@ amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 # calculate effeciencey
 pcr_assess(pcr_dilute,
            amount = amount)
+
+# calculate standard curve
+pcr_assess(pcr_dilute,
+           amount = amount,
+           mode = 'standard_curve')
 
 }

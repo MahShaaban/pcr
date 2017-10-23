@@ -33,3 +33,6 @@
 
 #' PCR effecienty calculated from pcr_dilute_*
 "pcr_effeciency"
+
+#' PCR amount using standard curve
+"pcr_amounts"

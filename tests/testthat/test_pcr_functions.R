@@ -52,20 +52,32 @@ test_that("pcr_analyze returns the proper values in the right format", {
   expect_equal(pcr2_norm$norm_rel, norm_rel$norm_rel)
   expect_equal(pcr2_norm$int_upper, norm_rel$int_upper)
   expect_equal(pcr2_norm$int_lower, norm_rel$int_lower)
-})
 
-test_that('pcr_caliberate returns the proper values in the right format', {
   group_var <- rep(c('brain', 'kidney'), each = 6)
-  rel <- pcr_caliberate(pcr_hk,
-                        group_var = group_var,
-                        reference_group = 'brain')
+  rel <- pcr_analyze(pcr_hk,
+                     group_var = group_var,
+                     reference_group = 'brain',
+                     method = 'delta_ct')
 
   expect_identical(pcr_hk_calib, rel)
 })
 
 test_that("pcr_assess retruns the proper values in the right formate", {
   amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
+
+  # default mode "effeciency"
   eff <- pcr_assess(pcr_dilute,
                    amount = amount)
   expect_s3_class(eff, 'data.frame')
+
+  # testing problem!!
+  # standard curve mode
+  co_eff1 <- coefficients(lm(pcr_dilute$c_myc ~ log10(amount)))
+  co_eff2 <- coefficients(lm(pcr_dilute$GAPDH ~ log10(amount)))
+
+  sc <- pcr_assess(pcr_dilute,
+                   amount = amount,
+                   mode = 'standard_curve')
+  expect_s3_class(sc, 'data.frame')
+  # testing problem!!
 })

@@ -22,7 +22,10 @@ recorded in the grouping variable}
 \item{intervals}{A logical (default TRUE) to whether or not to calculate the
 error intervals}
 
-\item{method}{A character string. Default is "delta_delta_ct"}
+\item{method}{A character string. Default is "delta_delta_ct" to perform
+normalization by a reference gene and cliberation to a reference group.
+"delta_ct" to caliberate ct values to a refernce group and obtain the fold-
+change; this method can be used to choose between candidate reference genes}
 
 \item{mode}{A character string. Possible inputs are "average_ct" or
 "average_dct"}
@@ -34,6 +37,7 @@ A tidy data.frame of calculated expression values and errors
 A wrapper function to perform different analysis methods and modes
 }
 \examples{
+# default mode delta_delta_ct
 # locate and read raw ct data
 fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
 pcr1_ct <- readr::read_csv(fl)
@@ -47,4 +51,24 @@ group_var = rep(c('brain', 'kidney'), each = 6),
 reference_gene = 'GAPDH',
 reference_group = 'brain')
 
+# delta_ct method
+# example to check fold change of control gens
+# locate and read file
+fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
+pcr1_ct <- readr::read_csv(fl)
+
+# make a data.frame of two identical columns
+pcr_hk <- data.frame(
+  GAPDH1 = pcr1_ct$GAPDH,
+  GAPDH2 = pcr1_ct$GAPDH
+  )
+
+# add grouping variable
+group_var <- rep(c('brain', 'kidney'), each = 6)
+
+# calculate caliberation
+pcr_analyze(pcr_hk,
+            group_var = group_var,
+            reference_group = 'brain',
+            method = 'delta_ct')
 }
