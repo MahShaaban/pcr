@@ -2,7 +2,7 @@
 title: "Analysis of qPCR data"
 author: "Mahmoud Ahmed"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: pdf_document
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
@@ -42,3 +42,32 @@ $$
 $$
 s = (cv)(\bar X)
 $$
+
+
+\begin{table}
+\centering
+\caption{Relative quantification using comparative ($\Delta\Delta C_T$) method (separate tubes)}
+\label{table1}
+\begin{tabular}{lccccc}
+\hline
+Tissue & c-myc $C_T$ & GAPDH $C_T$ & \begin{tabular}[c]{@{}c@{}}$\Delta C_T$\\ c-myc - GAPDH\end{tabular} & \begin{tabular}[c]{@{}c@{}}$\Delta\Delta C_T$\\ $\Delta C_T - \Delta C_{T,Brain}$\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc\\ Rel. to Brain\end{tabular} \\
+\hline
+Brain & 30.72 & 23.7 &  &  &  \\
+ & 30.34 & 23.56 &  &  &  \\
+ & 30.58 & 23.47 &  &  &  \\
+ & 30.34 & 23.65 &  &  &  \\
+ & 30.5 & 23.69 &  &  &  \\
+ & 30.43 & 23.68 &  &  &  \\
+\textbf{Average} & 30.49 $\pm$ 0.15 & 23.63 $\pm$ 0.09 & 6.86 $\pm$ 0.17 & 0.00 $\pm$ 0.17 & 1.0 (0.9–1.1) \\
+\hline
+Kidney & 27.06 & 22.76 &  &  &  \\
+ & 27.03 & 22.61 &  &  &  \\
+ & 27.03 & 22.62 &  &  &  \\
+ & 27.1 & 22.6 &  &  &  \\
+ & 26.99 & 22.61 &  &  &  \\
+ & 26.94 & 24.18 &  &  &  \\
+\textbf{Average} & 27.03 $\pm$ 0.06 & 22.66 $\pm$ 0.08 & 4.37 $\pm$ 0.10 & –2.50 $\pm$ 0.10 & 5.6 (5.3–6.0) \\
+\hline
+\end{tabular}
+\end{table}
+
