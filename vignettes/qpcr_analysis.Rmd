@@ -1,0 +1,44 @@
+---
+title: "Analysis of qPCR data"
+author: "Mahmoud Ahmed"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Comparative CT methods  
+## Double delta CT  
+
+$$
+\Delta\Delta C_T = \Delta C_{T,q} - \Delta C_{T,cb}
+$$
+
+$$
+2^{-\Delta\Delta C_T}
+$$
+
+$$
+s = \sqrt{s_1^2 + s_2^2}
+$$
+
+## Delata CT   
+
+# statndard curve methods  
+$$
+\log amount = \dfrac{C_T - b}{m}
+$$
+
+$$
+10^{\log amount}
+$$
+
+$$
+cv = \sqrt{cv_1^2 + cv_2^2}
+$$
+
+$$
+s = (cv)(\bar X)
+$$
