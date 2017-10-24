@@ -4,7 +4,7 @@
 \alias{pcr_norm}
 \title{Normalize ct values to a reference gene}
 \usage{
-pcr_norm(df, reference_gene)
+pcr_norm(df, reference_gene, mode = "subtract")
 }
 \arguments{
 \item{df}{A data.frame of ct or average values for each gene in each
@@ -13,6 +13,8 @@ conditon in addition to a grouping variable such as the output of
 
 \item{reference_gene}{A character string of the name of the column
 correspoinding to the reference gene}
+
+\item{mode}{Defualt "subtract" other possible is "divide"}
 }
 \value{
 A data.frame of normalized ct values for each gene and a

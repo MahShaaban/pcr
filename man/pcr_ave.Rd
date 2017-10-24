@@ -4,13 +4,15 @@
 \alias{pcr_ave}
 \title{Calculate average ct value}
 \usage{
-pcr_ave(df, group_var)
+pcr_ave(df, group_var, amount)
 }
 \arguments{
 \item{df}{A data.frame of numeric ct value of n genes in columns and m
 samples in raws.}
 
 \item{group_var}{A vector of length m as a grouping variables of samples}
+
+\item{amount}{A numeric vector of the input dilutions or amounts}
 }
 \value{
 A data.frame of ncol n and nrow equalse the number of unique

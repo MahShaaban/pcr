@@ -31,6 +31,10 @@ pcr_dilute <- with(generated_dat, split(ct, gene)) %>%
   arrange(-row_number())
 
 write_csv(pcr_dilute, path = 'inst/extdata/pcr_dilute.csv')
+
+# locate and read file
+fl <- system.file('extdata', 'pcr_dilute.csv', package = 'pcr')
+pcr_dilute <- read_csv(fl)
 use_data(pcr_dilute, overwrite = TRUE)
 
 # calculate dct and errors

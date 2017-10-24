@@ -4,7 +4,7 @@
 \alias{pcr_calib}
 \title{Caliberate ct values to a reference group}
 \usage{
-pcr_calib(df, reference_group)
+pcr_calib(df, reference_group, mode = "subtract")
 }
 \arguments{
 \item{df}{A data.frame of ct or normalized ct values for each gene and a
@@ -12,6 +12,8 @@ grouping variable such as the output of the \link{pcr_norm}}
 
 \item{reference_group}{A character string of the reference group as it is
 recorded in the grouping variable}
+
+\item{mode}{Defualt "subtract" other possible is "divide"}
 }
 \value{
 A data.fram of the caliberated ct values for each gene in a grouping

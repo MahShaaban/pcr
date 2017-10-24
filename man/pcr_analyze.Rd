@@ -5,7 +5,7 @@
 \title{pcr_analyze}
 \usage{
 pcr_analyze(df, group_var, reference_gene, reference_group, intervals = TRUE,
-  method = "delta_delta_ct", mode = "average_ct")
+  method = "delta_delta_ct", mode = "average_ct", intercept, slope)
 }
 \arguments{
 \item{df}{A data.frame of numeric ct value of n genes in columns and m
@@ -25,10 +25,15 @@ error intervals}
 \item{method}{A character string. Default is "delta_delta_ct" to perform
 normalization by a reference gene and cliberation to a reference group.
 "delta_ct" to caliberate ct values to a refernce group and obtain the fold-
-change; this method can be used to choose between candidate reference genes}
+change; this method can be used to choose between candidate reference genes.
+Finally, the relative_curve method performs the standard curve method}
 
 \item{mode}{A character string. Possible inputs are "average_ct" or
 "average_dct"}
+
+\item{intercept}{A numeric vector of length equals ncol(df)}
+
+\item{slope}{A numeric vector of length equals ncol(df)}
 }
 \value{
 A tidy data.frame of calculated expression values and errors

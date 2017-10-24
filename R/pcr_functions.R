@@ -7,6 +7,7 @@
 #' @param df A data.frame of numeric ct value of n genes in columns and m
 #' samples in raws.
 #' @param group_var A vector of length m as a grouping variables of samples
+#' @param amount A numeric vector of the input dilutions or amounts
 #'
 #' @return A data.frame of ncol n and nrow equalse the number of unique
 #' grouping variables containing the averages of ct values of each gene in each
@@ -27,14 +28,21 @@
 #' @importFrom dplyr mutate group_by summarise_all
 #'
 #' @export
-pcr_ave <- function(df, group_var) {
+pcr_ave <- function(df, group_var, amount) {
   if(length(group_var) != nrow(df)) {
     stop("group_var should be a vector of length equals nrow of df")
   }
 
-  mutate(df, group = group_var) %>%
+  ave <- mutate(df, group = group_var) %>%
     group_by(group) %>%
     summarise_all(function(x) mean(x))
+
+  if(missing(group_var)) {
+    ave <- mutate(df, amount = amount) %>%
+      group_by(amount) %>%
+      summarise_all(function(x) mean(x))
+  }
+  return(ave)
 }
 
 #' Normalize ct values to a reference gene
@@ -47,6 +55,7 @@ pcr_ave <- function(df, group_var) {
 #' \link{pcr_ave}
 #' @param reference_gene A character string of the name of the column
 #' correspoinding to the reference gene
+#' @param mode Defualt "subtract" other possible is "divide"
 #'
 #' @return A data.frame of normalized ct values for each gene and a
 #' grouping variable. The column corresponding to the reference gene is
@@ -69,15 +78,21 @@ pcr_ave <- function(df, group_var) {
 #' @importFrom dplyr select mutate_if starts_with
 #'
 #' @export
-pcr_norm <- function(df, reference_gene) {
+pcr_norm <- function(df, reference_gene, mode = 'subtract') {
   if(!reference_gene %in% names(df)) {
     stop("reference gene should be a character string and one of the column names")
   }
 
   ref <- select(df, reference_gene) %>% unlist(use.names = FALSE)
 
-  select(df, -starts_with(reference_gene)) %>%
-    mutate_if(is.numeric, function(x) x - ref)
+  if(mode == 'subtract') {
+    norm <- select(df, -starts_with(reference_gene)) %>%
+      mutate_if(is.numeric, function(x) x - ref)
+  } else if(mode == 'divide') {
+    norm <- select(df, -starts_with(reference_gene)) %>%
+      mutate_if(is.numeric, function(x) x / ref)
+  }
+  return(norm)
 }
 
 #' Caliberate ct values to a reference group
@@ -91,6 +106,7 @@ pcr_norm <- function(df, reference_gene) {
 #' grouping variable such as the output of the \link{pcr_norm}
 #' @param reference_group A character string of the reference group as it is
 #' recorded in the grouping variable
+#' @inheritParams pcr_norm
 #'
 #' @return A data.fram of the caliberated ct values for each gene in a grouping
 #' variable by a reference group
@@ -114,14 +130,19 @@ pcr_norm <- function(df, reference_gene) {
 #'
 #' @importFrom dplyr filter select mutate_if
 #' @export
-pcr_calib <- function(df, reference_group) {
+pcr_calib <- function(df, reference_group, mode = 'subtract') {
   if(!reference_group %in% unlist(df$group)) {
     stop("reference_group should be a character string and one of the group variable entries")
   }
 
   ind <- which(df$group == reference_group)
 
-  mutate_if(df, is.numeric, function(x) x - x[ind])
+  if(mode == 'subtract') {
+    calib <- mutate_if(df, is.numeric, function(x) x - x[ind])
+  } else if(mode == 'divide') {
+    calib <- mutate_if(df, is.numeric, function(x) x / x[ind])
+  }
+  return(calib)
 }
 
 #' Calculate standard error value
@@ -209,7 +230,10 @@ pcr_error <- function(df, reference_gene) {
 #' @param method A character string. Default is "delta_delta_ct" to perform
 #' normalization by a reference gene and cliberation to a reference group.
 #' "delta_ct" to caliberate ct values to a refernce group and obtain the fold-
-#' change; this method can be used to choose between candidate reference genes
+#' change; this method can be used to choose between candidate reference genes.
+#' Finally, the relative_curve method performs the standard curve method
+#' @param intercept A numeric vector of length equals ncol(df)
+#' @param slope A numeric vector of length equals ncol(df)
 #'
 #' @return A tidy data.frame of calculated expression values and errors
 #'
@@ -255,7 +279,7 @@ pcr_error <- function(df, reference_gene) {
 #' @export
 pcr_analyze <- function(df, group_var, reference_gene, reference_group,
                         intervals = TRUE, method = 'delta_delta_ct',
-                        mode = 'average_ct') {
+                        mode = 'average_ct', intercept, slope) {
   if(method == 'delta_delta_ct') {
     if(mode == 'average_ct') {
       ave <- pcr_ave(df, group_var = group_var)
@@ -315,6 +339,28 @@ pcr_analyze <- function(df, group_var, reference_gene, reference_group,
       }
       return(rel)
     }
+  } else if(method == 'relative_curve') {
+    amounts <- pcr_amount(pcr1_ct,
+                          intercept = intercept,
+                          slope = slope)
+    norm <- pcr_ave(amounts, group_var = group_var) %>%
+      pcr_norm(reference_gene = reference_gene, mode = 'divide') %>%
+      gather(gene, norm, -group)
+
+
+    calib <- pcr_ave(amounts, group_var = group_var) %>%
+      pcr_norm(reference_gene = reference_gene, mode = 'divide') %>%
+      pcr_calib(reference_group = reference_group, mode = 'divide') %>%
+      gather(gene, calib, -group)
+
+    cv <- pcr_cv(amounts, group_var, reference_gene) %>%
+      gather(gene, cv, -group)
+
+    standrized <- full_join(norm, calib) %>%
+      full_join(cv) %>%
+      group_by(group, gene) %>%
+      mutate(sd = norm * cv)
+    return(standrized)
   }
 }
 
@@ -400,4 +446,115 @@ pcr_assess <- function(df, amount, mode = 'effeciency', plot = FALSE) {
 
     return(standard_cruve)
   }
+}
+
+#' Calculate PCR RNA amounts
+#'
+#' Calculate the amount of RNA in a PCR experimental sample using the
+#' information provided by the standard curve, namely the slope and the
+#' intercept calculated in advance for each gene in a similar expermiment.
+#'
+#' @inheritParams pcr_ave
+#' @param intercept A numeric vector of length equals ncol(df), one for each
+#' gene such as the output of \link{pcr_assess}
+#' @param slope A numeric vector of length ncol(df), one for each gene such as
+#' the output of \link{pcr_assess}
+#'
+#' @return A data.frame of dimensions equal that of the input df containing the
+#' amount of RNA in each sample in each gene
+#'
+#' @importFrom magrittr %>%
+#' @importFrom dplyr data_frame full_join group_by mutate bind_cols
+#' @importFrom tidyr gather
+#'
+#' @examples
+#' # locate and read data
+#' fl <- system.file('extdata', 'pcr_dilute.csv', package = 'pcr')
+#' pcr_dilute <- readr::read_csv(fl)
+#'
+#' fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
+#' pcr1_ct <- readr::read_csv(fl)
+#'
+#' # make a vector of RNA amounts
+#' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
+#'
+#' # calculate curve
+#' standard_curve <- pcr_assess(pcr_dilute, amount = amount, mode = 'standard_curve')
+#' intercept <- standard_curve$intercept
+#' slope <- standard_curve$slope
+#'
+#' # calculate amounts
+#' pcr_amount(pcr1_ct,
+#'            intercept = intercept,
+#'            slope = slope)
+#'
+#' @export
+pcr_amount <- function(df, intercept, slope) {
+  curve <- data_frame(intercept,
+                      slope,
+                      gene = names(df))
+  ct <- df %>%
+    gather(gene, ct)
+
+  amounts <- full_join(ct, curve) %>%
+    group_by(gene) %>%
+    mutate(amount = 10 ^ ((ct - intercept)/slope))
+  with(amounts, split(amount, gene)) %>%
+    bind_cols()
+}
+
+#' Calculates cv
+#'
+#' Error terms for the standard curve relative quantification
+#'
+#' @inheritParams pcr_ave
+#' @inheritParams pcr_norm
+#'
+#' @return A data.frame of the cv term for each gene in each sample
+#'
+#' @examples
+#' # locate and read data
+#' fl <- system.file('extdata', 'pcr_dilute.csv', package = 'pcr')
+#' pcr_dilute <- readr::read_csv(fl)
+#'
+#' fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
+#' pcr1_ct <- readr::read_csv(fl)
+#'
+#' # make a vector of RNA amounts
+#' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
+#'
+#' # calculate curve
+#' standard_curve <- pcr_assess(pcr_dilute, amount = amount, mode = 'standard_curve')
+#' intercept <- standard_curve$intercept
+#' slope <- standard_curve$slope
+#'
+#' # calculate amounts
+#' input_amounts <- pcr_amount(pcr1_ct,
+#'                             intercept = intercept,
+#'                             slope = slope)
+#'
+#' # make grouping variable
+#' group <- rep(c('brain', 'kidney'), each = 6)
+#'
+#' # calculate cv errors
+#' pcr_cv(input_amounts,
+#'        group_var = group,
+#'        reference_gene = 'GAPDH')
+#'
+#' @importFrom tidyr gather spread
+#' @importFrom dplyr group_by summarise ungroup
+#'
+#' @export
+pcr_cv <- function(df, group_var, reference_gene) {
+  ave <- pcr_ave(df, group_var = group_var) %>%
+    gather(gene, ave, -group)
+
+  error <- pcr_sd(df, group_var = group_var) %>%
+    gather(gene, sd, -group)
+  cv <- full_join(ave, error) %>%
+    group_by(group, gene) %>%
+    summarise(cv = sd/ave) %>%
+    spread(gene, cv) %>%
+    ungroup()
+  pcr_error(cv, reference_gene = reference_gene)
 }
