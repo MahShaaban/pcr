@@ -8,6 +8,13 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(error = FALSE, message = FALSE)
+```
+
+```{r load libraries}
+library(pcr)
+```
 
 # Comparative CT methods  
 ## Double delta CT  
@@ -24,25 +31,7 @@ $$
 s = \sqrt{s_1^2 + s_2^2}
 $$
 
-## Delata CT   
-
-# statndard curve methods  
-$$
-\log amount = \dfrac{C_T - b}{m}
-$$
-
-$$
-10^{\log amount}
-$$
-
-$$
-cv = \sqrt{cv_1^2 + cv_2^2}
-$$
-
-$$
-s = (cv)(\bar X)
-$$
-
+### separate tubes 
 
 \begin{table}
 \centering
@@ -70,4 +59,210 @@ Kidney & 27.06 & 22.76 &  &  &  \\
 \hline
 \end{tabular}
 \end{table}
+
+```{r ddct_average_ct}
+# default mode delta_delta_ct
+## locate and read raw ct data
+fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
+pcr1_ct <- readr::read_csv(fl)
+
+## add grouping variable
+group_var <- rep(c('brain', 'kidney'), each = 6)
+
+# calculate all values and errors in one step
+## mode == 'average_ct' default
+pcr_analyze(pcr1_ct,
+  group_var = group_var,
+  reference_gene = 'GAPDH',
+  reference_group = 'brain')
+```
+
+### same tubes  
+
+\begin{table}
+\centering
+\caption{Relative quantification using comparative ($\Delta\Delta C_T$) method (same tube)}
+\label{table2}
+\begin{tabular}{lccccc}
+\hline
+Tissue & c-myc $C_T$ & GAPDH $C_T$ & \begin{tabular}[c]{@{}c@{}}$\Delta C_T$\\ c-myc - GAPDH\end{tabular} & \begin{tabular}[c]{@{}c@{}}$\Delta\Delta C_T$\\ $\Delta C_T - Ave. \Delta C_{T,Brain}$\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc\\ Rel. to Brain\end{tabular} \\
+\hline
+Brain & 32.38 & 25.07 & 7.31 &  &  \\
+ & 32.08 & 25.29 & 6.79 &  &  \\
+ & 32.35 & 25.32 & 7.03 &  &  \\
+ & 32.08 & 25.24 & 6.84 &  &  \\
+ & 32.34 & 25.17 & 7.17 &  &  \\
+ & 32.13 & 25.29 & 6.84 &  &  \\
+\textbf{Average} &  &  & 6.99 $\pm$ 0.21 & 0.00 $\pm$ 0.21 & 1.0 (0.86–1.15) \\
+\hline
+Kidney & 28.73 & 24.30 & 4.43 &  &  \\
+ & 28.84 & 24.32 & 4.52 &  &  \\
+ & 28.51 & 24.31 & 4.20 &  &  \\
+ & 28.86 & 24.25 & 4.61 &  &  \\
+ & 28.86 & 24.34 & 4.52 &  &  \\
+ & 28.70 & 24.18 & 4.52 &  &  \\
+Average &  &  & 4.47 $\pm$ 0.14 & –2.53 $\pm$ 0.14 & 5.77 (5.23–6.37) \\
+\hline
+\end{tabular}
+\end{table}
+
+```{r ddct_average_dct}
+# calculate all values and errors in one step
+## mode == 'average_dct'
+pcr_analyze(pcr2_ct,
+  group_var = group_var,
+  reference_gene = 'GAPDH',
+  reference_group = 'brain',
+  mode = 'average_dct')
+```
+
+## Delata CT   
+
+```{r}
+# delta_ct method
+## example to check fold change of control gens
+## locate and read file
+fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
+pcr1_ct <- readr::read_csv(fl)
+
+## make a data.frame of two identical columns
+pcr_hk <- data.frame(
+  GAPDH1 = pcr1_ct$GAPDH,
+  GAPDH2 = pcr1_ct$GAPDH
+  )
+
+## add grouping variable
+group_var <- rep(c('brain', 'kidney'), each = 6)
+
+## calculate caliberation
+pcr_analyze(pcr_hk,
+            group_var = group_var,
+            reference_group = 'brain',
+            method = 'delta_ct')
+```
+
+
+# statndard curve methods  
+$$
+\log amount = \dfrac{C_T - b}{m}
+$$
+
+$$
+10^{\log amount}
+$$
+
+$$
+cv = \sqrt{cv_1^2 + cv_2^2}
+$$
+
+$$
+s = (cv)(\bar X)
+$$
+
+## calculating standard curve
+
+\begin{table}
+\centering
+\caption{Average $C_T$ value for c-myc and GAPDH at different input amounts}
+\label{table3}
+\begin{tabular}{@{}cccc@{}}
+\hline
+\begin{tabular}[c]{@{}c@{}}Input RNA\\ (ng)\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc\\ Average $C_T$\end{tabular} & \begin{tabular}[c]{@{}c@{}}GAPDH\\ Average $C_T$\end{tabular} & \begin{tabular}[c]{@{}c@{}}$\Delta C_T$\\ c-myc - GAPDH\end{tabular} \\
+\hline
+1.0 & 25.59 $\pm$ 0.04 & 22.64 $\pm$ 0.03 & 2.95 $\pm$ 0.05 \\
+0.5 & 26.77 $\pm$ 0.09 & 23.73 $\pm$ 0.05 & 3.04 $\pm$ 0.10 \\
+0.2 & 28.14 $\pm$ 0.05 & 25.12 $\pm$ 0.10 & 3.02 $\pm$ 0.11 \\
+0.1 & 29.18 $\pm$ 0.13 & 26.16 $\pm$ 0.02 & 3.01 $\pm$ 0.13 \\
+0.05 & 30.14 $\pm$ 0.03 & 27.17 $\pm$ 0.06 & 2.97 $\pm$ 0.07 \\
+0.02 & 31.44 $\pm$ 0.16 & 28.62 $\pm$ 0.10 & 2.82 $\pm$ 0.19 \\
+0.02 & 32.42 $\pm$ 0.12 & 29.45 $\pm$ 0.08 & 2.97 $\pm$ 0.14 \\
+\hline
+\end{tabular}
+\end{table}
+
+```{r calculating curve}
+# relative standard curve method
+## locate and read data
+fl <- system.file('extdata', 'pcr_dilute.csv', package = 'pcr')
+pcr_dilute <- readr::read_csv(fl)
+
+## make a vector of RNA amounts
+amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
+
+## calculate standard curve
+standard_curve <- pcr_assess(pcr_dilute,
+                             amount = amount,
+                             mode = 'standard_curve')
+intercept <- standard_curve$intercept
+slope <- standard_curve$slope
+```
+
+## separate tubes
+
+\begin{table}
+\centering
+\caption{Relative quantification using the standard curve method (separate tube)}
+\label{table4}
+\begin{tabular}{@{}lcccc@{}}
+\hline
+Tissue & c-myc (ng) & GAPDH (ng) & \begin{tabular}[c]{@{}c@{}}c-myc\\ norm. to GAPDH\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc \\ Rel. to Brain\end{tabular} \\ 
+\hline
+Brain & 0.033 & 0.51 &  &  \\
+ & 0.043 & 0.56 &  &  \\
+ & 0.036 & 0.59 &  &  \\
+ & 0.043 & 0.53 &  &  \\
+ & 0.039 & 0.51 &  &  \\
+ & 0.040 & 0.52 &  &  \\
+\textbf{Average} & 0.039 $\pm$ 0.004 & 0.54 $\pm$ 0.034 & 0.07 $\pm$ 0.008 & 1.0 $\pm$ 0.12 \\
+\hline
+Kidney & 0.40 & 0.96 &  &  \\
+ & 0.41 & 1.06 &  &  \\
+ & 0.41 & 1.05 &  &  \\
+ & 0.39 & 1.07 &  &  \\
+ & 0.42 & 1.06 &  &  \\
+ & 0.43 & 0.96 &  &  \\
+\textbf{Average} & 0.41 $\pm$ 0.016 & 1.02 $\pm$ 0.052 & 0.40 $\pm$ 0.025 & 5.5 $\pm$ 0.35 \\ 
+\hline
+\end{tabular}
+\end{table}
+
+## Same tubes  
+
+\begin{table}
+\centering
+\caption{Relative quantification using the standard curve method (same tube)}
+\label{table5}
+\begin{tabular}{lcccc}
+\hline
+Tissue & c-myc (ng) & GAPDH (ng) & \begin{tabular}[c]{@{}c@{}}c-myc\\ norm. to GAPDH\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc\\ Rel. to Brain\end{tabular} \\
+\hline
+Brain & 0.031 & 0.618 & 0.05 &  \\
+ & 0.038 & 0.532 & 0.07 &  \\
+ & 0.032 & 0.521 & 0.06 &  \\
+ & 0.038 & 0.550 & 0.07 &  \\
+ & 0.032 & 0.577 & 0.06 &  \\
+ & 0.037 & 0.532 & 0.07 &  \\
+\textbf{Average} &  &  & 0.06 $\pm$ 0.008 & 1.0 $\pm$ 0.14 \\
+\hline
+Kidney & 0.365 & 0.049 & 0.35 &  \\
+ & 0.338 & 1.035 & 0.33 &  \\
+ & 0.423 & 1.042 & 0.41 &  \\
+ & 0.334 & 1.086 & 0.31 &  \\
+ & 0.334 & 1.021 & 0.33 &  \\
+ & 0.372 & 1.139 & 0.33 &  \\
+\textbf{Average} &  &  & 0.34 $\pm$ 0.035 & 5.4 $\pm$ 0.55 \\
+\hline
+\end{tabular}
+\end{table}
+
+```{r }
+## calculate standard amounts and error
+pcr_analyze(pcr1_ct,
+            group_var = group_var,
+            reference_gene = 'GAPDH',
+            reference_group = 'brain',
+            intercept = intercept,
+            slope = slope,
+            method = 'relative_curve')
+```
 

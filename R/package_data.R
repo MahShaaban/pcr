@@ -1,38 +1,38 @@
 #' PCR separate wells experiment raw data
-"pcr1_ct"
+"ct1"
 
 #' PCR separate wells experiment processed data
-"pcr1_norm"
+"rel_express"
 
 #' PCR same wells experiment raw data
-"pcr2_ct"
+"ct2"
 
 #' PCR same wells experment processed data
-"pcr2_norm"
-
-#' Simulated data of two identical housekeeping genes
-"pcr_hk"
+"rel_express2"
 
 #' Processed data of two identical houekeeping genes
-"pcr_hk_calib"
+"hk_express"
 
 #' Regenerated PCR ct values of different dilutions
 #'
 #' @references \url{http://www3.appliedbiosystems.com/cms/groups/mcb_support/documents/generaldocuments/cms_040980.pdf}
-"pcr_dilute"
+"ct3"
 
 #' PCR dilution averages
 #'
 #' @references \url{http://www3.appliedbiosystems.com/cms/groups/mcb_support/documents/generaldocuments/cms_040980.pdf}
-"pcr_dilute_ave"
+"ct3_ave"
 
 #' PCR dilution errors
 #'
 #' @references \url{http://www3.appliedbiosystems.com/cms/groups/mcb_support/documents/generaldocuments/cms_040980.pdf}
-"pcr_dilute_error"
+"ct3_sd"
 
 #' PCR effecienty calculated from pcr_dilute_*
-"pcr_effeciency"
+"effeciency"
 
-#' PCR amount using standard curve
-"pcr_amounts"
+#' PCR amount using standard curve/ average amounts mode
+"standarized1"
+
+#' PCR amount using standard curve/ average normalized mode
+"standarized1"

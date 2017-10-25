@@ -1,11 +1,10 @@
-
 #' Calculate average ct value
 #'
 #' Takes a data.frame of raw ct values and returns the averages in different
-#' groups
+#' groups or dilutions
 #'
 #' @param df A data.frame of numeric ct value of n genes in columns and m
-#' samples in raws.
+#' samples in raws
 #' @param group_var A vector of length m as a grouping variables of samples
 #' @param amount A numeric vector of the input dilutions or amounts
 #'
@@ -15,14 +14,14 @@
 #'
 #' @examples
 #' # locate and read raw ct data
-#' fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
-#' pcr1_ct <- readr::read_csv(fl)
+#' fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
+#' ct1 <- readr::read_csv(fl)
 #'
 #' # add grouping variable
 #' group_var <- rep(c('brain', 'kidney'), each = 6)
 #'
 #' # calculate averages
-#' pcr_ave(pcr1_ct, group_var = group_var)
+#' pcr_ave(ct1, group_var = group_var)
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate group_by summarise_all
@@ -63,14 +62,14 @@ pcr_ave <- function(df, group_var, amount) {
 #'
 #' @examples
 #' # locate and read raw ct data
-#' fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
-#' pcr1_ct <- readr::read_csv(fl)
+#' fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
+#' ct1 <- readr::read_csv(fl)
 #'
 #' # add grouping variable
 #' group_var <- rep(c('brain', 'kidney'), each = 6)
 #'
 #' # calculate averages
-#' ave <- pcr_ave(pcr1_ct, group_var = group_var)
+#' ave <- pcr_ave(ct1, group_var = group_var)
 #'
 #' # calculate delta ct
 #' pcr_norm(ave, 'GAPDH')
@@ -113,14 +112,14 @@ pcr_norm <- function(df, reference_gene, mode = 'subtract') {
 #'
 #' @examples
 #' # locate and read raw ct data
-#' fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
-#' pcr1_ct <- readr::read_csv(fl)
+#' fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
+#' ct1 <- readr::read_csv(fl)
 #'
 #' # add grouping variable
 #' group_var <- rep(c('brain', 'kidney'), each = 6)
 #'
 #' # calculate averages
-#' ave <- pcr_ave(pcr1_ct, group_var = group_var)
+#' ave <- pcr_ave(ct1, group_var = group_var)
 #'
 #' # calculate delta ct
 #' dct <- pcr_norm(ave, 'GAPDH')
@@ -155,14 +154,14 @@ pcr_calib <- function(df, reference_group, mode = 'subtract') {
 #'
 #' @examples
 #' # locate and read raw ct data
-#' fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
-#' pcr1_ct <- readr::read_csv(fl)
+#' fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
+#' ct1 <- readr::read_csv(fl)
 #'
 #' # add grouping variable
 #' group_var <- rep(c('brain', 'kidney'), each = 6)
 #'
 #' # calculate standard deviations
-#' pcr_sd(pcr1_ct, group_var = group_var)
+#' pcr_sd(ct1, group_var = group_var)
 #'
 #' @importFrom dplyr mutate group_by summarise_all
 #' @importFrom stats sd
@@ -190,14 +189,14 @@ pcr_sd <- function(df, group_var) {
 #'
 #' @examples
 #' # locate and read raw ct data
-#' fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
-#' pcr1_ct <- readr::read_csv(fl)
+#' fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
+#' ct1 <- readr::read_csv(fl)
 #'
 #' # add grouping variable
 #' group_var <- rep(c('brain', 'kidney'), each = 6)
 #'
 #' # calculate standard deviations
-#' sds <- pcr_sd(pcr1_ct, group_var = group_var)
+#' sds <- pcr_sd(ct1, group_var = group_var)
 #'
 #' # calculate errors
 #' pcr_error(sds, reference_gene = 'GAPDH)
@@ -240,8 +239,8 @@ pcr_error <- function(df, reference_gene) {
 #' fl <- system.file('extdata', 'pcr_dilute.csv', package = 'pcr')
 #' pcr_dilute <- readr::read_csv(fl)
 #'
-#' fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
-#' pcr1_ct <- readr::read_csv(fl)
+#' fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
+#' ct1 <- readr::read_csv(fl)
 #'
 #' # make a vector of RNA amounts
 #' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
@@ -252,7 +251,7 @@ pcr_error <- function(df, reference_gene) {
 #' slope <- standard_curve$slope
 #'
 #' # calculate amounts
-#' pcr_amount(pcr1_ct,
+#' pcr_amount(ct1,
 #'            intercept = intercept,
 #'            slope = slope)
 #'
@@ -285,8 +284,8 @@ pcr_amount <- function(df, intercept, slope) {
 #' fl <- system.file('extdata', 'pcr_dilute.csv', package = 'pcr')
 #' pcr_dilute <- readr::read_csv(fl)
 #'
-#' fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
-#' pcr1_ct <- readr::read_csv(fl)
+#' fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
+#' ct1 <- readr::read_csv(fl)
 #'
 #' # make a vector of RNA amounts
 #' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
@@ -297,7 +296,7 @@ pcr_amount <- function(df, intercept, slope) {
 #' slope <- standard_curve$slope
 #'
 #' # calculate amounts
-#' input_amounts <- pcr_amount(pcr1_ct,
+#' input_amounts <- pcr_amount(ct1,
 #'                             intercept = intercept,
 #'                             slope = slope)
 #'
@@ -435,14 +434,14 @@ pcr_assess <- function(df, amount, mode = 'effeciency', plot = FALSE) {
 #' @examples
 #' # default mode delta_delta_ct
 #' ## locate and read raw ct data
-#' fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
-#' pcr1_ct <- readr::read_csv(fl)
+#' fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
+#' ct1 <- readr::read_csv(fl)
 #'
 #' ## add grouping variable
 #' group_var <- rep(c('brain', 'kidney'), each = 6)
 #'
 #' # calculate all values and errors in one step
-#' pcr_analyze(pcr1_ct,
+#' pcr_analyze(ct1,
 #' group_var = rep(c('brain', 'kidney'), each = 6),
 #' reference_gene = 'GAPDH',
 #' reference_group = 'brain')
@@ -450,13 +449,13 @@ pcr_assess <- function(df, amount, mode = 'effeciency', plot = FALSE) {
 #' # delta_ct method
 #' ## example to check fold change of control gens
 #' ## locate and read file
-#' fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
-#' pcr1_ct <- readr::read_csv(fl)
+#' fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
+#' ct1 <- readr::read_csv(fl)
 #'
 #' ## make a data.frame of two identical columns
 #' pcr_hk <- data.frame(
-#'   GAPDH1 = pcr1_ct$GAPDH,
-#'   GAPDH2 = pcr1_ct$GAPDH
+#'   GAPDH1 = ct1$GAPDH,
+#'   GAPDH2 = ct1$GAPDH
 #'   )
 #'
 #' ## add grouping variable
@@ -484,7 +483,7 @@ pcr_assess <- function(df, amount, mode = 'effeciency', plot = FALSE) {
 #' slope <- standard_curve$slope
 #'
 #' ## calculate standard amounts and error
-#' pcr_analyze(pcr1_ct,
+#' pcr_analyze(ct1,
 #'             group_var = group_var,
 #'             reference_gene = 'GAPDH',
 #'             reference_group = 'brain',
@@ -560,7 +559,7 @@ pcr_analyze <- function(df, group_var, reference_gene, reference_group,
       return(rel)
     }
   } else if(method == 'relative_curve') {
-    amounts <- pcr_amount(pcr1_ct,
+    amounts <- pcr_amount(ct1,
                           intercept = intercept,
                           slope = slope)
     norm <- pcr_ave(amounts, group_var = group_var) %>%
