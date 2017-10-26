@@ -63,15 +63,15 @@ Kidney & 27.06 & 22.76 &  &  &  \\
 ```{r ddct_average_ct}
 # default mode delta_delta_ct
 ## locate and read raw ct data
-fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
-pcr1_ct <- readr::read_csv(fl)
+fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
+ct1 <- readr::read_csv(fl)
 
 ## add grouping variable
 group_var <- rep(c('brain', 'kidney'), each = 6)
 
 # calculate all values and errors in one step
 ## mode == 'average_ct' default
-pcr_analyze(pcr1_ct,
+pcr_analyze(ct1,
   group_var = group_var,
   reference_gene = 'GAPDH',
   reference_group = 'brain')
@@ -109,7 +109,7 @@ Average &  &  & 4.47 $\pm$ 0.14 & –2.53 $\pm$ 0.14 & 5.77 (5.23–6.37) \\
 ```{r ddct_average_dct}
 # calculate all values and errors in one step
 ## mode == 'average_dct'
-pcr_analyze(pcr2_ct,
+pcr_analyze(ct2,
   group_var = group_var,
   reference_gene = 'GAPDH',
   reference_group = 'brain',
@@ -122,13 +122,13 @@ pcr_analyze(pcr2_ct,
 # delta_ct method
 ## example to check fold change of control gens
 ## locate and read file
-fl <- system.file('extdata', 'pcr1_ct.csv', package = 'pcr')
-pcr1_ct <- readr::read_csv(fl)
+fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
+ct1 <- readr::read_csv(fl)
 
 ## make a data.frame of two identical columns
 pcr_hk <- data.frame(
-  GAPDH1 = pcr1_ct$GAPDH,
-  GAPDH2 = pcr1_ct$GAPDH
+  GAPDH1 = ct1$GAPDH,
+  GAPDH2 = ct1$GAPDH
   )
 
 ## add grouping variable
@@ -257,7 +257,7 @@ Kidney & 0.365 & 0.049 & 0.35 &  \\
 
 ```{r }
 ## calculate standard amounts and error
-pcr_analyze(pcr1_ct,
+pcr_analyze(ct1,
             group_var = group_var,
             reference_gene = 'GAPDH',
             reference_group = 'brain',

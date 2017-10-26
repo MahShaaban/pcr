@@ -2,7 +2,7 @@
 "ct1"
 
 #' PCR separate wells experiment processed data
-"rel_express"
+"rel_express1"
 
 #' PCR same wells experiment raw data
 "ct2"
@@ -18,16 +18,6 @@
 #' @references \url{http://www3.appliedbiosystems.com/cms/groups/mcb_support/documents/generaldocuments/cms_040980.pdf}
 "ct3"
 
-#' PCR dilution averages
-#'
-#' @references \url{http://www3.appliedbiosystems.com/cms/groups/mcb_support/documents/generaldocuments/cms_040980.pdf}
-"ct3_ave"
-
-#' PCR dilution errors
-#'
-#' @references \url{http://www3.appliedbiosystems.com/cms/groups/mcb_support/documents/generaldocuments/cms_040980.pdf}
-"ct3_sd"
-
 #' PCR effecienty calculated from pcr_dilute_*
 "effeciency"
 
@@ -35,4 +25,4 @@
 "standarized1"
 
 #' PCR amount using standard curve/ average normalized mode
-"standarized1"
+"standarized2"

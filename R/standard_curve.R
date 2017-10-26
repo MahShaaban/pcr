@@ -60,6 +60,8 @@ write_csv(generated_dat, path = 'inst/extdata/ct3.csv')
 fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
 ct3 <- read_csv(fl)
 
+use_data(ct3, overwrite = TRUE)
+
 ### make a log amount variable
 log_amount <- rep(log10(amount), each = 3)
 
