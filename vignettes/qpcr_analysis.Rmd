@@ -14,6 +14,7 @@ knitr::opts_chunk$set(error = FALSE, message = FALSE)
 
 ```{r load libraries}
 library(pcr)
+library(ggplot2)
 ```
 
 # Comparative CT methods  
@@ -71,10 +72,17 @@ group_var <- rep(c('brain', 'kidney'), each = 6)
 
 # calculate all values and errors in one step
 ## mode == 'average_ct' default
-pcr_analyze(ct1,
+res <- pcr_analyze(ct1,
   group_var = group_var,
   reference_gene = 'GAPDH',
   reference_group = 'brain')
+res
+```
+
+```{r plot_ddct_average_ct}
+ggplot(res, aes(x = group, y = relative_expression)) +
+  geom_col() +
+  geom_errorbar(aes(ymin = lower, ymax = upper))
 ```
 
 ### same tubes  
@@ -109,16 +117,23 @@ Average &  &  & 4.47 $\pm$ 0.14 & –2.53 $\pm$ 0.14 & 5.77 (5.23–6.37) \\
 ```{r ddct_average_dct}
 # calculate all values and errors in one step
 ## mode == 'average_dct'
-pcr_analyze(ct2,
+res <- pcr_analyze(ct2,
   group_var = group_var,
   reference_gene = 'GAPDH',
   reference_group = 'brain',
   mode = 'average_dct')
+res
 ```
 
-## Delata CT   
+```{r plote_ddct_average_dct}
+ggplot(res, aes(x = group, y = relative_expression)) +
+  geom_col() +
+  geom_errorbar(aes(ymin = lower, ymax = upper))
+```
 
-```{r}
+## Delata CT (choosing control genes)  
+
+```{r dct_method}
 # delta_ct method
 ## example to check fold change of control gens
 ## locate and read file
@@ -135,31 +150,20 @@ pcr_hk <- data.frame(
 group_var <- rep(c('brain', 'kidney'), each = 6)
 
 ## calculate caliberation
-pcr_analyze(pcr_hk,
+res <- pcr_analyze(pcr_hk,
             group_var = group_var,
             reference_group = 'brain',
             method = 'delta_ct')
+res
 ```
 
+```{r plot_dct_method}
+ggplot(res, aes(x = group, y = fold_change, group = gene, fill = gene)) +
+  geom_col(position = 'dodge') +
+  geom_errorbar(aes(ymin = lower, ymax = upper, group = gene))
+```
 
-# statndard curve methods  
-$$
-\log amount = \dfrac{C_T - b}{m}
-$$
-
-$$
-10^{\log amount}
-$$
-
-$$
-cv = \sqrt{cv_1^2 + cv_2^2}
-$$
-
-$$
-s = (cv)(\bar X)
-$$
-
-## calculating standard curve
+## Assessing amplification effeciency  
 
 \begin{table}
 \centering
@@ -180,21 +184,67 @@ $$
 \end{tabular}
 \end{table}
 
-```{r calculating curve}
-# relative standard curve method
+```{r calculate_effeciency}
 ## locate and read data
-fl <- system.file('extdata', 'pcr_dilute.csv', package = 'pcr')
-pcr_dilute <- readr::read_csv(fl)
+fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
+ct3 <- readr::read_csv(fl)
 
 ## make a vector of RNA amounts
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 
 ## calculate standard curve
-standard_curve <- pcr_assess(pcr_dilute,
-                             amount = amount,
-                             method = 'standard_curve')
-intercept <- standard_curve$intercept
-slope <- standard_curve$slope
+res <- pcr_assess(ct3,
+                  amount = amount,
+                  reference_gene = 'GAPDH',
+                  method = 'effeciency')
+res
+```
+
+```{r plot_effeciency}
+pcr_assess(ct3,
+           amount = amount,
+           reference_gene = 'GAPDH',
+           method = 'effeciency',
+           plot = TRUE)
+```
+
+# statndard curve methods  
+$$
+\log amount = \dfrac{C_T - b}{m}
+$$
+
+$$
+10^{\log amount}
+$$
+
+$$
+cv = \sqrt{cv_1^2 + cv_2^2}
+$$
+
+$$
+s = (cv)(\bar X)
+$$
+
+## calculating standard curve
+
+```{r calculating_curve}
+## calculate standard curve
+res <- pcr_assess(ct3,
+                  amount = amount,
+                  method = 'standard_curve')
+res
+```
+
+```{r plot_curves}
+pcr_assess(ct3,
+           amount = amount,
+           method = 'standard_curve',
+           plot = TRUE)
+```
+
+```{r retain_variable}
+intercept <- res$intercept
+slope <- res$slope
 ```
 
 ## separate tubes
@@ -226,6 +276,24 @@ Kidney & 0.40 & 0.96 &  &  \\
 \end{tabular}
 \end{table}
 
+```{r standard_average_amounts}
+## calculate standard amounts and error
+res <- pcr_analyze(ct1,
+                   group_var = group_var,
+                   reference_gene = 'GAPDH',
+                   reference_group = 'brain',
+                   intercept = intercept,
+                   slope = slope,
+                   method = 'relative_curve')
+res
+```
+
+```{r plot_standard_average_amounts}
+ggplot(res, aes(x = group, y = caliberated)) +
+  geom_col() +
+  geom_errorbar(aes(ymin = lower, ymax = upper))
+```
+
 ## Same tubes  
 
 \begin{table}
@@ -255,14 +323,37 @@ Kidney & 0.365 & 0.049 & 0.35 &  \\
 \end{tabular}
 \end{table}
 
-```{r }
+```{r standard_average_normalized}
 ## calculate standard amounts and error
-pcr_analyze(ct1,
-            group_var = group_var,
-            reference_gene = 'GAPDH',
-            reference_group = 'brain',
-            intercept = intercept,
-            slope = slope,
-            method = 'relative_curve')
+res <- pcr_analyze(ct1,
+                   group_var = group_var,
+                   reference_gene = 'GAPDH',
+                   reference_group = 'brain',
+                   intercept = intercept,
+                   slope = slope,
+                   method = 'relative_curve',
+                   mode = 'average_normalized')
+res
 ```
 
+```{r plot_standard_average_normalized}
+ggplot(res, aes(x = group, y = caliberated)) +
+  geom_col() +
+  geom_errorbar(aes(ymin = lower, ymax = upper))
+```
+
+# Statistical significance
+
+\begin{table}
+\centering
+\caption{Statistical significance using different testing methods}
+\label{table6}
+\begin{tabular}{@{}lccc@{}}
+\hline
+Test & \begin{tabular}[c]{@{}c@{}}$\Delta\Delta C_T$\\ (estimate)\end{tabular} & \textit{p-value} & Confidence Interval \\ \hline
+Multiple Regression & -0.6848 & \textless 0.0001 & (-0.4435, -0.9262) \\
+ANOVA & -0.6848 & \textless 0.0001 & (-0.4435, -0.9262) \\
+\textit{t-test} & -0.6848 & \textless 0.0001 & (-0.4147, -0.955) \\
+Wilcoxon test & -0.6354 & \textless 0.0001 & (-0.4227, -0.8805) \\ \hline
+\end{tabular}
+\end{table}

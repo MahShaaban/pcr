@@ -16,7 +16,8 @@ Imports: devtools,
   tidyr,
   purrr,
   readr,
-  ggplot2
+  ggplot2,
+  broom
 Suggests: testthat,
     knitr,
     rmarkdown,

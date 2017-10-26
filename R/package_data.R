@@ -26,3 +26,7 @@
 
 #' PCR amount using standard curve/ average normalized mode
 "standarized2"
+
+#' PCR experment clean data
+#' https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1395339/
+"ct4"

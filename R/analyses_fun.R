@@ -247,9 +247,10 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group, mode = 'av
 #' \link{pcr_curve}
 #'
 #' @export
-pcr_analyze <- function(df, method = 'delat_delat_ct', ...) {
+pcr_analyze <- function(df, method = 'delta_delta_ct', ...) {
   switch(method,
          'delta_delta_ct' = pcr_ddct(df, ...),
          'delta_ct' = pcr_dct(df, ...),
          'relative_curve' = pcr_curve(df, ...))
 }
+

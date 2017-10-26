@@ -5,4 +5,3 @@
 ^\.travis\.yml$
 ^appveyor\.yml$
 ^codecov\.yml$
-^vignettes/qpcr_analysis\.Rmd$

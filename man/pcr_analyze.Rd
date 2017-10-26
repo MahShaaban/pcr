@@ -4,7 +4,7 @@
 \alias{pcr_analyze}
 \title{Apply qPCR analysis methods}
 \usage{
-pcr_analyze(df, method = "delat_delat_ct", ...)
+pcr_analyze(df, method = "delta_delta_ct", ...)
 }
 \arguments{
 \item{df}{A data.frame of numeric ct value of n genes in columns and m
