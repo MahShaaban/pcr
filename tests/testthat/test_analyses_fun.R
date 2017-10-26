@@ -1,3 +1,5 @@
+context("test analyses functions")
+
 test_that("pcr_ddct in average_ct mode", {
   ## add grouping variable
   group_var <- rep(c('brain', 'kidney'), each = 6)
@@ -49,7 +51,7 @@ test_that("pcr_curve in average_amounts mode", {
   # calculate standard curve
   standard_curve <- pcr_assess(ct3,
                                amount = amount,
-                               mode = 'standard_curve')
+                               method = 'standard_curve')
   intercept <- standard_curve$intercept
   slope <- standard_curve$slope
 
@@ -73,7 +75,7 @@ test_that("pcr_curve in average_normalized mode", {
   # calculate standard curve
   standard_curve <- pcr_assess(ct3,
                                amount = amount,
-                               mode = 'standard_curve')
+                               method = 'standard_curve')
   intercept <- standard_curve$intercept
   slope <- standard_curve$slope
 

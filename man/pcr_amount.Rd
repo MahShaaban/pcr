@@ -37,7 +37,7 @@ ct1 <- readr::read_csv(fl)
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 
 # calculate curve
-standard_curve <- pcr_assess(ct3, amount = amount, mode = 'standard_curve')
+standard_curve <- pcr_assess(ct3, amount = amount, method = 'standard_curve')
 intercept <- standard_curve$intercept
 slope <- standard_curve$slope
 

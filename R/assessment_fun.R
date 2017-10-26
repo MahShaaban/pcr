@@ -1,84 +1,137 @@
-#' Assess PCR data quality
+#' Calculate amplification effeciency
 #'
-#' Assess the quality of a PCR experiment by examining the amplification
-#' effeciency when using the comparative ct method or calculating the standard
-#' curve
+#' @inheritParams pcr_average
+#' @inheritParams pcr_normalize
+#' @param plot A logical (default FALSE)
 #'
-#' @param df A data.frame of one or more columns containing ct values of a
-#' reference gene and another from an experiment run with differen dilutions
-#' (RNA amounts)
-#' @param amount A numeric vector of length equals nrow df with RNA amounts
-#' @param mode A character string of assessment mode. Default "effeciency"
-#' @param plot A logical default FALSE of whether plot or return the data
-#'
-#' @return When mode == 'effeciency' return a data.frame of 5 columns or a plot
-#' . when mode == 'standard_curve' retruns a data.frame of intercept and slope
-#' or a plot for each of the input columns.
+#' @return A data.frame of 4 columns when plot == FALSE. Returned by calling
+#' \link{pcr_trend}
 #'
 #' @examples
-#' # locate and read data
+#' # locate and read file
 #' fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
 #' ct3 <- readr::read_csv(fl)
 #'
-#' # make a vector of RNA amounts
+#' # make amount/dilution variable
 #' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 #'
-#' # calculate effeciencey
-#' pcr_assess(ct3,
-#'            amount = amount)
+#' # calculate amplification effeciency
+#' pcr_effeciency(ct3,
+#'                amount = amount,
+#'                reference_gene = 'GAPDH')
 #'
-#' # calculate standard curve
-#' pcr_assess(ct3,
-#'            amount = amount,
-#'            mode = 'standard_curve')
+#' # plot amplification effeciency
+#' pcr_effeciency(ct3,
+#'                amount = amount,
+#'                reference_gene = 'GAPDH',
+#'                plot = TRUE)
 #'
-#' @importFrom dplyr mutate summarise_all select data_frame bind_rows
-#' @importFrom purrr map
-#' @importFrom stats lm coefficients
+#' @importFrom magrittr %>%
+#' @importFrom dplyr full_join mutate
+#' @import ggplot2
 #'
 #' @export
-pcr_assess <- function(df, amount, mode = 'effeciency', plot = FALSE) {
-  if(mode == 'effeciency') {
-    log_amount <- unique(log10(amount))
+pcr_effeciency <- function(df, amount, reference_gene, plot = FALSE) {
+  # calculate delta_ct
+  dct <- pcr_normalize(df, reference_gene = reference_gene)
+  # calculate trend; intercep, slop and r_squared
+  trend <- pcr_trend(dct, amount = amount)
 
-    ave <- df %>%
-      mutate(amount = amount) %>%
-      group_by(amount) %>%
-      summarise_all(function(x) mean(x)) %>%
-      select(-amount)
+  # return data when plot is false
+  if(plot == TRUE) {
+    # calculate average of normalizex values
+    ave <- pcr_normalize(ct3, reference_gene = reference_gene) %>%
+      pcr_average(group_var = amount, tidy = TRUE)
 
-    dct <- unlist(ave[, 1] - ave[, 2], use.names = FALSE)
+    # calculate the standard deviation
+    sd <- pcr_normalize(ct3, reference_gene = reference_gene) %>%
+      pcr_sd(group_var = amount, tidy = TRUE)
 
-    error <- df %>%
-      mutate(amount = amount) %>%
-      group_by(amount) %>%
-      summarise_all(function(x) sd(x)) %>%
-      select(-amount)
+    # merge data.frames and calculate intervals
+    dat <- full_join(ave, sd) %>%
+      full_join(trend) %>%
+      mutate(group = log10(group),
+             lower = average - error,
+             upper = average + error)
 
-    error <- as.numeric(sqrt((error[, 1] ^ 2) + error[, 2] ^ 2))
+    # make effeciency plot
+    gg <- ggplot(dat, aes(x = group, y = average)) +
+      geom_point() +
+      geom_errorbar(aes(ymin = lower, ymax = upper)) +
+      facet_wrap(~gene) +
+      geom_smooth(method = 'lm')
 
-    int_lower = unlist(dct - error)
-    int_upper = unlist(dct + error)
-
-    effeciency <- data_frame(
-      log_amount = log_amount,
-      dct = dct,
-      error = error,
-      int_lower = int_lower,
-      int_upper = int_upper
-    )
-
-    return(effeciency)
-  } else if(mode == 'standard_curve') {
-    standard_cruve <- map(df, function(x) {
-      ll <- lm(x ~ log10(amount))
-      coeff <- coefficients(ll)
-      data_frame(intercept = coeff[1],
-                 slope = coeff[2])
-    }) %>%
-      bind_rows(.id = 'gene')
-
-    return(standard_cruve)
+    return(gg)
+  } else if(plot == FALSE) {
+    return(trend)
   }
 }
 
+#' Calculate the standard curve
+#'
+#' @inheritParams pcr_average
+#' @inheritParams pcr_normalize
+#' @param plot A logical (default FALSE)
+#'
+#' @return A data.frame of 4 columns when plot == FALSE. Returned by calling
+#' \link{pcr_trend}
+#'
+#' @examples
+#' # locate and read file
+#' fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
+#' ct3 <- readr::read_csv(fl)
+#'
+#' # make amount/dilution variable
+#' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
+#'
+#' # calculate the standard curve
+#' pcr_effeciency(ct3,
+#'                amount = amount,
+#'                reference_gene = 'GAPDH')
+#'
+#' # plot the standard curve
+#' pcr_standard(ct3,
+#'              amount = amount,
+#'              plot = TRUE)
+#'
+#' @importFrom dplyr mutate full_join
+#' @importFrom tidyr gather
+#' @import ggplot2
+#'
+#' @export
+pcr_standard <- function(df, amount, plot = FALSE) {
+  # return data when plot is false
+  # calculate trend; intercep, slop and r_squared
+  trend <- pcr_trend(df, amount)
+
+  # when plot == TRUE
+  # plot a standard curve for each gene
+  if(plot == TRUE) {
+    # make a data.frame of data
+    dat <- mutate(df, log_amount = log10(amount)) %>%
+      gather(gene, ct, -log_amount) %>%
+      full_join(trend)
+    gg <- ggplot(dat, aes(x = log_amount, y = ct)) +
+      geom_point() +
+      facet_wrap(~gene)
+    return(gg)
+    } else if(plot == FALSE) {
+      return(trend)
+    }
+}
+
+#' Assess qPCR data quality
+#'
+#' @inheritParams pcr_average
+#' @param method A character string; 'standard_curve' defalult or 'effeciency'
+#' @param ... Arguments passed to other methods
+#'
+#' @return A data.frame or a plot. For details; \link{pcr_standard} and
+#' \link{pcr_effeciency}
+#'
+#' @export
+pcr_assess <- function(df, method = 'standard_curve', ...) {
+  switch(method,
+         'standard_curve' = pcr_standard(df, ...),
+         'effeciency' = pcr_effeciency(df, ...))
+}

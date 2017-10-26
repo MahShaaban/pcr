@@ -2,46 +2,22 @@
 % Please edit documentation in R/assessment_fun.R
 \name{pcr_assess}
 \alias{pcr_assess}
-\title{Assess PCR data quality}
+\title{Assess qPCR data quality}
 \usage{
-pcr_assess(df, amount, mode = "effeciency", plot = FALSE)
+pcr_assess(df, method = "standard_curve", ...)
 }
 \arguments{
-\item{df}{A data.frame of one or more columns containing ct values of a
-reference gene and another from an experiment run with differen dilutions
-(RNA amounts)}
+\item{df}{A data.frame of numeric ct value of n genes in columns and m
+samples in raws}
 
-\item{amount}{A numeric vector of length equals nrow df with RNA amounts}
+\item{method}{A character string; 'standard_curve' defalult or 'effeciency'}
 
-\item{mode}{A character string of assessment mode. Default "effeciency"}
-
-\item{plot}{A logical default FALSE of whether plot or return the data}
+\item{...}{Arguments passed to other methods}
 }
 \value{
-When mode == 'effeciency' return a data.frame of 5 columns or a plot
-. when mode == 'standard_curve' retruns a data.frame of intercept and slope
-or a plot for each of the input columns.
+A data.frame or a plot. For details; \link{pcr_standard} and
+\link{pcr_effeciency}
 }
 \description{
-Assess the quality of a PCR experiment by examining the amplification
-effeciency when using the comparative ct method or calculating the standard
-curve
-}
-\examples{
-# locate and read data
-fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-ct3 <- readr::read_csv(fl)
-
-# make a vector of RNA amounts
-amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
-
-# calculate effeciencey
-pcr_assess(ct3,
-           amount = amount)
-
-# calculate standard curve
-pcr_assess(ct3,
-           amount = amount,
-           mode = 'standard_curve')
-
+Assess qPCR data quality
 }

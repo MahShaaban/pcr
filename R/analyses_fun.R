@@ -178,7 +178,7 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group, mode = 'aver
 #' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 #'
 #' # calculate curve
-#' standard_curve <- pcr_assess(ct3, amount = amount, mode = 'standard_curve')
+#' standard_curve <- pcr_assess(ct3, amount = amount, method = 'standard_curve')
 #' intercept <- standard_curve$intercept
 #' slope <- standard_curve$slope
 #'
@@ -234,4 +234,22 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group, mode = 'av
            error = error * normalized)
 
   return(res)
+}
+
+#' Apply qPCR analysis methods
+#'
+#' @inheritParams pcr_average
+#' @param method A character string; 'delta_delta_ct' defalult, 'delta_ct' or
+#' 'relative_curve'
+#' @param ... Arguments passed to other methods
+#'
+#' @return A data.frame or a plot. For details; \link{pcr_ddct}, \link{pcr_dct} and
+#' \link{pcr_curve}
+#'
+#' @export
+pcr_analyze <- function(df, method = 'delat_delat_ct', ...) {
+  switch(method,
+         'delta_delta_ct' = pcr_ddct(df, ...),
+         'delta_ct' = pcr_dct(df, ...),
+         'relative_curve' = pcr_curve(df, ...))
 }

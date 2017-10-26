@@ -89,7 +89,7 @@ test_that("pcr_cv calculates the correct cv", {
   # calculate curve
   standard_curve <- pcr_assess(ct3,
                                amount = amount,
-                               mode = 'standard_curve')
+                               method = 'standard_curve')
   intercept <- standard_curve$intercept
   slope <- standard_curve$slope
 

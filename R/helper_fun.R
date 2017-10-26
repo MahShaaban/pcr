@@ -332,7 +332,7 @@ pcr_error <- function(df, reference_gene, tidy = FALSE) {
 #' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 #'
 #' # calculate curve
-#' standard_curve <- pcr_assess(ct3, amount = amount, mode = 'standard_curve')
+#' standard_curve <- pcr_assess(ct3, amount = amount, method = 'standard_curve')
 #' intercept <- standard_curve$intercept
 #' slope <- standard_curve$slope
 #'
@@ -343,15 +343,20 @@ pcr_error <- function(df, reference_gene, tidy = FALSE) {
 #'
 #' @export
 pcr_amount <- function(df, intercept, slope) {
+  # make a data.frame of intercept, slope ana gene names
   curve <- data_frame(intercept,
                       slope,
                       gene = names(df))
+  # tidy the data.frame
   ct <- df %>%
     gather(gene, ct)
 
+  # calculate input amounts
   amounts <- full_join(ct, curve) %>%
     group_by(gene) %>%
     mutate(amount = 10 ^ ((ct - intercept)/slope))
+
+  # reshap input amounts
   with(amounts, split(amount, gene)) %>%
     bind_cols()
 }
@@ -379,7 +384,7 @@ pcr_amount <- function(df, intercept, slope) {
 #' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 #'
 #' # calculate curve
-#' standard_curve <- pcr_assess(ct3, amount = amount, mode = 'standard_curve')
+#' standard_curve <- pcr_assess(ct3, amount = amount, method = 'standard_curve')
 #' intercept <- standard_curve$intercept
 #' slope <- standard_curve$slope
 #'
@@ -400,13 +405,70 @@ pcr_amount <- function(df, intercept, slope) {
 #' @importFrom dplyr group_by summarise ungroup
 #'
 #' @export
-pcr_cv <- function(amounts, group_var, reference_gene, mode = 'average_amount', tidy = FALSE) {
+pcr_cv <- function(amounts, group_var, reference_gene, mode = 'average_amount',
+                   tidy = FALSE) {
+  # group_by group_var and calculate cv
   cv <- mutate(amounts, group = group_var) %>%
     group_by(group) %>%
     summarise_all(function(x) sd(x)/mean(x))
 
+  # return a tidy data.frame when tidy == TRUE
   if(tidy == TRUE) {
     cv <- gather(cv, gene, error, -group)
   }
+
   return(cv)
+}
+
+#' Calculate the linear trend for the standard curve
+#'
+#' @inheritParams pcr_average
+#'
+#' @return A data.frame of 4 columns
+#' \itemize{
+#'   \item gene
+#'   \item intercept
+#'   \item slope
+#'   \item r_squared
+#' }
+#'
+#' @examples
+#' # locate and read file
+#' fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
+#' ct3 <- readr::read_csv(fl)
+#'
+#' # make amount/dilution variable
+#' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
+#'
+#' # calculate trend
+#' pcr_trend(ct3, amount = amount)
+#'
+#' @importFrom purrr map
+#' @importFrom stats cor lm coefficients
+#' @importFrom dplyr data_frame bind_rows
+#'
+#' @export
+pcr_trend <- function(df, amount) {
+  # make a trend line using linear regression
+  trend_line <- map(df, function(x) {
+    # calculate the r squared
+    r_squared <- cor(x, log10(amount))^2
+
+    # calculate the model
+    ll <- lm(x ~ log10(amount))
+
+    # get coeffecients
+    coeff <- coefficients(ll)
+
+    # make a data.frame of intercep, slope and rsquared
+    data_frame(
+      intercept = coeff[1],
+      slope = coeff[2],
+      r_squared = r_squared
+    )
+  })
+
+  trend_line <- bind_rows(trend_line, .id = 'gene')
+
+  return(trend_line)
 }
