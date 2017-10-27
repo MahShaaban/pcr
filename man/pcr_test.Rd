@@ -4,7 +4,7 @@
 \alias{pcr_test}
 \title{Statistical testing of PCR data}
 \usage{
-pcr_test(df, group_var, reference_gene, test = "t.test")
+pcr_test(df, group_var, reference_gene, reference_group, test = "t.test")
 }
 \arguments{
 \item{df}{A data.frame of numeric ct value of n genes in columns and m
@@ -12,11 +12,18 @@ samples in raws}
 
 \item{group_var}{A vector of length m as a grouping variables of samples}
 
-\item{test}{A character string; 't.test' default or 'wilcox.test'}
+\item{reference_gene}{A character string of the name of the column
+correspoinding to the reference gene}
+
+\item{reference_group}{A character string of the reference group as it is
+recorded in the grouping variable}
+
+\item{test}{A character string; 't.test' default, 'wilcox.test' or lm}
 }
 \value{
-A data.frame of 5 columns
+A data.frame of 5 columns in addition to term when test == 'lm'
 \itemize{
+  \item term
   \item gene
   \item estimate
   \item p_value
@@ -29,23 +36,30 @@ Statistical testing of PCR data
 }
 \examples{
 # locate and read data
-fl <- system.file('extdata', 'ct4_raw.tsv', package = 'pcr')
-ct4 <- read_csv(fl)
+fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
+ct4 <- readr::read_csv(fl)
 
 # make group variable
 group <- rep(c('control', 'treatment'), each = 12)
-group <- relevel(factor(group), ref = 'treatment')
 
 # test using t-test
 pcr_test(ct4,
          group_var = group,
          reference_gene = 'ref',
+         reference_group = 'control',
          test = 't.test')
 
 # test using wilcox.test
 pcr_test(ct4,
          group_var = group,
          reference_gene = 'ref',
+         reference_group = 'control',
          test = 'wilcox.test')
+# testing using lm
+pcr_test(ct4,
+         group_var = group,
+         reference_gene = 'ref',
+         reference_group = 'control',
+         test = 'lm')
 
 }
