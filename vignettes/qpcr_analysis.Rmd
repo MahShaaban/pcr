@@ -192,7 +192,7 @@ ct3 <- readr::read_csv(fl)
 ## make a vector of RNA amounts
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 
-## calculate standard curve
+## calculate amplification effeciency
 res <- pcr_assess(ct3,
                   amount = amount,
                   reference_gene = 'GAPDH',
@@ -357,3 +357,38 @@ ANOVA & -0.6848 & \textless 0.0001 & (-0.4435, -0.9262) \\
 Wilcoxon test & -0.6354 & \textless 0.0001 & (-0.4227, -0.8805) \\ \hline
 \end{tabular}
 \end{table}
+
+```{r testing_t.test}
+# locate and read data
+fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
+ct4 <- readr::read_csv(fl)
+
+# make group variable
+group <- rep(c('control', 'treatment'), each = 12)
+
+# test using t-test
+pcr_test(ct4,
+         group_var = group,
+         reference_gene = 'ref',
+         reference_group = 'control',
+         test = 't.test')
+```
+
+```{r testing_wilcox}
+# test using wilcox.test
+pcr_test(ct4,
+         group_var = group,
+         reference_gene = 'ref',
+         reference_group = 'control',
+         test = 'wilcox.test')
+```
+
+```{r testing_lm}
+# testing using lm
+pcr_test(ct4,
+         group_var = group,
+         reference_gene = 'ref',
+         reference_group = 'control',
+         test = 'lm')
+```
+
