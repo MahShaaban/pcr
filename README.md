@@ -54,6 +54,7 @@ res <- pcr_assess(ct3,
                   method = 'effeciency')
 res
 ```
+
 ### Other analysis methods  
 
 * Delta CT method  
