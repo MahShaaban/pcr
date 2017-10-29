@@ -5,7 +5,7 @@
 \title{Calculate the standard_curve}
 \usage{
 pcr_curve(df, group_var, reference_gene, reference_group,
-  mode = "average_amounts", intercept, slope)
+  mode = "separate_tube", intercept, slope)
 }
 \arguments{
 \item{df}{A data.frame of ct values}
@@ -16,7 +16,7 @@ pcr_curve(df, group_var, reference_gene, reference_group,
 
 \item{reference_group}{A character string of the control group}
 
-\item{mode}{A character string; 'average_amounts' or 'average_normalized'}
+\item{mode}{A character string; 'separate_tube' or 'same_tube'}
 
 \item{intercept}{A numerice vector of intercepst and length equals the number of genes}
 

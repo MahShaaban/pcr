@@ -366,7 +366,7 @@ pcr_amount <- function(df, intercept, slope) {
 #' Error terms for the standard curve relative quantification
 #'
 #' @param amounts A data.frame of calculated input RNA amounts
-#' @param mode A character string; 'average_amounts' or 'average_normalized'
+#' @param mode A character string; 'separate_tube' or 'same_tube'
 #' @inheritParams pcr_average
 #' @inheritParams pcr_normalize
 #'

@@ -4,7 +4,7 @@
 #' @param group_var A character vector of a grouping variable
 #' @param reference_gene A character string of the column name of a control gene
 #' @param reference_group A character string of the control group
-#' @param mode A character string of; 'average_ct' or 'average_dct'
+#' @param mode A character string of; 'separate_tube' or 'same_tube'
 #'
 #' @return A data.frame of 8 columns
 #' \itemize{
@@ -36,13 +36,13 @@
 #' @importFrom dplyr mutate full_join
 #'
 #' @export
-pcr_ddct <- function(df, group_var, reference_gene, reference_group, mode = 'average_ct') {
+pcr_ddct <- function(df, group_var, reference_gene, reference_group, mode = 'separate_tube') {
   # calculate the delta_ct
-  if(mode == 'average_ct') {
+  if(mode == 'separate_tube') {
     # calculate average ct and normalize
     ave <- pcr_average(df, group_var = group_var)
     dct <- pcr_normalize(ave, reference_gene = reference_gene)
-    } else if(mode == 'average_dct') {
+    } else if(mode == 'same_tube') {
       # normalize and average normalized ct values
       dct <- pcr_normalize(df, reference_gene = reference_gene)
       dct <- pcr_average(dct, group_var = group_var)
@@ -56,11 +56,11 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group, mode = 'ave
   # calculate the relative expression
   norm_rel <- mutate(ddct, relative_expression = 2 ^ -caliberated)
 
-  if(mode == 'average_ct') {
+  if(mode == 'separate_tube') {
     # calculate the error from ct values
     sds <- pcr_sd(df, group_var = group_var)
     error <- pcr_error(sds, reference_gene = reference_gene, tidy = TRUE)
-    } else if(mode == 'average_dct') {
+    } else if(mode == 'same_tube') {
       # calculate error from normalized ct values
       dct <- pcr_normalize(df, reference_gene = reference_gene)
       error <- pcr_sd(dct, group_var = group_var, tidy = TRUE)
@@ -114,12 +114,12 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group, mode = 'ave
 #' @importFrom dplyr mutate full_join
 #'
 #' @export
-pcr_dct <- function(df, group_var, reference_gene, reference_group, mode = 'average_ct') {
-  if(mode == 'average_ct') {
+pcr_dct <- function(df, group_var, reference_gene, reference_group, mode = 'separate_tube') {
+  if(mode == 'separate_tube') {
     # average ct and calibrate to a reference group
     ave <- pcr_average(df, group_var = group_var)
     dct <- pcr_caliberate(ave, reference_group = reference_group)
-  } else if(mode == 'average_dct') {
+  } else if(mode == 'same_tube') {
     # caliberate ct and average
     dct <- pcr_caliberate(df, reference_group = reference_group)
     dct <- pcr_average(dct, group_var = group_var)
@@ -130,10 +130,10 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group, mode = 'aver
   calib <- gather(dct, gene, caliberated, -group) %>%
     mutate(fold_change = 2 ^ -caliberated)
 
-  if(mode == 'average_ct') {
+  if(mode == 'separate_tube') {
     # calculate the standard deviation from ct values
     sds <- pcr_sd(df, group_var = group_var, tidy = TRUE)
-  } else if(mode == 'average_dct') {
+  } else if(mode == 'same_tube') {
     # caliberate ct values to a reference group
     # calculated sd from caliberated values
     dct <- pcr_caliberate(df, reference_group = reference_group)
@@ -151,7 +151,7 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group, mode = 'aver
 #' Calculate the standard_curve
 #'
 #' @inheritParams pcr_ddct
-#' @param mode A character string; 'average_amounts' or 'average_normalized'
+#' @param mode A character string; 'separate_tube' or 'same_tube'
 #' @param intercept A numerice vector of intercepst and length equals the number of genes
 #' @param slope A numerice vector of slopes length equals the number of genes
 #'
@@ -194,17 +194,17 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group, mode = 'aver
 #' @importFrom tidyr gather
 #' @importFrom dplyr full_join mutate
 #' @export
-pcr_curve <- function(df, group_var, reference_gene, reference_group, mode = 'average_amounts',
+pcr_curve <- function(df, group_var, reference_gene, reference_group, mode = 'separate_tube',
                       intercept, slope) {
   # calculate the amount of rna in samples
   amounts <- pcr_amount(df,
                         intercept = intercept,
                         slope = slope)
-  if(mode == 'average_amounts') {
+  if(mode == 'separate_tube') {
     # average amounts and normalize by a reference_gene
     ave <- pcr_average(amounts, group_var = group_var)
     norm <- pcr_normalize(ave, reference_gene = reference_gene, mode = 'divide')
-  } else if(mode == 'average_normalized') {
+  } else if(mode == 'same_tube') {
     # normalize amounts and average
     norm <- pcr_normalize(amounts, reference_gene = reference_gene, mode = 'divide')
     norm <- pcr_average(norm, group_var = group_var)
@@ -217,11 +217,11 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group, mode = 'av
   calib <- pcr_caliberate(norm, reference_group = reference_group,
                           mode = 'divide', tidy = TRUE)
 
-  if(mode == 'average_amounts') {
+  if(mode == 'separate_tube') {
     # calculate cv from amounts
     cv <- pcr_cv(amounts, group_var = group_var, mode = mode)
     error <- pcr_error(cv, reference_gene = reference_gene, tidy = TRUE)
-  } else if(mode == 'average_normalized') {
+  } else if(mode == 'same_tube') {
     # calculate cv from normalized amounts
     norm <- pcr_normalize(amounts, reference_gene = reference_gene, mode = 'divide')
     error <- pcr_cv(norm, group_var = group_var, tidy = TRUE)

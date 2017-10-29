@@ -4,7 +4,8 @@
 \alias{pcr_ddct}
 \title{Calculate the delta_delta_ct}
 \usage{
-pcr_ddct(df, group_var, reference_gene, reference_group, mode = "average_ct")
+pcr_ddct(df, group_var, reference_gene, reference_group,
+  mode = "separate_tube")
 }
 \arguments{
 \item{df}{A data.frame of ct values}
@@ -15,7 +16,7 @@ pcr_ddct(df, group_var, reference_gene, reference_group, mode = "average_ct")
 
 \item{reference_group}{A character string of the control group}
 
-\item{mode}{A character string of; 'average_ct' or 'average_dct'}
+\item{mode}{A character string of; 'separate_tube' or 'same_tube'}
 }
 \value{
 A data.frame of 8 columns

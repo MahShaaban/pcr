@@ -5,9 +5,9 @@
 # Details: loads the raw data and make it available within the package for the
 # puroposes of testing and documentations. When this file excuted withing the
 # package it should do the following:
-#   + apply comparative ct method in average_ct mode on 'ct1.csv' and produce
+#   + apply comparative ct method in separate_tube mode on 'ct1.csv' and produce
 #     'rel_express1' object; a data.frame containing calculated values
-#   + apply comparative ct method in average_normalized mode on 'ct2.csv' and
+#   + apply comparative ct method in same_tube mode on 'ct2.csv' and
 #     produce 'rel_express2' object; a data.frame containing calculated values
 #   + apply the delat_ct method to calculate effeciency in a dilution experiment
 #     'ct3.csv' and produces 'effeciency'
@@ -22,7 +22,7 @@ library(dplyr)
 library(tidyr)
 library(devtools)
 
-# double delta method / average_ct mode
+# double delta method / separate_tube mode
 ## locate and read file
 fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
 ct1 <- read_csv(fl)
@@ -64,7 +64,7 @@ use_data(rel_express1, overwrite = TRUE)
 
 
 
-# # double delta method / average_normalized mode
+# # double delta method / same_tube mode
 # locate and read file
 fl <- system.file('extdata', 'ct2.csv', package = 'pcr')
 ct2 <- read_csv(fl)

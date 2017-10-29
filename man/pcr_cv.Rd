@@ -15,7 +15,7 @@ pcr_cv(amounts, group_var, reference_gene, mode = "average_amount",
 \item{reference_gene}{A character string of the name of the column
 correspoinding to the reference gene}
 
-\item{mode}{A character string; 'average_amounts' or 'average_normalized'}
+\item{mode}{A character string; 'separate_tube' or 'same_tube'}
 
 \item{tidy}{A logical, default FALSE. When TRUE returns a tidy data.frame}
 }

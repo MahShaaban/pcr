@@ -31,7 +31,7 @@ ct1 <- readr::read_csv(fl)
 group_var <- rep(c('brain', 'kidney'), each = 6)
 
 # calculate all values and errors in one step
-## mode == 'average_ct' default
+## mode == 'separate_tube' default
 res <- pcr_analyze(ct1,
   group_var = group_var,
   reference_gene = 'GAPDH',
@@ -61,7 +61,7 @@ res
 * Relative standard curve method  
 
 ### Testing statistical significance  
-* Two group testing **t-**test and **wilcoxon** test  
+* Two group testing *t*-test and *wilcoxon* test  
 * Linear regression testing  
 
 ## Documnetation  

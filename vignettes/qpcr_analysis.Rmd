@@ -61,7 +61,7 @@ Kidney & 27.06 & 22.76 &  &  &  \\
 \end{tabular}
 \end{table}
 
-```{r ddct_average_ct}
+```{r ddct_separate_tube}
 # default mode delta_delta_ct
 ## locate and read raw ct data
 fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
@@ -71,7 +71,7 @@ ct1 <- readr::read_csv(fl)
 group_var <- rep(c('brain', 'kidney'), each = 6)
 
 # calculate all values and errors in one step
-## mode == 'average_ct' default
+## mode == 'separate_tube' default
 res <- pcr_analyze(ct1,
   group_var = group_var,
   reference_gene = 'GAPDH',
@@ -79,7 +79,7 @@ res <- pcr_analyze(ct1,
 res
 ```
 
-```{r plot_ddct_average_ct}
+```{r plot_ddct_separate_tube}
 ggplot(res, aes(x = group, y = relative_expression)) +
   geom_col() +
   geom_errorbar(aes(ymin = lower, ymax = upper))
@@ -114,18 +114,18 @@ Average &  &  & 4.47 $\pm$ 0.14 & –2.53 $\pm$ 0.14 & 5.77 (5.23–6.37) \\
 \end{tabular}
 \end{table}
 
-```{r ddct_average_dct}
+```{r ddct_same_tube}
 # calculate all values and errors in one step
-## mode == 'average_dct'
+## mode == 'same_tube'
 res <- pcr_analyze(ct2,
   group_var = group_var,
   reference_gene = 'GAPDH',
   reference_group = 'brain',
-  mode = 'average_dct')
+  mode = 'same_tube')
 res
 ```
 
-```{r plote_ddct_average_dct}
+```{r plote_ddct_same_tube}
 ggplot(res, aes(x = group, y = relative_expression)) +
   geom_col() +
   geom_errorbar(aes(ymin = lower, ymax = upper))
@@ -276,7 +276,7 @@ Kidney & 0.40 & 0.96 &  &  \\
 \end{tabular}
 \end{table}
 
-```{r standard_average_amounts}
+```{r standard_separate_tube}
 ## calculate standard amounts and error
 res <- pcr_analyze(ct1,
                    group_var = group_var,
@@ -288,7 +288,7 @@ res <- pcr_analyze(ct1,
 res
 ```
 
-```{r plot_standard_average_amounts}
+```{r plot_standard_separate_tube}
 ggplot(res, aes(x = group, y = caliberated)) +
   geom_col() +
   geom_errorbar(aes(ymin = lower, ymax = upper))
@@ -323,7 +323,7 @@ Kidney & 0.365 & 0.049 & 0.35 &  \\
 \end{tabular}
 \end{table}
 
-```{r standard_average_normalized}
+```{r standard_same_tube}
 ## calculate standard amounts and error
 res <- pcr_analyze(ct1,
                    group_var = group_var,
@@ -332,11 +332,11 @@ res <- pcr_analyze(ct1,
                    intercept = intercept,
                    slope = slope,
                    method = 'relative_curve',
-                   mode = 'average_normalized')
+                   mode = 'same_tube')
 res
 ```
 
-```{r plot_standard_average_normalized}
+```{r plot_standard_same_tube}
 ggplot(res, aes(x = group, y = caliberated)) +
   geom_col() +
   geom_errorbar(aes(ymin = lower, ymax = upper))
@@ -392,3 +392,8 @@ pcr_test(ct4,
          test = 'lm')
 ```
 
+## referecne
+
+significance tetsting https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1395339/
+applied biosystem http://www3.appliedbiosystems.com/cms/groups/mcb_support/documents/generaldocuments/cms_040980.pdf
+analysis paper file:///Users/MahShaaban/Downloads/livak-2001.pdf

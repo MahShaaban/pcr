@@ -1,6 +1,6 @@
 context("test analyses functions")
 
-test_that("pcr_ddct in average_ct mode", {
+test_that("pcr_ddct in separate_tube mode", {
   ## add grouping variable
   group_var <- rep(c('brain', 'kidney'), each = 6)
 
@@ -13,7 +13,7 @@ test_that("pcr_ddct in average_ct mode", {
   expect_identical(res, rel_express1)
 })
 
-test_that("pcr_ddct in average_dct mode", {
+test_that("pcr_ddct in same_tube mode", {
   ## add grouping variable
   group_var <- rep(c('brain', 'kidney'), each = 6)
 
@@ -22,7 +22,7 @@ test_that("pcr_ddct in average_dct mode", {
                   group_var = group_var,
                   reference_gene = 'GAPDH',
                   reference_group = 'brain',
-                  mode = 'average_dct')
+                  mode = 'same_tube')
 
   expect_identical(res, rel_express2)
 })
@@ -44,7 +44,7 @@ test_that("pcr_dct calculates and returns the correct values", {
    expect_identical(res, hk_express)
 })
 
-test_that("pcr_curve in average_amounts mode", {
+test_that("pcr_curve in separate_tube mode", {
   # make a vector of RNA amounts
   amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 
@@ -69,7 +69,7 @@ test_that("pcr_curve in average_amounts mode", {
   # testing problem!!
 })
 
-test_that("pcr_curve in average_normalized mode", {
+test_that("pcr_curve in same_tube mode", {
   # make a vector of RNA amounts
   amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 
@@ -90,7 +90,7 @@ test_that("pcr_curve in average_normalized mode", {
                    reference_group = 'brain',
                    intercept = intercept,
                    slope = slope,
-                   mode = 'average_normalized')
+                   mode = 'same_tube')
   # testing problem!!
 })
 
