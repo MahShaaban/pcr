@@ -1,33 +1,5 @@
 context("test assessment functions")
 
-# loading required libraries
-library(readr)
-library(dplyr)
-
-# delta_ct method for efficiency calculations
-# locate and read file
-fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-ct3 <- read_csv(fl)
-
-## create amounts/diluion variable
-amount <- c(1, .5, .2, .1, .05, .02, .01)
-
-# apply delta ct method
-# for amplification efficiency calculations
-## add a log10 amount/dilution variable
-## normalize by subtracting a reference gene
-## calculate error using sd of gene and control
-## calculate intervals by adding/subtracting errors from normalized values
-efficiency <- ct3 %>%
-  mutate(log_amount = rep(log10(amount), each = 3)) %>%
-  group_by(log_amount) %>%
-  summarise(normalized = mean(c_myc) - mean(GAPDH),
-            error = sqrt((sd(c_myc)^2) + (sd(GAPDH)^2)),
-            lower = normalized - error,
-            upper = normalized + error)
-
-# start testing
-
 test_that("pcr_efficiency calculates the correct intercept and slope", {
   # make amount/dilution variable
   amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
@@ -68,11 +40,11 @@ test_that("pcr_standard calculates the correct intercept and slope", {
 
   c <- coef(lm(ct3$c_myc ~ log_amount))
 
-  # testing problem
+  #expect_equal(unlist(res[1, 2:3], use.names = FALSE), unname(c))
 
   c <- coef(lm(ct3$GAPDH ~ log_amount))
 
-  # testing problem
+  #expect_equal(unlist(res[2, 2:3], use.names = FALSE), unname(c))
 })
 
 test_that("pcr_standard retruns a plot", {
@@ -100,7 +72,8 @@ test_that("pcr_assess calls the correct methods", {
 
   c <- coef(lm(ct3$c_myc ~ log_amount))
 
-  # testing problem
+  #expect_equal(unlist(res[1, 2:3], use.names = FALSE), unname(c))
+
 
   # method: efficiency
   # make amount/dilution variable

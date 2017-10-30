@@ -29,7 +29,6 @@ if(file.exists(fl)) {
   message(paste("File", fl, "doesn't exist"))
 }
 
-
 # ct4
 fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
 if(file.exists(fl)) {
