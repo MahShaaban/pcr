@@ -1,5 +1,5 @@
 Package: pcr
-Title: Processing and analysing quantitative PCR data
+Title: Processing and analyzing quantitative PCR data
 Version: 0.0.0.9000
 Authors@R: person("Mahmoud", "Ahmded",
   email = "mahmoud.s.fahmy@students.kasralainy.edu.eg",
@@ -21,6 +21,7 @@ Imports: devtools,
 Suggests: testthat,
     knitr,
     rmarkdown,
-    covr
+    covr,
+    cowplot
 VignetteBuilder: knitr
 License: GPL-3 + file LICENSE

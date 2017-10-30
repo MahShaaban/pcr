@@ -10,13 +10,13 @@ pcr_assess(df, method = "standard_curve", ...)
 \item{df}{A data.frame of numeric ct value of n genes in columns and m
 samples in raws}
 
-\item{method}{A character string; 'standard_curve' defalult or 'effeciency'}
+\item{method}{A character string; 'standard_curve' defalult or 'efficiency'}
 
 \item{...}{Arguments passed to other methods}
 }
 \value{
 A data.frame or a plot. For details; \link{pcr_standard} and
-\link{pcr_effeciency}
+\link{pcr_efficiency}
 }
 \description{
 Assess qPCR data quality

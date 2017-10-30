@@ -47,11 +47,11 @@ ct3 <- readr::read_csv(fl)
 ## make a vector of RNA amounts
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 
-## calculate amplification effeciency
+## calculate amplification efficiency
 res <- pcr_assess(ct3,
                   amount = amount,
                   reference_gene = 'GAPDH',
-                  method = 'effeciency')
+                  method = 'efficiency')
 res
 ```
 
@@ -73,5 +73,5 @@ browseVignettes("pcr")
 ## Citation  
 
 ```r
-citation("pct")
+citation("pcr")
 ```

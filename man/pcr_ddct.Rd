@@ -24,7 +24,7 @@ A data.frame of 8 columns
   \item group
   \item gene
   \item normalized
-  \item caliberated
+  \item calibrated
   \item relative_expression
   \item error
   \item lower

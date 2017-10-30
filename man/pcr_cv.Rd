@@ -13,7 +13,7 @@ pcr_cv(amounts, group_var, reference_gene, mode = "average_amount",
 \item{group_var}{A vector of length m as a grouping variables of samples}
 
 \item{reference_gene}{A character string of the name of the column
-correspoinding to the reference gene}
+corresponding to the reference gene}
 
 \item{mode}{A character string; 'separate_tube' or 'same_tube'}
 

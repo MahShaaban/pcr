@@ -3,14 +3,14 @@
 \docType{data}
 \name{ct4}
 \alias{ct4}
-\title{PCR experment clean data
+\title{PCR experiment clean data
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1395339/}
 \format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 24 rows and 2 columns.}
 \usage{
 ct4
 }
 \description{
-PCR experment clean data
+PCR experiment clean data
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1395339/
 }
 \keyword{datasets}

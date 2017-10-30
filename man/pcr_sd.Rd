@@ -15,7 +15,7 @@ samples in raws}
 \item{tidy}{A logical, default FALSE. When TRUE returns a tidy data.frame}
 }
 \value{
-A data.frame of ncol n and nrow equalse the number of unique
+A data.frame of ncol n and nrow equals the number of unique
 grouping variables containing the standard error values of each gene in each
 group
 }

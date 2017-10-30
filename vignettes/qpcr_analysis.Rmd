@@ -2,45 +2,262 @@
 title: "Analysis of qPCR data"
 author: "Mahmoud Ahmed"
 date: "`r Sys.Date()`"
-output: pdf_document
+output:
+  pdf_document:
+    fig_caption: yes
+    fig_crop: no
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+    toc_depth: 2
+header-includes: 
+- \usepackage{graphicx}
+- \usepackage{float}
+- \usepackage{svg}
+references:
+- id: Yuan2006
+  title: Statistical analysis of real-time PCR data
+  author:
+  - family: Yuan
+    given: Joshua S
+  - family: Reed
+    given: Ann
+  - family: Chen
+    given: Feng
+  - family: Stewart
+    given: Neal
+  container-title: BMC Bioinformatics
+  volume: 7
+  URL: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1395339/'
+  DOI: 10.1186/1471-2105-7-85
+  issue: 85
+  publisher: BioMed Central
+  type: article-journal
+  issued:
+    year: 2006
+    month: 2
+- id: Livak2001
+  title: Analysis of Relative Gene Expression Data Using Real-Time Quantitative PCR and the $2^{-\Delta\Delta C_T}$ Method
+  author:
+  - family: Livak
+    given: Kenneth J
+  - family: Schmittgen
+    given: Thomas D
+  container-title: Methods
+  volume: 25
+  URL: 'https://www.ncbi.nlm.nih.gov/pubmed/11846609'
+  DOI: 10.1006/meth.2001.1262
+  issue: 4
+  publisher: ELSEVIER
+  type: article-journal
+  issued:
+    year: 2001
+    month: 12
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{Analysis of qPCR data}
+  %\usepackage[UTF-8]{inputenc}
 ---
+
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(error = FALSE, message = FALSE)
+knitr::opts_chunk$set(error = FALSE, message = FALSE, fig.align = 'center', fig.height = 3.5, fig.width = 3.5, fig.pos = 'H')
 ```
 
-```{r load libraries}
+# Overview  
+Quantitative real-time PCR is an imprtant technique in medical and biomedical applicaitons. The `pcr` package provides a unified interface for quality assessing, analyzing and testing qPCR data for statistical significance. The aim of this document is to describe the different methods and modes used to relatively quantify gene expression of qPCR and their implemenation in the `pcr` package.  
+
+# Getting started 
+
+The `pcr` is available on github. To install it using `devtools`:  
+
+```{r install_master, eval=FALSE}
+# install package from github (under development)
+devtools::install_github('MahShaaban/pcr')
+```
+
+The development version of the package can be similarly obtained through:  
+
+```{r install_develop, eval=FALSE}
+# install package from github (under development)
+devtools::install_github('MahShaaban/pcr@develop')
+```
+
+```{r load_pcr}
+# load required libraries
 library(pcr)
-library(ggplot2)
 ```
 
-# Comparative CT methods  
-## Double delta CT  
+The following chunck of code locates a dataset of $C_T$ values of two genes from 12 different samples and performs a quick analysis to obtain the expression of a target gene **c-myc** normalized by a control GAPDH in the **Kidney** samples relative to the brain samples. `pcr_analyze` provides differnt methods, the default one that is used here is 'delta_delta_ct' applies the populat ($\Delta\Delta C_T$) method.  
+
+```{r analyze}
+# default mode delta_delta_ct
+## locate and read raw ct data
+fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
+ct1 <- readr::read_csv(fl)
+
+## add grouping variable
+group_var <- rep(c('brain', 'kidney'), each = 6)
+
+# calculate all values and errors in one step
+## mode == 'separate_tube' default
+res <- pcr_analyze(ct1,
+                   group_var = group_var,
+                   reference_gene = 'GAPDH',
+                   reference_group = 'brain')
+  
+res
+```
+
+The output of `pcr_analyze` is explained in the documnetation of the function `?pcr_analyze` and the method it calls `?pcr_ddct` as well as in a later secion of this document. Briefly, the input includes the $C_T$ value of c-myc `normalized` to the control GAPDH, The `calibrated` value of c-myc in the kidney relative to the brain samples and the final `relative_expression` of c-myc. In addition, an `error` term and a `lower` and `upper` intervals are provided.  
+
+The previous analysis makes a few assumpitons that will be explained later in this documnet. One of which is a perfect amplification efficiency of the PCR reation. To assess the validity of this assumption, `pcr_assess` provides a method called `efficiency`. The input `data.frame` is the $C_T$ values of c-myc and GAPDH at different input amounts/dilutions.  
+
+```{r assess}
+## locate and read data
+fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
+ct3 <- readr::read_csv(fl)
+
+## make a vector of RNA amounts
+amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
+
+## calculate amplification efficiency
+res <- pcr_assess(ct3,
+                  amount = amount,
+                  reference_gene = 'GAPDH',
+                  method = 'efficiency')
+res
+```
+
+In the case of using the $\Delta\Delta C_T$, the assumption of the amplification efficiency is critical for the reliability of the model. In particulare, the *slope* and the *R^2* of the line between thel log input amount and $\Delta C_T$ or differnce between the $C_T$ value of the target **c-myc** and GAPDH. Typically, The *slope* should be very small and the $R^2$ should be near 1. Here, both summaries; `slope` and `r_squared` are appropriate `r res$slope` and `r res$r_squared` respectively, so the assumption holds true.  
+
+# Background  
+
+## Glossary   
+
+  * **Amplification efficiency**: The ability of the reaction to amplify a certain amount of input RNA in a sample  
+  * $C_T$: *Cycle Threshold* is the number of cycles required for the fluorescent signal to cross the threshold  
+  * $\Delta C_T$: Difference between two $C_T$ values (e.g. $C_{T, c-myc} - C_{T, GAPDH}$)  
+  * $\Delta \Delta C_T$: Difference between two $\Delta C_T$ values (e.g. $\Delta C_{T, Treatment} - \Delta C_{T, Treatment}$)    
+  * **Reference gene**: A gene known not to change its expression between the groups of interest, so any change in its signal should be due to the amplification of the PCR. Used for *normalization*. (e.g. GAPDH or $\beta$-actine)  
+  * **Reference group**: An experimental group used to express mRNA level in comparison to. Used for *caliberation*. (e.g. control or time point 0)    
+  * **Standard**: A sample of known concentration  
+
+## Analysis methods   
+In contrast with the absoute quantifiction of the amount of mRNA in a sample, relative quantification uses a internal control (reference gene) and/or a control group (reference group) to quantify the mRNA of interest relative to these references. This relative quantification is sufficent to draw conculsions in most of the biomedical applications involving qPCR. A few methods were developed to perform these relative quantification. These methods require different assumptions and models. The most commen two of these methods are explained here.  
+
+### Comparative $C_T$ methods  
+The comparitive $C_T$ methods assume that the cDNA templates of the gene/s of interest as well as the control/reference gene have similar amplification efficiency. And that this amplification efficiency is near perfect. Meaning, at a certain threshold during the linear portion of the PCR reaction, the amount of the gene of the interest and the control double each cycle. Another assumptios is that, the expression difference between two genes or two samples can be captured by subtracting one (gene or sample of interest) from another (reference).  This final assumption requires also that these references doesn't change with the treatment or the course in question.  
+The formal derivation of the double delta $C_T$ model is described here [ref]. Briefly,  
+The $\Delta\Delta C_T$ is given by:  
 
 $$
 \Delta\Delta C_T = \Delta C_{T,q} - \Delta C_{T,cb}
 $$
 
+And the relative expression by:  
+
 $$
 2^{-\Delta\Delta C_T}
 $$
+
+Where:  
+
+  * $\Delta C_{T,q}$ is the difference in the $C_T$ (or their \underline{average}) of a *gene* of interest and a *reference* gene in a group of interest    
+  * $\Delta C_{T,cb}$ is the the differnece in the $C_T$ (or their \underline{average}) of a *gene* of interest and a *reference* gene in a *reference* group   
+
+And the error term is given by: 
 
 $$
 s = \sqrt{s_1^2 + s_2^2}
 $$
 
-### separate tubes 
+Where:  
 
-\begin{table}
+  * $s_1$ is the \underline{standard devaition} of a *gene* of interest      
+  * $s_2$ is the \underline{standard devaition} of a *reference* gene   
+  
+### Standard curve methods  
+
+In comparison, this model doesn't assume perfect amplificaion but rather actively use the amplificaion in calculating the relative expresion. So when the amplification efficiency of all genes are 100% both methods should give similar results. The standard curve method is applied using two steps. First, serial dilutions of the mRNAs from the samples of interest are used as input to the PCR reaction. The linear trend of the log input amount and the resulting $C_T$ values for each gene are used to calculate an intercept and a slope. Secondly, these intercepts and slopes are used to calculate the amounts of mRNA of the genes of interest and the control/reference in the samples of interest and the control sample/reference. These amounts are finally used to calculate the relative expression in a manner similar to the later method, just using division instead of subtraction.  
+The formal deriviation of the model is described here [ref]. Briefly,  
+The amount of RNA in a sample is given by:
+
+$$
+\log amount = \dfrac{C_T - b}{m}
+$$
+
+And the relative expression is given by:  
+
+$$
+10^{\log amount}
+$$
+
+where: 
+
+  * $C_T$ is the cycle threshold of a gene  
+  
+  * $b$ is  the \underline{intercept} of $C_T$ ~ log10 input amount
+  
+  * $m$ is  the \underline{slope} of $C_T$ ~ log10 input amount
+
+And the error term is given by:  
+
+$$
+s = (cv)(\bar X)
+$$
+
+Where:   
+
+$$
+cv = \sqrt{cv_1^2 + cv_2^2}
+$$
+
+Where:    
+
+  * $s$ is the \underline{standard deviation}  
+  
+  * $\bar X$ is the \underline{average}  
+  
+  * $cv$ is the \underline{coefficient of variation} or relative standard deviation  
+
+## Quality Assessment of qPCR  
+
+Fortuanlty, regardless of the method used in the analysis of qPCR data, The quality asssesment are done in a similar way. It requires an experiment similar to that of calculating the standard curve. Serial dilutions of the genes of interest and controls are used as input to the reaction and diferent calculations are made.  
+
+  * The amplificaion efficiency is approximated be the linear trend between the difference between the $C_T$ value of a gene of interest and a control/reference ($\Delta C_T$) and the log input amount. This piece of information is required when using the $\Delta\Delta C_T$ model. Typically, the slope of the curve should be very small and thr $R^2$ value should be very close to one. Other analysis methods are recommended when this is not the case.  
+  * Similar curves are required for each gene using the $C_T$ value instead of the differnce for applying the standard curve method. In this case, a separte slope and intercept are required for the calculation of the relative expression.  
+
+## Testing statistical significance   
+
+Using the later two methods and there assuptions, useful statistics such as p-values and confidence intervals can be calculated. 
+
+### Two-group tests  
+
+Assuming that the assumptions of the first methods are holding true, the simple t-test can be used to test the significance of the difference between two condtions ($\Delta C_T$). t-test assumes in addtion, that the input $C_T$ values are normally distributed and the variance between condtions are comprable. Wilcoxon test can be used when sample size is samll and those two last assumpiton are hard to achieve.  
+
+### Linear regression  
+
+Two use the linear regression here. A null hypothesis is formulated as following,  
+
+$$
+C_{T, target, treatment} - C_{T, control, treatment} = C_{T, target, control} - C_{T, control, control} \quad \textrm{or} \quad  \Delta\Delta C_T
+$$
+
+This is exactly the ($\Delta\Delta C_T$) as explained earlier. So the $\Delta\Delta C_T$ is estimated and the null is rejected when $\Delta\Delta C_T \ne 0$.  
+
+# The `pcr` package  
+
+## Motivation   
+
+To illustrate the use of the `pcr` packge in applying these methods on qPCR data, we use real qPCR real qPCR datasets from two published papers. In addtion, we compare the results obtained by the `pcr` package to that of the original paper to ensure the reliablity. First, Livak *et al.* [@Livak2001] obtained total RNA from human tissues; brain and kidney. c-myc and GAPDH primers were then used for cDNA synthesis and used as input in the PCR reaction. 6 replicates for each tissue were run in separte sample. This dataset is refered to as `ct1` through this document and is shown along with the difference calculations in Table \ref{table1} and \ref{table2}. Another dataset was generated from separate assay. Only running the samples in the same tube this time with pairs of primates that has different reporting dyes. This is refered to as `ct2` and is shown in Table  \ref{table3} and \ref{table4}. Finally, $C_T$ values from a qPCR experiment using differnt input amounts of c-myc and GAPDH was conducted. The dataset is refered to as `ct3` and is shown in Table  \ref{table5}. Secondly, Yuan *et al.* [@Yuan2006] extracted total RNA from *Arabidopsis thaliana* plant treated and control samples, 24 samples each. And performed a qPCR to using MT7 and ubiquitin primers. This dataset is refered to as `ct4` and Table \ref{table6} showes the results of the different testing methods that were applied in the original paper.  
+
+\begin{table}[H]
 \centering
 \caption{Relative quantification using comparative ($\Delta\Delta C_T$) method (separate tubes)}
 \label{table1}
 \begin{tabular}{lccccc}
 \hline
-Tissue & c-myc $C_T$ & GAPDH $C_T$ & \begin{tabular}[c]{@{}c@{}}$\Delta C_T$\\ c-myc - GAPDH\end{tabular} & \begin{tabular}[c]{@{}c@{}}$\Delta\Delta C_T$\\ $\Delta C_T - \Delta C_{T,Brain}$\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc\\ Rel. to Brain\end{tabular} \\
+Tissue & c-myc $C_T$ & GAPDH $C_T$ & \begin{tabular}[c]{@{}c@{}}$\Delta C_T$\\ c-myc - GAPDH\end{tabular} & \begin{tabular}[c]{@{}c@{}}$\Delta\Delta C_T$\\ $\Delta C_T - \Delta C_{T,Brain}$\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc$_N$\\ Rel. to Brain\end{tabular} \\
 \hline
 Brain & 30.72 & 23.7 &  &  &  \\
  & 30.34 & 23.56 &  &  &  \\
@@ -61,201 +278,13 @@ Kidney & 27.06 & 22.76 &  &  &  \\
 \end{tabular}
 \end{table}
 
-```{r ddct_separate_tube}
-# default mode delta_delta_ct
-## locate and read raw ct data
-fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-ct1 <- readr::read_csv(fl)
-
-## add grouping variable
-group_var <- rep(c('brain', 'kidney'), each = 6)
-
-# calculate all values and errors in one step
-## mode == 'separate_tube' default
-res <- pcr_analyze(ct1,
-  group_var = group_var,
-  reference_gene = 'GAPDH',
-  reference_group = 'brain')
-res
-```
-
-```{r plot_ddct_separate_tube}
-ggplot(res, aes(x = group, y = relative_expression)) +
-  geom_col() +
-  geom_errorbar(aes(ymin = lower, ymax = upper))
-```
-
-### same tubes  
-
-\begin{table}
-\centering
-\caption{Relative quantification using comparative ($\Delta\Delta C_T$) method (same tube)}
-\label{table2}
-\begin{tabular}{lccccc}
-\hline
-Tissue & c-myc $C_T$ & GAPDH $C_T$ & \begin{tabular}[c]{@{}c@{}}$\Delta C_T$\\ c-myc - GAPDH\end{tabular} & \begin{tabular}[c]{@{}c@{}}$\Delta\Delta C_T$\\ $\Delta C_T - Ave. \Delta C_{T,Brain}$\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc\\ Rel. to Brain\end{tabular} \\
-\hline
-Brain & 32.38 & 25.07 & 7.31 &  &  \\
- & 32.08 & 25.29 & 6.79 &  &  \\
- & 32.35 & 25.32 & 7.03 &  &  \\
- & 32.08 & 25.24 & 6.84 &  &  \\
- & 32.34 & 25.17 & 7.17 &  &  \\
- & 32.13 & 25.29 & 6.84 &  &  \\
-\textbf{Average} &  &  & 6.99 $\pm$ 0.21 & 0.00 $\pm$ 0.21 & 1.0 (0.86–1.15) \\
-\hline
-Kidney & 28.73 & 24.30 & 4.43 &  &  \\
- & 28.84 & 24.32 & 4.52 &  &  \\
- & 28.51 & 24.31 & 4.20 &  &  \\
- & 28.86 & 24.25 & 4.61 &  &  \\
- & 28.86 & 24.34 & 4.52 &  &  \\
- & 28.70 & 24.18 & 4.52 &  &  \\
-Average &  &  & 4.47 $\pm$ 0.14 & –2.53 $\pm$ 0.14 & 5.77 (5.23–6.37) \\
-\hline
-\end{tabular}
-\end{table}
-
-```{r ddct_same_tube}
-# calculate all values and errors in one step
-## mode == 'same_tube'
-res <- pcr_analyze(ct2,
-  group_var = group_var,
-  reference_gene = 'GAPDH',
-  reference_group = 'brain',
-  mode = 'same_tube')
-res
-```
-
-```{r plote_ddct_same_tube}
-ggplot(res, aes(x = group, y = relative_expression)) +
-  geom_col() +
-  geom_errorbar(aes(ymin = lower, ymax = upper))
-```
-
-## Delata CT (choosing control genes)  
-
-```{r dct_method}
-# delta_ct method
-## example to check fold change of control gens
-## locate and read file
-fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-ct1 <- readr::read_csv(fl)
-
-## make a data.frame of two identical columns
-pcr_hk <- data.frame(
-  GAPDH1 = ct1$GAPDH,
-  GAPDH2 = ct1$GAPDH
-  )
-
-## add grouping variable
-group_var <- rep(c('brain', 'kidney'), each = 6)
-
-## calculate caliberation
-res <- pcr_analyze(pcr_hk,
-            group_var = group_var,
-            reference_group = 'brain',
-            method = 'delta_ct')
-res
-```
-
-```{r plot_dct_method}
-ggplot(res, aes(x = group, y = fold_change, group = gene, fill = gene)) +
-  geom_col(position = 'dodge') +
-  geom_errorbar(aes(ymin = lower, ymax = upper, group = gene))
-```
-
-## Assessing amplification effeciency  
-
-\begin{table}
-\centering
-\caption{Average $C_T$ value for c-myc and GAPDH at different input amounts}
-\label{table3}
-\begin{tabular}{@{}cccc@{}}
-\hline
-\begin{tabular}[c]{@{}c@{}}Input RNA\\ (ng)\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc\\ Average $C_T$\end{tabular} & \begin{tabular}[c]{@{}c@{}}GAPDH\\ Average $C_T$\end{tabular} & \begin{tabular}[c]{@{}c@{}}$\Delta C_T$\\ c-myc - GAPDH\end{tabular} \\
-\hline
-1.0 & 25.59 $\pm$ 0.04 & 22.64 $\pm$ 0.03 & 2.95 $\pm$ 0.05 \\
-0.5 & 26.77 $\pm$ 0.09 & 23.73 $\pm$ 0.05 & 3.04 $\pm$ 0.10 \\
-0.2 & 28.14 $\pm$ 0.05 & 25.12 $\pm$ 0.10 & 3.02 $\pm$ 0.11 \\
-0.1 & 29.18 $\pm$ 0.13 & 26.16 $\pm$ 0.02 & 3.01 $\pm$ 0.13 \\
-0.05 & 30.14 $\pm$ 0.03 & 27.17 $\pm$ 0.06 & 2.97 $\pm$ 0.07 \\
-0.02 & 31.44 $\pm$ 0.16 & 28.62 $\pm$ 0.10 & 2.82 $\pm$ 0.19 \\
-0.02 & 32.42 $\pm$ 0.12 & 29.45 $\pm$ 0.08 & 2.97 $\pm$ 0.14 \\
-\hline
-\end{tabular}
-\end{table}
-
-```{r calculate_effeciency}
-## locate and read data
-fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-ct3 <- readr::read_csv(fl)
-
-## make a vector of RNA amounts
-amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
-
-## calculate amplification effeciency
-res <- pcr_assess(ct3,
-                  amount = amount,
-                  reference_gene = 'GAPDH',
-                  method = 'effeciency')
-res
-```
-
-```{r plot_effeciency}
-pcr_assess(ct3,
-           amount = amount,
-           reference_gene = 'GAPDH',
-           method = 'effeciency',
-           plot = TRUE)
-```
-
-# statndard curve methods  
-$$
-\log amount = \dfrac{C_T - b}{m}
-$$
-
-$$
-10^{\log amount}
-$$
-
-$$
-cv = \sqrt{cv_1^2 + cv_2^2}
-$$
-
-$$
-s = (cv)(\bar X)
-$$
-
-## calculating standard curve
-
-```{r calculating_curve}
-## calculate standard curve
-res <- pcr_assess(ct3,
-                  amount = amount,
-                  method = 'standard_curve')
-res
-```
-
-```{r plot_curves}
-pcr_assess(ct3,
-           amount = amount,
-           method = 'standard_curve',
-           plot = TRUE)
-```
-
-```{r retain_variable}
-intercept <- res$intercept
-slope <- res$slope
-```
-
-## separate tubes
-
-\begin{table}
+\begin{table}[H]
 \centering
 \caption{Relative quantification using the standard curve method (separate tube)}
-\label{table4}
+\label{table2}
 \begin{tabular}{@{}lcccc@{}}
 \hline
-Tissue & c-myc (ng) & GAPDH (ng) & \begin{tabular}[c]{@{}c@{}}c-myc\\ norm. to GAPDH\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc \\ Rel. to Brain\end{tabular} \\ 
+Tissue & c-myc (ng) & GAPDH (ng) & \begin{tabular}[c]{@{}c@{}}c-myc$_N$\\ norm. to GAPDH\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc$_N$ \\ Rel. to Brain\end{tabular} \\ 
 \hline
 Brain & 0.033 & 0.51 &  &  \\
  & 0.043 & 0.56 &  &  \\
@@ -276,33 +305,40 @@ Kidney & 0.40 & 0.96 &  &  \\
 \end{tabular}
 \end{table}
 
-```{r standard_separate_tube}
-## calculate standard amounts and error
-res <- pcr_analyze(ct1,
-                   group_var = group_var,
-                   reference_gene = 'GAPDH',
-                   reference_group = 'brain',
-                   intercept = intercept,
-                   slope = slope,
-                   method = 'relative_curve')
-res
-```
+\begin{table}[H]
+\centering
+\caption{Relative quantification using comparative ($\Delta\Delta C_T$) method (same tube)}
+\label{table3}
+\begin{tabular}{lccccc}
+\hline
+Tissue & c-myc $C_T$ & GAPDH $C_T$ & \begin{tabular}[c]{@{}c@{}}$\Delta C_T$\\ c-myc - GAPDH\end{tabular} & \begin{tabular}[c]{@{}c@{}}$\Delta\Delta C_T$\\ $Ave.\Delta C_T - Ave. \Delta C_{T,Brain}$\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc$_N$\\ Rel. to Brain\end{tabular} \\
+\hline
+Brain & 32.38 & 25.07 & 7.31 &  &  \\
+ & 32.08 & 25.29 & 6.79 &  &  \\
+ & 32.35 & 25.32 & 7.03 &  &  \\
+ & 32.08 & 25.24 & 6.84 &  &  \\
+ & 32.34 & 25.17 & 7.17 &  &  \\
+ & 32.13 & 25.29 & 6.84 &  &  \\
+\textbf{Average} &  &  & 6.99 $\pm$ 0.21 & 0.00 $\pm$ 0.21 & 1.0 (0.86–1.15) \\
+\hline
+Kidney & 28.73 & 24.30 & 4.43 &  &  \\
+ & 28.84 & 24.32 & 4.52 &  &  \\
+ & 28.51 & 24.31 & 4.20 &  &  \\
+ & 28.86 & 24.25 & 4.61 &  &  \\
+ & 28.86 & 24.34 & 4.52 &  &  \\
+ & 28.70 & 24.18 & 4.52 &  &  \\
+Average &  &  & 4.47 $\pm$ 0.14 & –2.53 $\pm$ 0.14 & 5.77 (5.23–6.37) \\
+\hline
+\end{tabular}
+\end{table}
 
-```{r plot_standard_separate_tube}
-ggplot(res, aes(x = group, y = caliberated)) +
-  geom_col() +
-  geom_errorbar(aes(ymin = lower, ymax = upper))
-```
-
-## Same tubes  
-
-\begin{table}
+\begin{table}[H]
 \centering
 \caption{Relative quantification using the standard curve method (same tube)}
-\label{table5}
+\label{table4}
 \begin{tabular}{lcccc}
 \hline
-Tissue & c-myc (ng) & GAPDH (ng) & \begin{tabular}[c]{@{}c@{}}c-myc\\ norm. to GAPDH\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc\\ Rel. to Brain\end{tabular} \\
+Tissue & c-myc (ng) & GAPDH (ng) & \begin{tabular}[c]{@{}c@{}}c-myc$_N$\\ norm. to GAPDH\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc$_N$\\ Rel. to Brain\end{tabular} \\
 \hline
 Brain & 0.031 & 0.618 & 0.05 &  \\
  & 0.038 & 0.532 & 0.07 &  \\
@@ -323,28 +359,26 @@ Kidney & 0.365 & 0.049 & 0.35 &  \\
 \end{tabular}
 \end{table}
 
-```{r standard_same_tube}
-## calculate standard amounts and error
-res <- pcr_analyze(ct1,
-                   group_var = group_var,
-                   reference_gene = 'GAPDH',
-                   reference_group = 'brain',
-                   intercept = intercept,
-                   slope = slope,
-                   method = 'relative_curve',
-                   mode = 'same_tube')
-res
-```
+\begin{table}[H]
+\centering
+\caption{Average $C_T$ value for c-myc and GAPDH at different input amounts}
+\label{table5}
+\begin{tabular}{@{}cccc@{}}
+\hline
+\begin{tabular}[c]{@{}c@{}}Input RNA\\ (ng)\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc\\ Average $C_T$\end{tabular} & \begin{tabular}[c]{@{}c@{}}GAPDH\\ Average $C_T$\end{tabular} & \begin{tabular}[c]{@{}c@{}}$\Delta C_T$\\ c-myc - GAPDH\end{tabular} \\
+\hline
+1.0 & 25.59 $\pm$ 0.04 & 22.64 $\pm$ 0.03 & 2.95 $\pm$ 0.05 \\
+0.5 & 26.77 $\pm$ 0.09 & 23.73 $\pm$ 0.05 & 3.04 $\pm$ 0.10 \\
+0.2 & 28.14 $\pm$ 0.05 & 25.12 $\pm$ 0.10 & 3.02 $\pm$ 0.11 \\
+0.1 & 29.18 $\pm$ 0.13 & 26.16 $\pm$ 0.02 & 3.01 $\pm$ 0.13 \\
+0.05 & 30.14 $\pm$ 0.03 & 27.17 $\pm$ 0.06 & 2.97 $\pm$ 0.07 \\
+0.02 & 31.44 $\pm$ 0.16 & 28.62 $\pm$ 0.10 & 2.82 $\pm$ 0.19 \\
+0.02 & 32.42 $\pm$ 0.12 & 29.45 $\pm$ 0.08 & 2.97 $\pm$ 0.14 \\
+\hline
+\end{tabular}
+\end{table}
 
-```{r plot_standard_same_tube}
-ggplot(res, aes(x = group, y = caliberated)) +
-  geom_col() +
-  geom_errorbar(aes(ymin = lower, ymax = upper))
-```
-
-# Statistical significance
-
-\begin{table}
+\begin{table}[H]
 \centering
 \caption{Statistical significance using different testing methods}
 \label{table6}
@@ -358,42 +392,375 @@ Wilcoxon test & -0.6354 & \textless 0.0001 & (-0.4227, -0.8805) \\ \hline
 \end{tabular}
 \end{table}
 
-```{r testing_t.test}
+## Assess `pcr_assess`  
+
+`pcr_efficiency` is a wrapper for the implemented quality assessment methods; `pcr_efficiency` and `pcr_standard`. Both methods can be called direcly using the method names or through `pcr_assess` by passing a string to the argument `method`; 'efficiency' or 'standard_curve' for calculating the amplificaion efficiency or the standard curve for each gene respectively.  
+
+### Amplification efficiency `pcr_efficiency` 
+
+To calculate the amplificaion efficiency in a qPCR experiment, the main input is a `data.frame` with columns contain the $C_T$ values for each gene and raws correspond to the different input amounts/dilutions (Table \ref{table:table5}).  
+
+The following code apply the calculation on the `data.frame`, `ct3`. It has two columns `r names(ct3)[1]` and `r names(ct3)[2]` and 3 raws for each of the input amounts coded in the variable `amounts`. A reference gene passed to the `reference_gene` argument, in this case, the column name `r names(ct3)[2]`.  
+
+```{r load_libraries}
+library(pcr)
+library(ggplot2)
+library(cowplot)
+```
+
+```{r calculate_efficiency}
+## locate and read data
+fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
+ct3 <- readr::read_csv(fl)
+
+## make a vector of RNA amounts
+amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
+
+## calculate amplification efficiency
+res <- pcr_assess(ct3,
+                  amount = amount,
+                  reference_gene = 'GAPDH',
+                  method = 'efficiency')
+knitr::kable(res, caption = '\\label{table:table7} Amplificaion efficiency of c-myc')
+```
+
+The output of `pcr_assess` is a `data.frame` of 4 columns and *n* rows equals the input genes except for the reference. For each gene an *intercept*, *slope* and $R^2$ is calculated for a the difference between it and the reference ($\Delta C_T$) (Table \ref{table:table7}).  
+
+When the argument `plot` is `TRUE` a graph is produced insead shows the average and standard deviation of of the $\Delta C_T$ at difference input amounts. In addition, a linear trend line is drawn (Fig \ref{fig:fig1}).  
+
+```{r plot_efficiency, fig.cap='\\label{fig:fig1} Amplification efficiency of c-myc'}
+gg <- pcr_assess(ct3,
+           amount = amount,
+           reference_gene = 'GAPDH',
+           method = 'efficiency',
+           plot = TRUE)
+gg + 
+  labs(x = 'log10 amount', y = 'Delta Ct') +
+  theme(strip.background = element_blank(),
+        strip.text = element_blank())
+```
+
+The relavant summaries in calculating *efficiency* are the `slope` and `r_squared`. Typically, `slope` should be very low, and `r_squared` very high. Means the $\Delta C_T$ are not changing much as consequnce of changing the input concentration.  
+
+### Standard curve `pcr_standard`  
+
+To caclulate the standard curve for individual genes, `pcr_assess` takes a `data.frame` similar to that described above as input `ct3`, and the same `amount` variable. The following code calculates the curves for the two columns/genes by fitting a line between their $C_T$ values and the log input amounts.  
+
+```{r calculating_curve}
+## calculate standard curve
+res <- pcr_assess(ct3,
+                  amount = amount,
+                  method = 'standard_curve')
+knitr::kable(res, caption = '\\label{table:table8}Standard curves of c-myc and GAPDH')
+```
+
+The output put is similar to the previous call, except when 'standard_curve' is passed to `method` curves are calculated for individual genes, column `gene` (Table \ref{table:table8}). 
+
+The information of the standard curves are required when using the standard curve methods, so we reain the relevant ones in the variables `intercept` and `slope`.  
+
+```{r retain_variable}
+intercept <- res$intercept
+slope <- res$slope
+```
+
+When the argument `plot` is `TRUE` a graph is returned instead. A panel for each gene showing the raw $C_T$ values and the log input amounts  (Fig. \ref{fig:fig2}).  
+
+```{r plot_curves, fig.width=8, fig.cap='\\label{fig:fig2} Standard curve of c-myc and GAPDH'}
+gg <- pcr_assess(ct3,
+           amount = amount,
+           method = 'standard_curve',
+           plot = TRUE)
+gg + 
+  labs(x = 'Log 10 amount', y = 'Ct value')
+```
+
+## Analyze `pcr_analyze` 
+
+Similarly, `pcr_analyze` is a wrapper and unified interface for difference analysis models; `pcr_ddct`, `pcr_dct` and `pcr_curve`. The models can be invoked by calling these functions difreclty or through the argument `method` to `pcr_analyze`. Possible input to the argument `method` are 'delta_delta_ct', 'delta_ct' and 'relative_curve' for calculating the double delta $C_T$, delta $C_T$ and the standard curve models respectively.  
+
+### Doube delta $C_T$ ($\Delta\Delta C_T$) `pcr_ddct`  
+
+To apply the double delta $C_T$ model, the default `method` of `pcr_analyze`, the main input is a `data.frame` with columns containing the genes and the rows the $C_T$ values from different samples. In addition, a group variable `group_var` corresponding to these rows/samples is required. Finally, a `reference_gene` and a `reference_group` are entered.  
+
+The following code chunck applies this method to a `data.frame` of 12 samples from 2 groups `ct1` (Table \ref{table1}).  
+
+```{r ddct_separate_tube}
+# default mode delta_delta_ct
+## locate and read raw ct data
+fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
+ct1 <- readr::read_csv(fl)
+
+## add grouping variable
+group_var <- rep(c('brain', 'kidney'), each = 6)
+
+# calculate all values and errors in one step
+## mode == 'separate_tube' default
+res1 <- pcr_analyze(ct1,
+  group_var = group_var,
+  reference_gene = 'GAPDH',
+  reference_group = 'brain')
+
+knitr::kable(res1, caption = '\\label{table:table9} Double delta Ct method (separate tubes)')
+```
+
+The output of `pcr_analyze` is 8 columns; contains the calculatations of each gene in each group and the error terms (Table \ref{table:table8}). This analysis uses the default `mode`, 'separate_tube' as the input dataset came for an experiment where the target `r names(ct1)[1]` and the control gene `r names(ct1)[2]` were ran in separate tubes.  
+
+In contrast, the `ct2` dataset, also shown in Table \ref{table:table2}, came from an identical experment except the samples were run in the same tube. So the followin analysis invokes a different `mode`, 'same_tube'.  
+
+```{r ddct_same_tube}
+# calculate all values and errors in one step
+## mode == 'same_tube'
+res2 <- pcr_analyze(ct2,
+  group_var = group_var,
+  reference_gene = 'GAPDH',
+  reference_group = 'brain',
+  mode = 'same_tube')
+
+knitr::kable(res2, caption = '\\label{table:table10} Double delta Ct method (same tube)')
+```
+
+The only difference here is that the average of the $C_T$ values for the target gene `r names(ct1)[1]` is calculated after normalizing by the reference gene `r names(ct1)[2]`. The rest of the calculations are expected to be slighlty different than the previous case (Table \ref{table:table10}).  
+
+Figure \ref{fig:fig3} shows the results of these two analysis. Bars represent the average relative expression of c-myc in the kidney, normalized by GAPDH and calibrated by the brain. The error bars are the standard deviations.   
+
+```{r plot_ddct_separate_tube}
+gg1 <- ggplot(res1, aes(x = group, y = relative_expression)) +
+  geom_col(width = .7) +
+  geom_errorbar(aes(ymin = lower, ymax = upper), width = .5) +
+  labs(x = '', y = 'Relative mRNA expression') +
+  ggtitle(label = 'Separate tubes')
+```
+
+```{r plote_ddct_same_tube}
+gg2 <- ggplot(res2, aes(x = group, y = relative_expression)) +
+  geom_col(width = .7) +
+  geom_errorbar(aes(ymin = lower, ymax = upper), width = .5) +
+  labs(x = '', y = 'Relative mRNA expression') +
+  ggtitle(label = 'Same tubes')
+```
+
+```{r plot_expression, fig.width=8, fig.cap='\\label{fig:fig3} Relative expression of c-myc using double delta $C_T$'}
+plot_grid(gg1, gg2)
+```
+
+### Delta $C_T$ ($\Delta C_T$) `pcr_dct` 
+
+This method is a variation of the double delta Ct model. It can be used to caculate the fold change of in one sample relative to the others. For example, it can be used to compare and choosing a control/referece genes.  
+
+```{r make_up_dataset}
+## example to check fold change of control gens
+## locate and read file
+fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
+ct1 <- readr::read_csv(fl)
+
+## make a data.frame of two identical columns
+pcr_hk <- data.frame(
+  GAPDH1 = ct1$GAPDH,
+  GAPDH2 = ct1$GAPDH
+  )
+
+## add grouping variable
+group_var <- rep(c('brain', 'kidney'), each = 6)
+```
+
+Here, we used the column `r names(ct1)[2]` from the dataset `ct1` to make a `data.frame`, `pcr_hk` of two identical columns `r names(pcr_hk)[1]` and `r names(pcr_hk)[2]` two show how such comparison can be done.  
+
+The input to `pcr_analyze` is identical to that of the previous call, only `method` is specified this time to 'delta_ct'.  
+```{r dct_method}
+# delta_ct method
+## calculate caliberation
+res <- pcr_analyze(pcr_hk,
+            group_var = group_var,
+            reference_group = 'brain',
+            method = 'delta_ct')
+
+knitr::kable(res, caption = '\\label{table:table11} Delta Ct method')
+```
+
+Similarly, the output contains the calculated model and the error terms (Table \ref{table:table11}). The difference here will be skiping the normalization step and caliberating the $C_T$ values of all genes to  a `reference_group`.  
+
+Figure \ref{fig:fig4} shows the average relative fold change of the identical housekeeping genes and there error terms in two tissue samples.  
+
+```{r plot_dct_method, fig.cap='\\label{fig:fig4} GAPDH relative fold change using delta Ct'}
+ggplot(res, aes(x = group, y = fold_change, group = gene, fill = gene)) +
+  geom_col(position = 'dodge') +
+  geom_errorbar(aes(ymin = lower, ymax = upper, group = gene)) +
+  theme(legend.position = 'top',
+        legend.direction = 'horizontal') +
+  labs(x = '', y = 'Relative fold change')
+```
+
+### Standard curve `pcr_curve`  
+
+The calculation of the standard curve method involves to steps as explained earlier. First, a standard curve is calculted for each gene to find the *intercept* and the *slope*. Then the relative expression is calculated.  
+
+To apply this method to the `ct1` dataset (Table \ref{table:table3}). We used the variables `slope` and `intercept` that were calculated earlier using the `ct3` dataset \ref{table}.  
+
+```{r standard_separate_tube}
+## calculate standard amounts and error
+res1 <- pcr_analyze(ct1,
+                   group_var = group_var,
+                   reference_gene = 'GAPDH',
+                   reference_group = 'brain',
+                   intercept = intercept,
+                   slope = slope,
+                   method = 'relative_curve')
+
+knitr::kable(res1, caption = '\\label{table:table12}Standard curve method (separate tubes)')
+```
+
+The output of `pcr_analyze` is the same as explained before. The calculated averages and error term of target genes in each group relative to the reference gene and gourp (Table \ref{table:table12}).   
+
+The argument `mode` can be can be used to change the way the $C_T$ values are averaged when samples from different genes were ran in the same tube (Table \ref{table:table4}).  
+
+```{r standard_same_tube}
+## calculate standard amounts and error
+res2 <- pcr_analyze(ct2,
+                   group_var = group_var,
+                   reference_gene = 'GAPDH',
+                   reference_group = 'brain',
+                   intercept = intercept,
+                   slope = slope,
+                   method = 'relative_curve',
+                   mode = 'same_tube')
+
+knitr::kable(res2, caption = 'Standard curve method (same tube)')
+```
+
+The output is similar to that descriped earlier (Table \ref{table:table12}).  
+
+Figure \ref{fig:fig5} shows the output of the standrd curve method. Relative expression values of c-myc in the kideny normalized by GAPDH and calibrated to the brain are shown as bars, Averages $\pm$ standard deviations.  
+
+```{r plot_standard_separate_tube}
+gg1 <- ggplot(res1, aes(x = group, y = calibrated)) +
+  geom_col() +
+  geom_errorbar(aes(ymin = lower, ymax = upper), width = .7) +
+  labs(x = '', y = 'Relative mRNA expression') +
+  ggtitle(label = 'Separate tubes')
+```
+
+```{r plot_standard_same_tube}
+gg2 <- ggplot(res2, aes(x = group, y = calibrated)) +
+  geom_col() +
+  geom_errorbar(aes(ymin = lower, ymax = upper), width = .7) +
+  labs(x = '', y = 'Relative mRNA expression') +
+  ggtitle(label = 'Same tubes')
+```
+
+```{r plot_expression2, fig.width=8, fig.cap='\\label{fig:fig5} Relative expression of c-myc using the standard curve'}
+plot_grid(gg1, gg2)
+```
+
+## Test `pcr_test`  
+
+Testing for statistical significance between conditions is important to ensure validity and replicability of the analysis. Different statistical methods require differnt assumptions. So the choice of which test to use depends on many factors. Among these factors are the number of the conditons/groups, the sample and replicate sizes and the type of desired comparison.  
+
+`pcr_test` provides a unified interface to different testing methods, which is similar to that used before for analysis and quality assessment.  
+
+Here, we used a dataset `ct4` of 48 samples and two gene columns `r names(ct4)[1]` and `r names(ct4)[2]`. The samples came from two groups as indicated in the variable `group`. argumets `reference_gene` and `referece_control` are used to construct the comparison the same way they were used to calculate the relative expression.  
+
+```{r testing_data}
 # locate and read data
 fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
 ct4 <- readr::read_csv(fl)
 
 # make group variable
 group <- rep(c('control', 'treatment'), each = 12)
+```
 
+```{r analyze_testing_data}
+# analyze the testing data
+res <- pcr_analyze(ct4, 
+            group_var = group,
+            reference_gene = 'ref',
+            reference_group = 'control')
+```
+
+```{r plot_testing data, fig.cap='\\label{fig:fig6} Relative expression of target gene using delta delta Ct'}
+ggplot(res, aes(x = group, y = relative_expression)) +
+  geom_col() +
+  labs(x = '', y = 'Relative mRNA expression')
+```
+
+We start by analyzing the dataset `ct4` using the default method of `pcr_analyze`, 'delta_delta_ct' and show a bar graph of the results (Fig. \ref{fig:fig6}).  
+
+Finallys we used the `pcr_test` to perfom differnt tests. The resulting output tables can be compared to the results from the original paper that provided the dataset (Table \ref{table:table6}).  
+
+```{r testing_t.test}
 # test using t-test
-pcr_test(ct4,
+tst1 <- pcr_test(ct4,
          group_var = group,
          reference_gene = 'ref',
          reference_group = 'control',
          test = 't.test')
+
+knitr::kable(tst1, caption = '\\label{table:table14} t-test summary')
 ```
+
+When the argument `test` is set to 't.test' a simple two-group *t*-test is carried out and an `estimate` for the differnce between groups for the change in the target relative to a control gene is provided. In addtion, a `p_vale`, a `lower` and `upper` 95% confidence intervals are provided as well (Table \ref{table:table14}).  
 
 ```{r testing_wilcox}
 # test using wilcox.test
-pcr_test(ct4,
+tst2 <- pcr_test(ct4,
          group_var = group,
          reference_gene = 'ref',
          reference_group = 'control',
          test = 'wilcox.test')
+
+knitr::kable(tst2, caption = 'Wilcoxon test summary')
 ```
+
+When the argument `test` is set to 'wilcox.test', Wilcoxon test method is used instead and similar output is provided (Table \ref{table:table15}).  
+
+The linear regression can be applied to more than two groups and more advanced comparisons.   
 
 ```{r testing_lm}
 # testing using lm
-pcr_test(ct4,
+tst3 <- pcr_test(ct4,
          group_var = group,
          reference_gene = 'ref',
          reference_group = 'control',
          test = 'lm')
+
+knitr::kable(tst3, caption = 'Linear regression summary')
 ```
 
-## referecne
+The output of the `test`, 'lm' contains an extra column `term` to show the different comparison terms used to calculate the results (Table \ref{table:table16}).  
 
-significance tetsting https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1395339/
-applied biosystem http://www3.appliedbiosystems.com/cms/groups/mcb_support/documents/generaldocuments/cms_040980.pdf
-analysis paper file:///Users/MahShaaban/Downloads/livak-2001.pdf
+# Comparison with existing pacakges  
+# Citation  
+
+```{r citation, eval=FALSE}
+citation("pcr")
+```
+
+# Contribution  
+I'd be glad to recieve any comments or ideas to help the package forward.  
+
+## Bug reporting  
+
+* To report a bug please use the [issue](https://github.com/MahShaaban/pcr/issues) page on github  
+
+## Code contributions  
+
+* Fork this repo to your github account  
+* Clone the repo to your machine and make changes  
+* Push to your account  
+* Submit a [pull](https://github.com/MahShaaban/pcr/pulls) request at this repo  
+    
+## Contacts:
+
+My email is: [mahmoud.s.fahmy@students.kasralainy.egu.eg](mahmoud.s.fahmy@students.kasralainy.egu.eg)  
+
+# Notes
+
+  * It seems like there is a tiny mistake in the original table presented in [@Livak2001] in calulating the average of $C_T$ values of the GAPDH in the brain samples and the subsequent calculations. The tables shown here from this study are the corrected ones.   
+  * The original [@Livak2001] serial dilution dataset provides only averages and standard deviations of $C_T$ values. We used these summaries to regenerate a dataset of raw $C_T$ values using the `rnorm(n = 3, mean = average, sd = sd)` to show how they could be used from the start in a typical analysis. So the subsequent calculaitons that involve this data set might be slighlty different than the original tables in the paper.    
+
+# Tables & Figures  
+
+\listoftables  
+\listoffigures  
+
+# References  
+

@@ -10,7 +10,7 @@ pcr_analyze(df, method = "delta_delta_ct", ...)
 \item{df}{A data.frame of numeric ct value of n genes in columns and m
 samples in raws}
 
-\item{method}{A character string; 'delta_delta_ct' defalult, 'delta_ct' or
+\item{method}{A character string; 'delta_delta_ct' default, 'delta_ct' or
 'relative_curve'}
 
 \item{...}{Arguments passed to other methods}

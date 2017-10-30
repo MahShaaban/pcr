@@ -87,7 +87,7 @@ group <- rep(c('brain', 'kidney'), each = 6)
 ## calculate the input amounts 10 ^ ((ct - b) / m)
 ## average the amounts
 ## normalize by division on referece gene
-## caliberate by division on reference group
+## calibrate by division on reference group
 df1 <- ct1 %>%
   mutate(c_myc = 10 ^ ((c_myc - intercept1) / slope1),
          GAPDH = 10 ^ ((GAPDH - intercept2) / slope2)) %>%
@@ -97,7 +97,7 @@ df1 <- ct1 %>%
   group_by(group) %>%
   summarise(c_myc = c_myc / GAPDH) %>%
   gather(gene, normalized, -group) %>%
-  mutate(caliberated = normalized / .$normalized[1])
+  mutate(calibrated = normalized / .$normalized[1])
 
 ## calculate standard deviations
 ## calculate cv
@@ -116,8 +116,8 @@ df2 <- ct1 %>%
 ## calculate intervals
 ## modify error = error(cv) * normalized
 standarized1 <- full_join(df1, df2) %>%
-  mutate(lower = caliberated - error,
-         upper = caliberated + error,
+  mutate(lower = calibrated - error,
+         upper = calibrated + error,
          error = error * normalized)
 
 use_data(standarized1, overwrite = TRUE)
@@ -133,7 +133,7 @@ ct2 <- read_csv(fl)
 ## average the amounts
 ## normalize by division on referece gene
 ## average the normalized amounts
-## caliberate by division on reference group
+## calibrate by division on reference group
 df1 <- ct2 %>%
   mutate(c_myc = 10 ^ ((c_myc - intercept1) / slope1),
          GAPDH = 10 ^ ((GAPDH - intercept2) / slope2)) %>%
@@ -141,7 +141,7 @@ df1 <- ct2 %>%
   group_by(group) %>%
   summarise(c_myc = mean(c_myc / GAPDH)) %>%
   gather(gene, normalized, -group) %>%
-  mutate(caliberated = normalized / .$normalized[1])
+  mutate(calibrated = normalized / .$normalized[1])
 
 # calculate cv as mean/sd
 df2 <- ct2 %>%
@@ -156,7 +156,7 @@ df2 <- ct2 %>%
 ## calculate intervals
 ## modify error = error(cv) * normalized
 standarized2 <- full_join(df1, df2) %>%
-  mutate(lower = caliberated - error,
-         upper = caliberated + error,
+  mutate(lower = calibrated - error,
+         upper = calibrated + error,
          error = error * normalized)
 use_data(standarized2, overwrite = TRUE)

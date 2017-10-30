@@ -30,7 +30,7 @@ ct3 <- readr::read_csv(fl)
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 
 # calculate the standard curve
-pcr_effeciency(ct3,
+pcr_efficiency(ct3,
                amount = amount,
                reference_gene = 'GAPDH')
 

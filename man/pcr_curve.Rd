@@ -18,9 +18,9 @@ pcr_curve(df, group_var, reference_gene, reference_group,
 
 \item{mode}{A character string; 'separate_tube' or 'same_tube'}
 
-\item{intercept}{A numerice vector of intercepst and length equals the number of genes}
+\item{intercept}{A numeric vector of intercept and length equals the number of genes}
 
-\item{slope}{A numerice vector of slopes length equals the number of genes}
+\item{slope}{A numeric vector of slopes length equals the number of genes}
 }
 \value{
 A data.frame of 7 columns
@@ -28,7 +28,7 @@ A data.frame of 7 columns
   \item group
   \item gene
   \item normalized
-  \item caliberated
+  \item calibrated
   \item error
   \item lower
   \item upper

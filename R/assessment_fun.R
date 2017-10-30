@@ -1,4 +1,4 @@
-#' Calculate amplification effeciency
+#' Calculate amplification efficiency
 #'
 #' @inheritParams pcr_average
 #' @inheritParams pcr_normalize
@@ -15,13 +15,13 @@
 #' # make amount/dilution variable
 #' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 #'
-#' # calculate amplification effeciency
-#' pcr_effeciency(ct3,
+#' # calculate amplification efficiency
+#' pcr_efficiency(ct3,
 #'                amount = amount,
 #'                reference_gene = 'GAPDH')
 #'
-#' # plot amplification effeciency
-#' pcr_effeciency(ct3,
+#' # plot amplification efficiency
+#' pcr_efficiency(ct3,
 #'                amount = amount,
 #'                reference_gene = 'GAPDH',
 #'                plot = TRUE)
@@ -31,7 +31,7 @@
 #' @import ggplot2
 #'
 #' @export
-pcr_effeciency <- function(df, amount, reference_gene, plot = FALSE) {
+pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
   # calculate delta_ct
   dct <- pcr_normalize(df, reference_gene = reference_gene)
   # calculate trend; intercep, slop and r_squared
@@ -54,7 +54,7 @@ pcr_effeciency <- function(df, amount, reference_gene, plot = FALSE) {
              lower = average - error,
              upper = average + error)
 
-    # make effeciency plot
+    # make efficiency plot
     gg <- ggplot(dat, aes(x = group, y = average)) +
       geom_point() +
       geom_errorbar(aes(ymin = lower, ymax = upper)) +
@@ -85,7 +85,7 @@ pcr_effeciency <- function(df, amount, reference_gene, plot = FALSE) {
 #' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 #'
 #' # calculate the standard curve
-#' pcr_effeciency(ct3,
+#' pcr_efficiency(ct3,
 #'                amount = amount,
 #'                reference_gene = 'GAPDH')
 #'
@@ -123,15 +123,15 @@ pcr_standard <- function(df, amount, plot = FALSE) {
 #' Assess qPCR data quality
 #'
 #' @inheritParams pcr_average
-#' @param method A character string; 'standard_curve' defalult or 'effeciency'
+#' @param method A character string; 'standard_curve' defalult or 'efficiency'
 #' @param ... Arguments passed to other methods
 #'
 #' @return A data.frame or a plot. For details; \link{pcr_standard} and
-#' \link{pcr_effeciency}
+#' \link{pcr_efficiency}
 #'
 #' @export
 pcr_assess <- function(df, method = 'standard_curve', ...) {
   switch(method,
          'standard_curve' = pcr_standard(df, ...),
-         'effeciency' = pcr_effeciency(df, ...))
+         'efficiency' = pcr_efficiency(df, ...))
 }

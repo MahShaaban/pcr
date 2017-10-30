@@ -3,12 +3,12 @@
 \docType{data}
 \name{rel_express2}
 \alias{rel_express2}
-\title{PCR same wells experment processed data}
+\title{PCR same wells experiment processed data}
 \format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 2 rows and 8 columns.}
 \usage{
 rel_express2
 }
 \description{
-PCR same wells experment processed data
+PCR same wells experiment processed data
 }
 \keyword{datasets}

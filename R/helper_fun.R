@@ -87,7 +87,7 @@ pcr_average <- function(df, group_var, amount, tidy = FALSE) {
 #'
 #' @param df A data.frame of such as that returned by \link{pcr_average}
 #' @param reference_gene A character string of the name of the column
-#' correspoinding to the reference gene
+#' corresponding to the reference gene
 #' @param mode A character string of the normalization mode to be used. Default
 #' is 'subtract'. Other possible modes include 'divide'
 #' @inheritParams  pcr_average
@@ -95,7 +95,7 @@ pcr_average <- function(df, group_var, amount, tidy = FALSE) {
 #' @return A data.frame of normalized ct values for each gene and a
 #' grouping variable. When mode is 'subtract' (default) each the reference gene
 #'  is subtracted from each column, and division is used instead when mode is
-#' 'divide'. The functino returns ignors non numeric columns and dropes the one
+#' 'divide'. The function returns ignores non numeric columns and drops the one
 #' that corresponds to the reference_gene
 #'
 #' @examples
@@ -147,11 +147,11 @@ pcr_normalize <- function(df, reference_gene, mode = 'subtract', tidy = FALSE) {
   return(norm)
 }
 
-#' Caliberate ct values to a reference group
+#' calibrate ct values to a reference group
 #'
 #' Takes a data.frame of the ct or normalized ct values for each gene in each
-#' condition and returns a data.frame of the caliberated ct value of each gene
-#' e.x. (delat ct of gene of interest - delta ct value of same gene in
+#' condition and returns a data.frame of the calibrated ct value of each gene
+#' e.x. (delta ct of gene of interest - delta ct value of same gene in
 #' reference group)
 #'
 #' @param df A data.frame of ct or normalized ct values for each gene and a
@@ -161,7 +161,7 @@ pcr_normalize <- function(df, reference_gene, mode = 'subtract', tidy = FALSE) {
 #' @inheritParams pcr_normalize
 #' @inheritParams pcr_average
 #'
-#' @return A data.fram of the caliberated ct values for each gene in a grouping
+#' @return A data.frame of the calibrated ct values for each gene in a grouping
 #' variable by a reference group
 #'
 #' @examples
@@ -179,16 +179,16 @@ pcr_normalize <- function(df, reference_gene, mode = 'subtract', tidy = FALSE) {
 #' dct <- pcr_normalize(ave, 'GAPDH')
 #'
 #' # calculate delta delta ct
-#' pcr_caliberate(dct, 'brain', tidy = TRUE)
+#' pcr_calibrate(dct, 'brain', tidy = TRUE)
 #'
 #' # calculate delta delta ct and return a tidy data.frame
-#' pcr_caliberate(dct, 'brain', tidy = TRUE)
+#' pcr_calibrate(dct, 'brain', tidy = TRUE)
 #'
 #' @importFrom dplyr filter select mutate_if
 #' @importFrom tidyr gather
 #'
 #' @export
-pcr_caliberate <- function(df, reference_group, mode = 'subtract', tidy = FALSE) {
+pcr_calibrate <- function(df, reference_group, mode = 'subtract', tidy = FALSE) {
   # get the row index of the reference group
   ind <- which(df$group == reference_group)
 
@@ -205,7 +205,7 @@ pcr_caliberate <- function(df, reference_group, mode = 'subtract', tidy = FALSE)
   # return a tidy data.frame when tidy == TRUE
   if(tidy == TRUE) {
     calib <- calib %>%
-      gather(gene, caliberated, -group)
+      gather(gene, calibrated, -group)
   }
   return(calib)
 }
@@ -214,7 +214,7 @@ pcr_caliberate <- function(df, reference_group, mode = 'subtract', tidy = FALSE)
 #'
 #' @inheritParams pcr_average
 #'
-#' @return A data.frame of ncol n and nrow equalse the number of unique
+#' @return A data.frame of ncol n and nrow equals the number of unique
 #' grouping variables containing the standard error values of each gene in each
 #' group
 #'
@@ -255,7 +255,7 @@ pcr_sd <- function(df, group_var, tidy = FALSE) {
 
 #' Calculate error value
 #'
-#' @param df A data.frame of ncol n and nrow equalse the number of unique
+#' @param df A data.frame of ncol n and nrow equals the number of unique
 #' grouping variables containing the standard error values of each gene in each
 #' group
 #' @inheritParams pcr_normalize

@@ -11,7 +11,7 @@
 #'   \item group
 #'   \item gene
 #'   \item normalized
-#'   \item caliberated
+#'   \item calibrated
 #'   \item relative_expression
 #'   \item error
 #'   \item lower
@@ -51,10 +51,10 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group, mode = 'sep
   delta_ct <- gather(dct, gene, normalized, -group)
 
   # calculate the delta_delta_ct
-  ddct <- pcr_caliberate(dct, reference_group = reference_group, tidy = TRUE)
+  ddct <- pcr_calibrate(dct, reference_group = reference_group, tidy = TRUE)
 
   # calculate the relative expression
-  norm_rel <- mutate(ddct, relative_expression = 2 ^ -caliberated)
+  norm_rel <- mutate(ddct, relative_expression = 2 ^ -calibrated)
 
   if(mode == 'separate_tube') {
     # calculate the error from ct values
@@ -70,8 +70,8 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group, mode = 'sep
   res <- full_join(delta_ct, ddct) %>%
     full_join(norm_rel) %>%
     full_join(error) %>%
-    mutate(lower = 2 ^ -(caliberated + error),
-           upper = 2 ^ -(caliberated - error))
+    mutate(lower = 2 ^ -(calibrated + error),
+           upper = 2 ^ -(calibrated - error))
 
   return(res)
 }
@@ -84,7 +84,7 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group, mode = 'sep
 #' \itemize{
 #'   \item group
 #'   \item gene
-#'   \item caliberated
+#'   \item calibrated
 #'   \item fold_change
 #'   \item error
 #'   \item lower
@@ -118,32 +118,32 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group, mode = 'sepa
   if(mode == 'separate_tube') {
     # average ct and calibrate to a reference group
     ave <- pcr_average(df, group_var = group_var)
-    dct <- pcr_caliberate(ave, reference_group = reference_group)
+    dct <- pcr_calibrate(ave, reference_group = reference_group)
   } else if(mode == 'same_tube') {
-    # caliberate ct and average
-    dct <- pcr_caliberate(df, reference_group = reference_group)
+    # calibrate ct and average
+    dct <- pcr_calibrate(df, reference_group = reference_group)
     dct <- pcr_average(dct, group_var = group_var)
   }
 
-  # retain caliberated values
+  # retain calibrated values
   # calculate the fold change
-  calib <- gather(dct, gene, caliberated, -group) %>%
-    mutate(fold_change = 2 ^ -caliberated)
+  calib <- gather(dct, gene, calibrated, -group) %>%
+    mutate(fold_change = 2 ^ -calibrated)
 
   if(mode == 'separate_tube') {
     # calculate the standard deviation from ct values
     sds <- pcr_sd(df, group_var = group_var, tidy = TRUE)
   } else if(mode == 'same_tube') {
-    # caliberate ct values to a reference group
-    # calculated sd from caliberated values
-    dct <- pcr_caliberate(df, reference_group = reference_group)
+    # calibrate ct values to a reference group
+    # calculated sd from calibrated values
+    dct <- pcr_calibrate(df, reference_group = reference_group)
     sds <- pcr_sd(dct, group_var = group_var, tidy = TRUE)
   }
 
   # join data frame and calculate intervals
   res <- full_join(calib, sds) %>%
-    mutate(lower = 2 ^ -(caliberated + error),
-           upper = 2 ^ -(caliberated - error))
+    mutate(lower = 2 ^ -(calibrated + error),
+           upper = 2 ^ -(calibrated - error))
 
   return(res)
 }
@@ -152,15 +152,15 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group, mode = 'sepa
 #'
 #' @inheritParams pcr_ddct
 #' @param mode A character string; 'separate_tube' or 'same_tube'
-#' @param intercept A numerice vector of intercepst and length equals the number of genes
-#' @param slope A numerice vector of slopes length equals the number of genes
+#' @param intercept A numeric vector of intercept and length equals the number of genes
+#' @param slope A numeric vector of slopes length equals the number of genes
 #'
 #' @return A data.frame of 7 columns
 #' \itemize{
 #'   \item group
 #'   \item gene
 #'   \item normalized
-#'   \item caliberated
+#'   \item calibrated
 #'   \item error
 #'   \item lower
 #'   \item upper
@@ -213,8 +213,8 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group, mode = 'se
   # retain normalized amounts
   normalized <- gather(norm, gene, normalized, -group)
 
-  # caliberate to a reference_group
-  calib <- pcr_caliberate(norm, reference_group = reference_group,
+  # calibrate to a reference_group
+  calib <- pcr_calibrate(norm, reference_group = reference_group,
                           mode = 'divide', tidy = TRUE)
 
   if(mode == 'separate_tube') {
@@ -229,8 +229,8 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group, mode = 'se
   # join data.frames and calculate intervals
   res <- full_join(normalized, calib) %>%
     full_join(error) %>%
-    mutate(lower = caliberated - error,
-           upper = caliberated + error,
+    mutate(lower = calibrated - error,
+           upper = calibrated + error,
            error = error * normalized)
 
   return(res)
@@ -239,7 +239,7 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group, mode = 'se
 #' Apply qPCR analysis methods
 #'
 #' @inheritParams pcr_average
-#' @param method A character string; 'delta_delta_ct' defalult, 'delta_ct' or
+#' @param method A character string; 'delta_delta_ct' default, 'delta_ct' or
 #' 'relative_curve'
 #' @param ... Arguments passed to other methods
 #'

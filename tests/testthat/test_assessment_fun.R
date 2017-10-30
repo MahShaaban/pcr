@@ -1,11 +1,11 @@
 context("test assessment functions")
 
-test_that("pcr_effeciency calculates the correct intercept and slope", {
+test_that("pcr_efficiency calculates the correct intercept and slope", {
   # make amount/dilution variable
   amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 
   # calculate the standard curve
-  res <- pcr_effeciency(ct3,
+  res <- pcr_efficiency(ct3,
                         amount = amount,
                         reference_gene = 'GAPDH')
 
@@ -16,12 +16,12 @@ test_that("pcr_effeciency calculates the correct intercept and slope", {
   expect_equal(unname(c), unlist(res[, 2:3], use.names = FALSE))
 })
 
-test_that("pcr_effeciency retruns a plot", {
+test_that("pcr_efficiency retruns a plot", {
   # make amount/dilution variable
   amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 
   # calculate the standard curve
-  gg <- pcr_effeciency(ct3,
+  gg <- pcr_efficiency(ct3,
                        amount = amount,
                        reference_gene = 'GAPDH',
                        plot = TRUE)
@@ -74,7 +74,7 @@ test_that("pcr_assess calls the correct methods", {
 
   # testing problem
 
-  # method: effeciency
+  # method: efficiency
   # make amount/dilution variable
   amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 
@@ -82,7 +82,7 @@ test_that("pcr_assess calls the correct methods", {
   res <- pcr_assess(ct3,
                     amount = amount,
                     reference_gene = 'GAPDH',
-                    method = 'effeciency')
+                    method = 'efficiency')
 
   log_amount <- log10(amount)
   x <- with(ct3, c_myc - GAPDH)

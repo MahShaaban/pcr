@@ -10,7 +10,7 @@ pcr_normalize(df, reference_gene, mode = "subtract", tidy = FALSE)
 \item{df}{A data.frame of such as that returned by \link{pcr_average}}
 
 \item{reference_gene}{A character string of the name of the column
-correspoinding to the reference gene}
+corresponding to the reference gene}
 
 \item{mode}{A character string of the normalization mode to be used. Default
 is 'subtract'. Other possible modes include 'divide'}
@@ -21,7 +21,7 @@ is 'subtract'. Other possible modes include 'divide'}
 A data.frame of normalized ct values for each gene and a
 grouping variable. When mode is 'subtract' (default) each the reference gene
  is subtracted from each column, and division is used instead when mode is
-'divide'. The functino returns ignors non numeric columns and dropes the one
+'divide'. The function returns ignores non numeric columns and drops the one
 that corresponds to the reference_gene
 }
 \description{

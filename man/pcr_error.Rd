@@ -7,12 +7,12 @@
 pcr_error(df, reference_gene, tidy = FALSE)
 }
 \arguments{
-\item{df}{A data.frame of ncol n and nrow equalse the number of unique
+\item{df}{A data.frame of ncol n and nrow equals the number of unique
 grouping variables containing the standard error values of each gene in each
 group}
 
 \item{reference_gene}{A character string of the name of the column
-correspoinding to the reference gene}
+corresponding to the reference gene}
 
 \item{tidy}{A logical, default FALSE. When TRUE returns a tidy data.frame}
 }

@@ -23,7 +23,7 @@ A data.frame of 7 columns
 \itemize{
   \item group
   \item gene
-  \item caliberated
+  \item calibrated
   \item fold_change
   \item error
   \item lower

@@ -3,12 +3,12 @@
 \docType{data}
 \name{hk_express}
 \alias{hk_express}
-\title{Processed data of two identical houekeeping genes}
+\title{Processed data of two identical housekeeping genes}
 \format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 4 rows and 7 columns.}
 \usage{
 hk_express
 }
 \description{
-Processed data of two identical houekeeping genes
+Processed data of two identical housekeeping genes
 }
 \keyword{datasets}

@@ -2,7 +2,7 @@
 #'
 #' @inheritParams pcr_average
 #' @inheritParams pcr_normalize
-#' @inheritParams pcr_caliberate
+#' @inheritParams pcr_calibrate
 #' @param test A character string; 't.test' default, 'wilcox.test' or lm
 #'
 #' @return A data.frame of 5 columns in addition to term when test == 'lm'

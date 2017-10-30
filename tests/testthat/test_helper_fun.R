@@ -55,20 +55,20 @@ test_that("pcr_normalize normalizes by subtraction", {
   expect_equal(norm$c_myc, norm2)
 })
 
-test_that("pcr_caliberate calculates the caliberated expression by subtraction", {
+test_that("pcr_calibrate calculates the calibrated expression by subtraction", {
   group_var <- rep(c('brain', 'kidney'), each = 6)
   ave = pcr_average(ct1, group_var = group_var)
   dct = pcr_normalize(ave, 'GAPDH')
-  ddct = pcr_caliberate(dct, 'brain')
+  ddct = pcr_calibrate(dct, 'brain')
 
-  expect_equal(rel_express1$caliberated, ddct$c_myc)
+  expect_equal(rel_express1$calibrated, ddct$c_myc)
 })
 
-test_that("pcr_caliberate calculates the caliberated expression by division", {
+test_that("pcr_calibrate calculates the calibrated expression by division", {
   group_var <- rep(c('brain', 'kidney'), each = 6)
   ave = pcr_average(ct1, group_var = group_var)
   norm = pcr_normalize(ave, 'GAPDH')
-  calib = pcr_caliberate(norm, 'brain', mode = 'divide')
+  calib = pcr_calibrate(norm, 'brain', mode = 'divide')
 
   calib2 <- norm$c_myc / norm$c_myc[1]
   expect_equal(calib$c_myc, calib2)
