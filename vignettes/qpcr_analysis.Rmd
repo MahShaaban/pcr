@@ -53,6 +53,29 @@ references:
   issued:
     year: 2001
     month: 12
+- id: Pabinger2014
+  title: A survey of tools for the analysis of quantitative PCR (qPCR) data
+  author:
+  - family: Pabinger
+    given: Stephan
+  - family: Rodiger
+    given: Stefan
+  - family: Kriegner
+    given: Albert
+  - family: Vierlinger
+    given: Klemens
+  - family: Weinhausel
+    given: Andreas
+  container-title: Biomolecular Detection and Quantification
+  volume: 1
+  URL: 'https://www.ncbi.nlm.nih.gov/pubmed/27920994'
+  DOI: 10.1016/j.bdq.2014.08.002
+  issue: 1
+  publisher: ELSEVIER
+  type: review
+  issued:
+    year: 2014
+    month: 9
 vignette: >
   %\VignetteEngine{knitr::knitr}
   %\VignetteIndexEntry{Analysis of real-time qPCR data}
@@ -64,6 +87,7 @@ knitr::opts_chunk$set(error = FALSE, message = FALSE, fig.align = 'center', fig.
 ```
 
 # Overview  
+
 Quantitative real-time PCR is an imprtant technique in medical and biomedical applicaitons. The `pcr` package provides a unified interface for quality assessing, analyzing and testing qPCR data for statistical significance. The aim of this document is to describe the different methods and modes used to relatively quantify gene expression of qPCR and their implemenation in the `pcr` package.  
 
 # Getting started 
@@ -128,7 +152,7 @@ res <- pcr_assess(ct3,
 res
 ```
 
-In the case of using the $\Delta\Delta C_T$, the assumption of the amplification efficiency is critical for the reliability of the model. In particulare, the *slope* and the *R^2* of the line between thel log input amount and $\Delta C_T$ or differnce between the $C_T$ value of the target **c-myc** and GAPDH. Typically, The *slope* should be very small and the $R^2$ should be near 1. Here, both summaries; `slope` and `r_squared` are appropriate `r res$slope` and `r res$r_squared` respectively, so the assumption holds true.  
+In the case of using the $\Delta\Delta C_T$, the assumption of the amplification efficiency is critical for the reliability of the model. In particulare, the *slope* and the *R^2* of the line between thel log input amount and $\Delta C_T$ or differnce between the $C_T$ value of the target **c-myc** and GAPDH. Typically, The *slope* should be very small (less than 0.01). `slope` here is appropriate `r res$slope`, so the assumption holds true.  
 
 # Background  
 
@@ -398,7 +422,7 @@ Wilcoxon test & -0.6354 & \textless 0.0001 & (-0.4227, -0.8805) \\ \hline
 
 ### Amplification efficiency `pcr_efficiency` 
 
-To calculate the amplificaion efficiency in a qPCR experiment, the main input is a `data.frame` with columns contain the $C_T$ values for each gene and raws correspond to the different input amounts/dilutions (Table \ref{table:table5}).  
+To calculate the amplificaion efficiency in a qPCR experiment, the main input is a `data.frame` with columns contain the $C_T$ values for each gene and raws correspond to the different input amounts/dilutions (Table \ref{table5}).  
 
 The following code apply the calculation on the `data.frame`, `ct3`. It has two columns `r names(ct3)[1]` and `r names(ct3)[2]` and 3 raws for each of the input amounts coded in the variable `amounts`. A reference gene passed to the `reference_gene` argument, in this case, the column name `r names(ct3)[2]`.  
 
@@ -440,7 +464,7 @@ gg +
         strip.text = element_blank())
 ```
 
-The relavant summaries in calculating *efficiency* are the `slope` and `r_squared`. Typically, `slope` should be very low, and `r_squared` very high. Means the $\Delta C_T$ are not changing much as consequnce of changing the input concentration.  
+The relavant summaries in calculating *efficiency* is the `slope`. Typically, `slope` should be very low (less than 0.1). Means the $\Delta C_T$ are not changing much as consequnce of changing the input concentration.  
 
 ### Standard curve `pcr_standard`  
 
@@ -456,7 +480,7 @@ knitr::kable(res, caption = '\\label{table:table8}Standard curves of c-myc and G
 
 The output put is similar to the previous call, except when 'standard_curve' is passed to `method` curves are calculated for individual genes, column `gene` (Table \ref{table:table8}). 
 
-The information of the standard curves are required when using the standard curve methods, so we reain the relevant ones in the variables `intercept` and `slope`.  
+The information of the standard curves are required when using the standard curve methods, so we retain the relevant ones in the variables `intercept` and `slope`. Typically, the `r_squared` should be close to 1.  
 
 ```{r retain_variable}
 intercept <- res$intercept
@@ -505,7 +529,7 @@ knitr::kable(res1, caption = '\\label{table:table9} Double delta $C_T$ method (s
 
 The output of `pcr_analyze` is 8 columns; contains the calculatations of each gene in each group and the error terms (Table \ref{table:table8}). This analysis uses the default `mode`, 'separate_tube' as the input dataset came for an experiment where the target `r names(ct1)[1]` and the control gene `r names(ct1)[2]` were ran in separate tubes.  
 
-In contrast, the `ct2` dataset, also shown in Table \ref{table:table2}, came from an identical experment except the samples were run in the same tube. So the followin analysis invokes a different `mode`, 'same_tube'.  
+In contrast, the `ct2` dataset, also shown in Table \ref{table2}, came from an identical experment except the samples were run in the same tube. So the followin analysis invokes a different `mode`, 'same_tube'.  
 
 ```{r ddct_same_tube}
 # calculate all values and errors in one step
@@ -594,7 +618,7 @@ ggplot(res, aes(x = group, y = fold_change, group = gene, fill = gene)) +
 
 The calculation of the standard curve method involves to steps as explained earlier. First, a standard curve is calculted for each gene to find the *intercept* and the *slope*. Then the relative expression is calculated.  
 
-To apply this method to the `ct1` dataset (Table \ref{table:table3}). We used the variables `slope` and `intercept` that were calculated earlier using the `ct3` dataset \ref{table}.  
+To apply this method to the `ct1` dataset (Table \ref{table3}). We used the variables `slope` and `intercept` that were calculated earlier using the `ct3` dataset (Table \ref{table:table8}).  
 
 ```{r standard_separate_tube}
 ## calculate standard amounts and error
@@ -611,7 +635,7 @@ knitr::kable(res1, caption = '\\label{table:table12}Standard curve method (separ
 
 The output of `pcr_analyze` is the same as explained before. The calculated averages and error term of target genes in each group relative to the reference gene and gourp (Table \ref{table:table12}).   
 
-The argument `mode` can be can be used to change the way the $C_T$ values are averaged when samples from different genes were ran in the same tube (Table \ref{table:table4}).  
+The argument `mode` can be can be used to change the way the $C_T$ values are averaged when samples from different genes were ran in the same tube (Table \ref{table4}).  
 
 ```{r standard_same_tube}
 ## calculate standard amounts and error
@@ -676,7 +700,7 @@ res <- pcr_analyze(ct4,
             reference_group = 'control')
 ```
 
-```{r plot_testing data, fig.cap='\\label{fig:fig6} Relative expression of target gene using delta delta Ct'}
+```{r plot_testing data, fig.cap='\\label{fig:fig6} Relative expression of target gene using delta delta $C_T$'}
 ggplot(res, aes(x = group, y = relative_expression)) +
   geom_col() +
   labs(x = '', y = 'Relative mRNA expression')
@@ -684,7 +708,7 @@ ggplot(res, aes(x = group, y = relative_expression)) +
 
 We start by analyzing the dataset `ct4` using the default method of `pcr_analyze`, 'delta_delta_ct' and show a bar graph of the results (Fig. \ref{fig:fig6}).  
 
-Finallys we used the `pcr_test` to perfom differnt tests. The resulting output tables can be compared to the results from the original paper that provided the dataset (Table \ref{table:table6}).  
+Finallys we used the `pcr_test` to perfom differnt tests. The resulting output tables can be compared to the results from the original paper that provided the dataset (Table \ref{table6}).  
 
 ```{r testing_t.test}
 # test using t-test
@@ -707,7 +731,7 @@ tst2 <- pcr_test(ct4,
          reference_group = 'control',
          test = 'wilcox.test')
 
-knitr::kable(tst2, caption = 'Wilcoxon test summary')
+knitr::kable(tst2, caption = '\\label{table:table15} Wilcoxon test summary')
 ```
 
 When the argument `test` is set to 'wilcox.test', Wilcoxon test method is used instead and similar output is provided (Table \ref{table:table15}).  
@@ -722,12 +746,15 @@ tst3 <- pcr_test(ct4,
          reference_group = 'control',
          test = 'lm')
 
-knitr::kable(tst3, caption = 'Linear regression summary')
+knitr::kable(tst3, caption = '\\label{table:table16} Linear regression summary')
 ```
 
 The output of the `test`, 'lm' contains an extra column `term` to show the different comparison terms used to calculate the results (Table \ref{table:table16}).  
 
 # Comparison with existing pacakges  
+
+Pabinger *et al.* surveyed the tools used to analyze qPCR data across different platforms [@Pabinger2014]. They included 9 R packages which provide very useful analysis and visualization methods. Some of these packages focuses one cetain models and some are designed to handle high-throughput qPCR data. Most of these packages are hosted in CRAN and a few on the BioConductor so they adhere to bioconductor methods and data containers. In comparison, `pcr` provides a unified interface for different quality assessment, analysis and testing models. The input and the output are tidy `data.frame`, and the package source code follows the tidyverse paractices. This package is targets the small scale qPCR experimental data and there R user practioners. The interface and documentation choices were made with such users in mind and require no deep knowledge in specific data structures or complex statistical models.  
+
 # Citation  
 
 ```{r citation, eval=FALSE}

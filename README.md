@@ -71,6 +71,8 @@ res <- pcr_assess(ct3,
 res
 ```
 
+In the case of using the $\Delta\Delta C_T$, the assumption of the amplification efficiency is critical for the reliability of the model. In particulare, the *slope* and the *R^2* of the line between thel log input amount and $\Delta C_T$ or differnce between the $C_T$ value of the target **c-myc** and GAPDH. Typically, The *slope* should be very small (less than 0.01). `slope` here is appropriate `r res$slope`, so the assumption holds true.  
+
 ### Other analysis methods  
 
 * Delta CT method  
