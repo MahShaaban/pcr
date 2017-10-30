@@ -13,26 +13,26 @@ Quantitative real-time PCR is an imprtant technique in medical and biomedical ap
 
 The `pcr` is available on github. To install it using `devtools`:  
 
-```{r install_master, eval=FALSE}
+```r
 # install package from github (under development)
 devtools::install_github('MahShaaban/pcr')
 ```
 
 The development version of the package can be similarly obtained through:  
 
-```{r install_develop, eval=FALSE}
+```r
 # install package from github (under development)
 devtools::install_github('MahShaaban/pcr@develop')
 ```
 
-```{r load_pcr}
+```r
 # load required libraries
 library(pcr)
 ```
 
-The following chunck of code locates a dataset of $C_T$ values of two genes from 12 different samples and performs a quick analysis to obtain the expression of a target gene **c-myc** normalized by a control GAPDH in the **Kidney** samples relative to the brain samples. `pcr_analyze` provides differnt methods, the default one that is used here is 'delta_delta_ct' applies the populat ($\Delta\Delta C_T$) method.  
+The following chunck of code locates a dataset of CT values of two genes from 12 different samples and performs a quick analysis to obtain the expression of a target gene **c-myc** normalized by a control GAPDH in the **Kidney** samples relative to the brain samples. `pcr_analyze` provides differnt methods, the default one that is used here is 'delta_delta_ct' applies the popular Double Delta CT method.  
 
-```{r analyze}
+```r
 # default mode delta_delta_ct
 ## locate and read raw ct data
 fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
@@ -51,11 +51,11 @@ res <- pcr_analyze(ct1,
 res
 ```
 
-The output of `pcr_analyze` is explained in the documnetation of the function `?pcr_analyze` and the method it calls `?pcr_ddct`. Briefly, the input includes the $C_T$ value of c-myc `normalized` to the control GAPDH, The `calibrated` value of c-myc in the kidney relative to the brain samples and the final `relative_expression` of c-myc. In addition, an `error` term and a `lower` and `upper` intervals are provided.  
+The output of `pcr_analyze` is explained in the documnetation of the function `?pcr_analyze` and the method it calls `?pcr_ddct`. Briefly, the input includes the CT value of c-myc `normalized` to the control GAPDH, The `calibrated` value of c-myc in the kidney relative to the brain samples and the final `relative_expression` of c-myc. In addition, an `error` term and a `lower` and `upper` intervals are provided.  
 
-The previous analysis makes a few assumpitons. One of which is a perfect amplification efficiency of the PCR reation. To assess the validity of this assumption, `pcr_assess` provides a method called `efficiency`. The input `data.frame` is the $C_T$ values of c-myc and GAPDH at different input amounts/dilutions.  
+The previous analysis makes a few assumpitons. One of which is a perfect amplification efficiency of the PCR reation. To assess the validity of this assumption, `pcr_assess` provides a method called `efficiency`. The input `data.frame` is the CT values of c-myc and GAPDH at different input amounts/dilutions.  
 
-```{r assess}
+```r
 ## locate and read data
 fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
 ct3 <- readr::read_csv(fl)
