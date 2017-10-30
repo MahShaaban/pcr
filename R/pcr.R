@@ -17,4 +17,5 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c('group',
                                                         'normalized',
                                                         'ct',
                                                         'upper',
-                                                        'lower'))
+                                                        'lower',
+                                                        'log_amount'))

@@ -37,12 +37,13 @@ test_that("pcr_average averages by amount", {
 })
 
 test_that("pcr_normalize normalizes by subtraction", {
-
   group_var <- rep(c('brain', 'kidney'), each = 6)
   ave = pcr_average(ct1, group_var = group_var)
-  dct = pcr_normalize(ave, 'GAPDH')
+  norm = pcr_normalize(ave, 'GAPDH', mode = 'subtract')
 
-  expect_equal(rel_express1$normalized, dct$c_myc)
+  norm2 <- ave$c_myc - ave$GAPDH
+
+  expect_equal(norm$c_myc, norm2)
 })
 
 test_that("pcr_normalize normalizes by subtraction", {
@@ -58,10 +59,11 @@ test_that("pcr_normalize normalizes by subtraction", {
 test_that("pcr_calibrate calculates the calibrated expression by subtraction", {
   group_var <- rep(c('brain', 'kidney'), each = 6)
   ave = pcr_average(ct1, group_var = group_var)
-  dct = pcr_normalize(ave, 'GAPDH')
-  ddct = pcr_calibrate(dct, 'brain')
+  norm = pcr_normalize(ave, 'GAPDH')
+  calib = pcr_calibrate(norm, 'brain', mode = 'subtract')
 
-  expect_equal(rel_express1$calibrated, ddct$c_myc)
+  calib2 <- norm$c_myc - norm$c_myc[1]
+  expect_equal(calib$c_myc, calib2)
 })
 
 test_that("pcr_calibrate calculates the calibrated expression by division", {
@@ -79,7 +81,8 @@ test_that("pcr_error returns the proper errors in the right format", {
   sds = pcr_sd(ct1, group_var = group_var)
   errors = pcr_error(sds, reference_gene = 'GAPDH')
 
-  expect_equal(rel_express1$error, errors$c_myc)
+  errors2 <- sqrt((sds$c_myc^2) + (sds$GAPDH^2))
+  expect_equal(errors$c_myc, errors2)
 })
 
 test_that("pcr_cv calculates the correct cv", {
