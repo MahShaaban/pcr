@@ -755,6 +755,76 @@ The output of the `test`, 'lm' contains an extra column `term` to show the diffe
 
 Pabinger *et al.* surveyed the tools used to analyze qPCR data across different platforms [@Pabinger2014]. They included 9 R packages which provide very useful analysis and visualization methods. Some of these packages focuses one cetain models and some are designed to handle high-throughput qPCR data. Most of these packages are hosted in CRAN and a few on the BioConductor so they adhere to bioconductor methods and data containers. In comparison, `pcr` provides a unified interface for different quality assessment, analysis and testing models. The input and the output are tidy `data.frame`, and the package source code follows the tidyverse paractices. This package is targets the small scale qPCR experimental data and there R user practioners. The interface and documentation choices were made with such users in mind and require no deep knowledge in specific data structures or complex statistical models.  
 
+# Miscellaneous  
+In this section, we discuss briefly some common issues that arises when using real-time qPCR data and some simpliefied solutions using the `pcr` package. Mainy, we use linear models to quantify the effect of variables external to the reaction condtions on the resulting data and analysis. Either to identify such effects or to inform further experiments that are more likely to yeild better results once the sources of the problems were removed. The examples are applied to the `ct4` dataset alone with some artificial variable.  
+
+## Testing advanced desgins and hypotheses  
+
+When considering testing, multiple variable in an experiment or their interactions the argument `model_matrix` should be used in `pcr_test`. The `model_matrix` should be constructed first to reflect the hypothesis at hand. For example, when having multiple dose of a treatmen. A vector of numerical values is constructed first to indicate the `dose` that were used with each sample. Along with the main grouping variable `group`, they should be combined in a data.frame and the function `model.matrix` is used. The first argument to this fuction is the `formula` of the comparison.  
+
+```{r advanced_designs}
+# testing advanced designs using a model matrix
+# make a model matrix
+group <- relevel(factor(group), ref = 'control')
+dose <- rep(c(100, 80, 60, 40), each = 3, times = 2)
+mm <- model.matrix(~group:dose, data = data.frame(group, dose))
+
+# test using t-test
+res <- pcr_test(ct4,
+                reference_gene = 'ref',
+                model_matrix = mm,
+                test = 'lm')
+
+knitr::kable(res, caption = "\\label{table:table17} Testing advanced hypotheses")
+```
+
+In this case, the `estimate` effect of the interaction term between `dose` and `group` is very samll and the `p_value` is very large (Table \ref{table:table17}).  
+
+## Varying RNA quality among samples  
+
+The quality of the RNA is very critical and should be measured and pass the minimum threshold. Including the scaled qualities , `quality`, can be added to an interaction term in a linear model, to rule out its effect on the analysis if suspected to have any.  
+
+```{r varying_rna_quality}
+# using linear models to check the effect of RNA quality
+# make a model matrix
+group <- relevel(factor(group), ref = 'control')
+set.seed(1234)
+quality <- scale(rnorm(n = 24, mean = 1.9, sd = .1))
+mm <- model.matrix(~group + group:quality, data = data.frame(group, quality))
+
+# testing using lm
+res <- pcr_test(ct4,
+                reference_gene = 'ref',
+                model_matrix = mm,
+                test = 'lm')
+
+knitr::kable(res, caption = "\\label{table:table18} Check the effect of varying RNA quality")
+```
+
+The randomly generated `quality` seems to infuluence the results as indicated by the big `estimate` for the term 'model_matrixgroupcontrol:quality' and its `p_value` (Table \ref{table:table18}).  
+
+## Combining data from multiple runs  
+
+The questions of whether it's permissable to combine data from multiple runs depends on many factors. However, in practice it might be the only available option. In that case, one way to ensure the reliabilty of the data, is to use consider carefully which samples to run each time. Randamization or blocking can be used to avoid that batch effect or at least leave a chance to detect it if exists.  
+
+```{r multiple_runs}
+# using linear model to check the effects of mixing separate runs
+# make a model matrix
+group <- relevel(factor(group), ref = 'control')
+run <- factor(rep(c(1:3), 8))
+mm <- model.matrix(~group + group:run, data = data.frame(group, run))
+
+# test using lm
+res <- pcr_test(ct4,
+                reference_gene = 'ref',
+                model_matrix = mm,
+                test = 'lm')
+
+knitr::kable(res, caption = "\\label{table:table19} Combining data from multiple qPCR runs")
+```
+
+Here, we contructed a variable `run` to similate a situation in which a dataset was generated in three separate runs. By including `run` in a `model_matrix`, its effect can be estimated. In this case, the `estimate` are very samll and the `p_value` are very large, so it can be igored (Table \ref{table:table19}).  
+
 # Citation  
 
 ```{r citation, eval=FALSE}

@@ -92,21 +92,21 @@ test_that("pcr_test runs the lm correctly with multiple groups", {
   ct_treated <- ct4[ group == 'treatment',]
 
   # make dose variable
-  dose <- rep(c(10, 2, 0.4, .08), each = 3)
+  dose <- rep(c(100, 80, 60, 40), each = 3)
 
   # test using lm
   res <- pcr_test(ct_treated,
                   group_var = as.character(dose),
                   reference_gene = 'ref',
-                  reference_group = '0.08',
+                  reference_group = '40',
                   test = 'lm')
 
   norm <- ct_treated$target - ct_treated$ref
 
-  group <- relevel(factor(dose), ref = '0.08')
+  group <- relevel(factor(dose), ref = '40')
 
-  ll <- tidy(lm(norm ~ group))[-1,][c(1,3,2),]
-  conf_int <- tidy(confint(lm(norm ~ group)))[-1,][c(1,3,2),]
+  ll <- tidy(lm(norm ~ group))[-1,][c(3,1,2),]
+  conf_int <- tidy(confint(lm(norm ~ group)))[-1,][c(3,1,2),]
 
 
   expect_equal(res$estimate, ll$estimate)
@@ -122,7 +122,7 @@ test_that("pcr_test runs the lm correctly with a model matrix", {
   # make a model matrix
   group <- rep(c('control', 'treatment'), each = 12)
   group <- relevel(factor(group), ref = 'control')
-  dose <- rep(c(10, 2, 0.4, .08), each = 3, times = 2)
+  dose <- rep(c(100, 80, 60, 40), each = 3, times = 2)
   mm <- model.matrix(~group+dose+group:dose, data = data.frame(group, dose))
 
   # test using lm
