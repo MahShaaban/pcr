@@ -63,30 +63,30 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group, mode = 'sep
   # calculate the delta_ct
   if(mode == 'separate_tube') {
     # calculate average ct and normalize
-    ave <- pcr_average(df, group_var = group_var)
-    dct <- pcr_normalize(ave, reference_gene = reference_gene)
+    ave <- .pcr_average(df, group_var = group_var)
+    dct <- .pcr_normalize(ave, reference_gene = reference_gene)
     } else if(mode == 'same_tube') {
       # normalize and average normalized ct values
-      dct <- pcr_normalize(df, reference_gene = reference_gene)
-      dct <- pcr_average(dct, group_var = group_var)
+      dct <- .pcr_normalize(df, reference_gene = reference_gene)
+      dct <- .pcr_average(dct, group_var = group_var)
     }
   # retain the normalized ct
   delta_ct <- gather(dct, gene, normalized, -group)
 
   # calculate the delta_delta_ct
-  ddct <- pcr_calibrate(dct, reference_group = reference_group, tidy = TRUE)
+  ddct <- .pcr_calibrate(dct, reference_group = reference_group, tidy = TRUE)
 
   # calculate the relative expression
   norm_rel <- mutate(ddct, relative_expression = 2 ^ -calibrated)
 
   if(mode == 'separate_tube') {
     # calculate the error from ct values
-    sds <- pcr_sd(df, group_var = group_var)
-    error <- pcr_error(sds, reference_gene = reference_gene, tidy = TRUE)
+    sds <- .pcr_sd(df, group_var = group_var)
+    error <- .pcr_error(sds, reference_gene = reference_gene, tidy = TRUE)
     } else if(mode == 'same_tube') {
       # calculate error from normalized ct values
-      dct <- pcr_normalize(df, reference_gene = reference_gene)
-      error <- pcr_sd(dct, group_var = group_var, tidy = TRUE)
+      dct <- .pcr_normalize(df, reference_gene = reference_gene)
+      error <- .pcr_sd(dct, group_var = group_var, tidy = TRUE)
     }
 
   # merge data.frames and calculate intervals
@@ -125,7 +125,7 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group, mode = 'sep
 #'
 #' @references Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of
 #' Relative Gene Expression Data Using Real-Time Quantitative PCR and the
-#' \eqn{2^{-\Delta \Delat C_T}} Method.” Methods 25 (4). ELSEVIER.
+#' Double Delta CT Method.” Methods 25 (4). ELSEVIER.
 #' doi:10.1006/meth.2001.1262.
 #'
 #' @examples
@@ -155,12 +155,12 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group, mode = 'sep
 pcr_dct <- function(df, group_var, reference_gene, reference_group, mode = 'separate_tube') {
   if(mode == 'separate_tube') {
     # average ct and calibrate to a reference group
-    ave <- pcr_average(df, group_var = group_var)
-    dct <- pcr_calibrate(ave, reference_group = reference_group)
+    ave <- .pcr_average(df, group_var = group_var)
+    dct <- .pcr_calibrate(ave, reference_group = reference_group)
   } else if(mode == 'same_tube') {
     # calibrate ct and average
-    dct <- pcr_calibrate(df, reference_group = reference_group)
-    dct <- pcr_average(dct, group_var = group_var)
+    dct <- .pcr_calibrate(df, reference_group = reference_group)
+    dct <- .pcr_average(dct, group_var = group_var)
   }
 
   # retain calibrated values
@@ -170,12 +170,12 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group, mode = 'sepa
 
   if(mode == 'separate_tube') {
     # calculate the standard deviation from ct values
-    sds <- pcr_sd(df, group_var = group_var, tidy = TRUE)
+    sds <- .pcr_sd(df, group_var = group_var, tidy = TRUE)
   } else if(mode == 'same_tube') {
     # calibrate ct values to a reference group
     # calculated sd from calibrated values
-    dct <- pcr_calibrate(df, reference_group = reference_group)
-    sds <- pcr_sd(dct, group_var = group_var, tidy = TRUE)
+    dct <- .pcr_calibrate(df, reference_group = reference_group)
+    sds <- .pcr_sd(dct, group_var = group_var, tidy = TRUE)
   }
 
   # join data frame and calculate intervals
@@ -222,7 +222,7 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group, mode = 'sepa
 #'
 #' @references Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of
 #' Relative Gene Expression Data Using Real-Time Quantitative PCR and the
-#' \eqn{2^{-\Delta \Delat C_T}} Method.” Methods 25 (4). ELSEVIER.
+#' Double Delta CT Method.” Methods 25 (4). ELSEVIER.
 #' doi:10.1006/meth.2001.1262.
 #'
 #' @examples
@@ -259,34 +259,34 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group, mode = 'sepa
 pcr_curve <- function(df, group_var, reference_gene, reference_group, mode = 'separate_tube',
                       intercept, slope) {
   # calculate the amount of rna in samples
-  amounts <- pcr_amount(df,
+  amounts <- .pcr_amount(df,
                         intercept = intercept,
                         slope = slope)
   if(mode == 'separate_tube') {
     # average amounts and normalize by a reference_gene
-    ave <- pcr_average(amounts, group_var = group_var)
-    norm <- pcr_normalize(ave, reference_gene = reference_gene, mode = 'divide')
+    ave <- .pcr_average(amounts, group_var = group_var)
+    norm <- .pcr_normalize(ave, reference_gene = reference_gene, mode = 'divide')
   } else if(mode == 'same_tube') {
     # normalize amounts and average
-    norm <- pcr_normalize(amounts, reference_gene = reference_gene, mode = 'divide')
-    norm <- pcr_average(norm, group_var = group_var)
+    norm <- .pcr_normalize(amounts, reference_gene = reference_gene, mode = 'divide')
+    norm <- .pcr_average(norm, group_var = group_var)
   }
 
   # retain normalized amounts
   normalized <- gather(norm, gene, normalized, -group)
 
   # calibrate to a reference_group
-  calib <- pcr_calibrate(norm, reference_group = reference_group,
+  calib <- .pcr_calibrate(norm, reference_group = reference_group,
                           mode = 'divide', tidy = TRUE)
 
   if(mode == 'separate_tube') {
     # calculate cv from amounts
-    cv <- pcr_cv(amounts, group_var = group_var)
-    error <- pcr_error(cv, reference_gene = reference_gene, tidy = TRUE)
+    cv <- .pcr_cv(amounts, group_var = group_var)
+    error <- .pcr_error(cv, reference_gene = reference_gene, tidy = TRUE)
   } else if(mode == 'same_tube') {
     # calculate cv from normalized amounts
-    norm <- pcr_normalize(amounts, reference_gene = reference_gene, mode = 'divide')
-    error <- pcr_cv(norm, group_var = group_var, tidy = TRUE)
+    norm <- .pcr_normalize(amounts, reference_gene = reference_gene, mode = 'divide')
+    error <- .pcr_cv(norm, group_var = group_var, tidy = TRUE)
   }
   # join data.frames and calculate intervals
   res <- full_join(normalized, calib) %>%
@@ -320,7 +320,7 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group, mode = 'se
 #'
 #' @references Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of
 #' Relative Gene Expression Data Using Real-Time Quantitative PCR and the
-#' \eqn{2^{-\Delta \Delat C_T}} Method.” Methods 25 (4). ELSEVIER.
+#' Double Delta CT Method.” Methods 25 (4). ELSEVIER.
 #' doi:10.1006/meth.2001.1262.
 #'
 #' @examples

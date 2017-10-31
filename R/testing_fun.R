@@ -78,7 +78,7 @@
 pcr_test <- function(df, group_var, reference_gene, reference_group,
                      test = 't.test', ...) {
   # calculate the delta_ct values
-  norm <- pcr_normalize(df, reference_gene = reference_gene)
+  norm <- .pcr_normalize(df, reference_gene = reference_gene)
 
   # adjust group_var for formuls
   if(test == 'lm') {

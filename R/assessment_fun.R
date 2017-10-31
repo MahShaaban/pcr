@@ -38,7 +38,7 @@
 #'
 #' @references Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of
 #' Relative Gene Expression Data Using Real-Time Quantitative PCR and the
-#' \eqn{2^{-\Delta \Delat C_T}} Method.” Methods 25 (4). ELSEVIER.
+#' Double Delta CT Method.” Methods 25 (4). ELSEVIER.
 #' doi:10.1006/meth.2001.1262.
 #'
 #' @examples
@@ -67,19 +67,19 @@
 #' @export
 pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
   # calculate delta_ct
-  dct <- pcr_normalize(df, reference_gene = reference_gene)
+  dct <- .pcr_normalize(df, reference_gene = reference_gene)
   # calculate trend; intercep, slop and r_squared
-  trend <- pcr_trend(dct, amount = amount)
+  trend <- .pcr_trend(dct, amount = amount)
 
   # return data when plot is false
   if(plot == TRUE) {
     # calculate average of normalizex values
-    ave <- pcr_normalize(ct3, reference_gene = reference_gene) %>%
-      pcr_average(group_var = amount, tidy = TRUE)
+    ave <- .pcr_normalize(ct3, reference_gene = reference_gene) %>%
+      .pcr_average(group_var = amount, tidy = TRUE)
 
     # calculate the standard deviation
-    sd <- pcr_normalize(ct3, reference_gene = reference_gene) %>%
-      pcr_sd(group_var = amount, tidy = TRUE)
+    sd <- .pcr_normalize(ct3, reference_gene = reference_gene) %>%
+      .pcr_sd(group_var = amount, tidy = TRUE)
 
     # merge data.frames and calculate intervals
     dat <- full_join(ave, sd) %>%
@@ -132,7 +132,7 @@ pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
 #'
 #' @references Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of
 #' Relative Gene Expression Data Using Real-Time Quantitative PCR and the
-#' \eqn{2^{-\Delta \Delat C_T}} Method.” Methods 25 (4). ELSEVIER.
+#' Double Delta CT Method.” Methods 25 (4). ELSEVIER.
 #' doi:10.1006/meth.2001.1262.
 #'
 #' @examples
@@ -161,7 +161,7 @@ pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
 pcr_standard <- function(df, amount, plot = FALSE) {
   # return data when plot is false
   # calculate trend; intercep, slop and r_squared
-  trend <- pcr_trend(df, amount)
+  trend <- .pcr_trend(df, amount)
 
   # when plot == TRUE
   # plot a standard curve for each gene

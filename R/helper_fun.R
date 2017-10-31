@@ -25,10 +25,10 @@
 #' group_var <- rep(c('brain', 'kidney'), each = 6)
 #'
 #' # calculate averages
-#' pcr_average(ct1, group_var = group_var)
+#' .pcr_average(ct1, group_var = group_var)
 #'
 #' # calculate averages and return a tidy data.frame
-#' pcr_average(ct1, group_var = group_var, tidy = TRUE)
+#' .pcr_average(ct1, group_var = group_var, tidy = TRUE)
 #'
 #' # using a amount variable
 #' # locate and read raw ct data
@@ -39,17 +39,18 @@
 #' amount <- amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 #'
 #' # calculate averages
-#' pcr_average(ct3, amount = amount)
+#' .pcr_average(ct3, amount = amount)
 #'
 #' # calculate averages and return a tidy data.frame
-#' pcr_average(ct3, amount = amount, tidy = TRUE)
+#' .pcr_average(ct3, amount = amount, tidy = TRUE)
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate group_by summarise_all
 #' @importFrom tidyr gather
 #'
-#' @export
-pcr_average <- function(df, group_var, amount, tidy = FALSE) {
+#' @keywords internal
+
+.pcr_average <- function(df, group_var, amount, tidy = FALSE) {
   # when group_var is provided
   # calculate the averages using group_var in group_by
   if(!missing(group_var)) {
@@ -86,7 +87,7 @@ pcr_average <- function(df, group_var, amount, tidy = FALSE) {
 #' Uses subtraction or division to normalize values in all columns to a certain
 #' specified column
 #'
-#' @inheritParams pcr_average
+#' @inheritParams .pcr_average
 #' @param reference_gene A character string of the name of the column
 #' corresponding to the reference gene
 #' @param mode A character string of the normalization mode to be used. Default
@@ -107,26 +108,27 @@ pcr_average <- function(df, group_var, amount, tidy = FALSE) {
 #' ct1 <- readr::read_csv(fl)
 #'
 #' # normalize the ct values
-#' pcr_normalize(ct1, reference_gene = 'GAPDH')
+#' .pcr_normalize(ct1, reference_gene = 'GAPDH')
 #'
 #' # normalize by division
-#' pcr_normalize(ct1, reference_gene = 'GAPDH', mode = 'divide')
+#' .pcr_normalize(ct1, reference_gene = 'GAPDH', mode = 'divide')
 #'
 #' # add grouping variable and average first
 #' group_var <- rep(c('brain', 'kidney'), each = 6)
-#' ave <- pcr_average(ct1, group_var = group_var)
+#' ave <- .pcr_average(ct1, group_var = group_var)
 #'
 #' # normalize by subtraction
-#' pcr_normalize(ave, 'GAPDH')
+#' .pcr_normalize(ave, 'GAPDH')
 #'
 #' # normalize by division
-#' pcr_normalize(ave, 'GAPDH', mode = 'divide')
+#' .pcr_normalize(ave, 'GAPDH', mode = 'divide')
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select mutate_if starts_with
 #'
-#' @export
-pcr_normalize <- function(df, reference_gene, mode = 'subtract', tidy = FALSE) {
+#' @keywords internal
+
+.pcr_normalize <- function(df, reference_gene, mode = 'subtract', tidy = FALSE) {
   # get the reference_gene column and unlist
   ref <- select(df, reference_gene) %>% unlist(use.names = FALSE)
 
@@ -156,8 +158,8 @@ pcr_normalize <- function(df, reference_gene, mode = 'subtract', tidy = FALSE) {
 #' Uses subtraction or division to caliberate values in all rows to a sepcified
 #' row
 #'
-#' @inheritParams pcr_average
-#' @inheritParams pcr_normalize
+#' @inheritParams .pcr_average
+#' @inheritParams .pcr_normalize
 #' @param reference_group A character string of the the entery in the rows of a
 #' grouping variable
 #'
@@ -178,23 +180,24 @@ pcr_normalize <- function(df, reference_gene, mode = 'subtract', tidy = FALSE) {
 #' group_var <- rep(c('brain', 'kidney'), each = 6)
 #'
 #' # calculate averages
-#' ave <- pcr_average(ct1, group_var = group_var)
+#' ave <- .pcr_average(ct1, group_var = group_var)
 #'
 #' # calculate delta ct
-#' dct <- pcr_normalize(ave, 'GAPDH')
+#' dct <- .pcr_normalize(ave, 'GAPDH')
 #'
 #' # calculate delta delta ct
-#' pcr_calibrate(dct, 'brain', tidy = TRUE)
+#' .pcr_calibrate(dct, 'brain', tidy = TRUE)
 #'
 #' # calculate delta delta ct and return a tidy data.frame
-#' pcr_calibrate(dct, 'brain', tidy = TRUE)
+#' .pcr_calibrate(dct, 'brain', tidy = TRUE)
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr filter select mutate_if
 #' @importFrom tidyr gather
 #'
-#' @export
-pcr_calibrate <- function(df, reference_group, mode = 'subtract', tidy = FALSE) {
+#' @keywords internal
+
+.pcr_calibrate <- function(df, reference_group, mode = 'subtract', tidy = FALSE) {
   # get the row index of the reference group
   ind <- which(df$group == reference_group)
 
@@ -221,7 +224,7 @@ pcr_calibrate <- function(df, reference_group, mode = 'subtract', tidy = FALSE) 
 #' Uses a group_by statement to calculate the standard deviations of values in
 #' a data.fram grouped by a variable
 #'
-#' @inheritParams pcr_average
+#' @inheritParams .pcr_average
 #'
 #' @details Used to calculate the standard devaitions of ct after grouping by a
 #' group_var for the experimental groups
@@ -239,18 +242,19 @@ pcr_calibrate <- function(df, reference_group, mode = 'subtract', tidy = FALSE) 
 #' group_var <- rep(c('brain', 'kidney'), each = 6)
 #'
 #' # calculate standard deviations
-#' pcr_sd(ct1, group_var = group_var)
+#' .pcr_sd(ct1, group_var = group_var)
 #'
 #' # calculate standard deviations and return a tidy data.frame
-#' pcr_sd(ct1, group_var = group_var, tidy = TRUE)
+#' .pcr_sd(ct1, group_var = group_var, tidy = TRUE)
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate group_by summarise_all
 #' @importFrom tidyr gather
 #' @importFrom stats sd
 #'
-#' @export
-pcr_sd <- function(df, group_var, tidy = FALSE) {
+#' @keywords internal
+
+.pcr_sd <- function(df, group_var, tidy = FALSE) {
   # group_by the group_var
   # calculate standard deviation
   sd <- mutate(df, group = group_var) %>%
@@ -271,8 +275,8 @@ pcr_sd <- function(df, group_var, tidy = FALSE) {
 #' Uses a specified column as a reference to calculate the error between it
 #' and another column.
 #'
-#' @inheritParams pcr_normalize
-#' @inheritParams pcr_average
+#' @inheritParams .pcr_normalize
+#' @inheritParams .pcr_average
 #'
 #' @details Used to sum the error of a gene and a reference_gene/column
 #'
@@ -292,17 +296,18 @@ pcr_sd <- function(df, group_var, tidy = FALSE) {
 #' group_var <- rep(c('brain', 'kidney'), each = 6)
 #'
 #' # calculate standard deviations
-#' sds <- pcr_sd(ct1, group_var = group_var)
+#' sds <- .pcr_sd(ct1, group_var = group_var)
 #'
 #' # calculate errors
-#' pcr_error(sds, reference_gene = 'GAPDH')
+#' .pcr_error(sds, reference_gene = 'GAPDH')
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select starts_with mutate_if
 #' @importFrom tidyr gather
 #'
-#' @export
-pcr_error <- function(df, reference_gene, tidy = FALSE) {
+#' @keywords internal
+
+.pcr_error <- function(df, reference_gene, tidy = FALSE) {
   # get the reference_gene column and unlist
   ref <- select(df, reference_gene) %>%
     unlist(use.names = FALSE)
@@ -328,8 +333,8 @@ pcr_error <- function(df, reference_gene, tidy = FALSE) {
 #' deviations of each group by their averages
 #'
 #' @param amounts A data.frame of the calculated input amounts returned by
-#' \code{\link{pcr_amount}}
-#' @inheritParams pcr_average
+#' \code{\link{.pcr_amount}}
+#' @inheritParams .pcr_average
 #'
 #' @details Used to calculate the coefficient of variation of the input amounts
 #'  after grouping by a grouping variable; group_var for experimental groups.
@@ -355,7 +360,7 @@ pcr_error <- function(df, reference_gene, tidy = FALSE) {
 #' slope <- standard_curve$slope
 #'
 #' # calculate amounts
-#' input_amounts <- pcr_amount(ct1,
+#' input_amounts <- .pcr_amount(ct1,
 #'                             intercept = intercept,
 #'                             slope = slope)
 #'
@@ -363,14 +368,16 @@ pcr_error <- function(df, reference_gene, tidy = FALSE) {
 #' group <- rep(c('brain', 'kidney'), each = 6)
 #'
 #' # calculate cv errors
-#' pcr_cv(input_amounts,
+#' .pcr_cv(input_amounts,
 #'        group_var = group)
 #'
 #' @importFrom tidyr gather spread
 #' @importFrom dplyr group_by summarise ungroup
 #'
-#' @export
-pcr_cv <- function(amounts, group_var, tidy = FALSE) {
+#' @keywords internal
+
+
+.pcr_cv <- function(amounts, group_var, tidy = FALSE) {
   # group_by group_var and calculate cv
   cv <- mutate(amounts, group = group_var) %>%
     group_by(group) %>%
@@ -387,7 +394,7 @@ pcr_cv <- function(amounts, group_var, tidy = FALSE) {
 #' Calculate PCR RNA amounts
 #'
 #'
-#' @inheritParams pcr_average
+#' @inheritParams .pcr_average
 #' @param intercept A numeric vector of length equals the number of columns of df,
 #'  one for each gene such as the output of \link{pcr_assess}
 #' @param slope A numeric vector of length equals the number of columns of df,
@@ -421,12 +428,13 @@ pcr_cv <- function(amounts, group_var, tidy = FALSE) {
 #' slope <- standard_curve$slope
 #'
 #' # calculate amounts
-#' pcr_amount(ct1,
+#' .pcr_amount(ct1,
 #'            intercept = intercept,
 #'            slope = slope)
 #'
-#' @export
-pcr_amount <- function(df, intercept, slope) {
+#' @keywords internal
+
+.pcr_amount <- function(df, intercept, slope) {
   # make a data.frame of intercept, slope ana gene names
   curve <- data_frame(intercept,
                       slope,
@@ -450,7 +458,7 @@ pcr_amount <- function(df, intercept, slope) {
 #' Calculates the linear trend; intercept and slope between two variables
 #'
 #' @param df A data.frame of raw ct values or the delta ct values calculated
-#' by \link{pcr_normalize}
+#' by \link{.pcr_normalize}
 #' @param amount A numeric vector input amounts/dilutions of legnth equals the
 #' number of thr rows of df.
 #'
@@ -465,6 +473,11 @@ pcr_amount <- function(df, intercept, slope) {
 #'   \item r_squared The squared correlation
 #' }
 #'
+#'
+#' @importFrom purrr map
+#' @importFrom stats cor lm coefficients
+#' @importFrom dplyr data_frame bind_rows
+#'
 #' @examples
 #' # locate and read file
 #' fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
@@ -474,14 +487,11 @@ pcr_amount <- function(df, intercept, slope) {
 #' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 #'
 #' # calculate trend
-#' pcr_trend(ct3, amount = amount)
+#' .pcr_trend(ct3, amount = amount)
 #'
-#' @importFrom purrr map
-#' @importFrom stats cor lm coefficients
-#' @importFrom dplyr data_frame bind_rows
-#'
-#' @export
-pcr_trend <- function(df, amount) {
+#' @keywords internal
+
+.pcr_trend <- function(df, amount) {
   # make a trend line using linear regression
   trend_line <- map(df, function(x) {
     # calculate the r squared
