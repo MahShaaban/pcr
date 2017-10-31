@@ -1,18 +1,19 @@
-#' Calculate average ct value
+#' Average values by a variable
 #'
-#' Takes a data.frame of raw ct values and returns the averages in different
-#' groups or dilutions
+#' Uses a group_by statement to average values in a data.fram by a variable
 #'
-#' @param df A data.frame of numeric ct value of n genes in columns and m
-#' samples in raws
-#' @param group_var A vector of length m as a grouping variables of samples
-#' @param amount A numeric vector of the input dilutions or amounts
+#' @param df A data.frame
+#' @param group_var A vector or lenght equals the number or rows of df
+#' @param amount A vector or lenght equals the number or rows of df
 #' @param tidy A logical, default FALSE. When TRUE returns a tidy data.frame
 #'
-#' @return A data.frame with a column for each and an addition colum for the,
-#' grouping variable that was provided, and a raw for each unique the  entry
-#' in the group_var or amount. When tidy is TRUE the function returns a tidy
-#' data.frame with three columns; group/amount, gene and average.
+#' @details Used to average ct or input amounts (or their averages) by a
+#' grouping variable; group_var for experimental groups or amount for serial
+#' dilutions.
+#'
+#' @return A data.frame with a column for the grouping variable; group_var or
+#' amount and one for each of the original columns. When tidy is TRUE the
+#' returns a tidy data.frame with 3 columns; group/amount, gene and average.
 #'
 #' @examples
 #' # using a group_var variabale
@@ -80,23 +81,25 @@ pcr_average <- function(df, group_var, amount, tidy = FALSE) {
   return(ave)
 }
 
-#' Normalize ct values to a reference gene
+#' Normalize values by a column
 #'
-#' Takes a data.frame of ct values or average ct values for each gene in each
-#' condition and returns the ct values normalized to a reference gene.
+#' Uses subtraction or division to normalize values in all columns to a certain
+#' specified column
 #'
-#' @param df A data.frame of such as that returned by \link{pcr_average}
+#' @inheritParams pcr_average
 #' @param reference_gene A character string of the name of the column
 #' corresponding to the reference gene
 #' @param mode A character string of the normalization mode to be used. Default
 #' is 'subtract'. Other possible modes include 'divide'
-#' @inheritParams  pcr_average
 #'
-#' @return A data.frame of normalized ct values for each gene and a
-#' grouping variable. When mode is 'subtract' (default) each the reference gene
-#'  is subtracted from each column, and division is used instead when mode is
-#' 'divide'. The function returns ignores non numeric columns and drops the one
-#' that corresponds to the reference_gene
+#' @details Used to normalize ct or input amounts (or their averages) by a
+#' a reference_gene/column
+#'
+#' @return A data.frame with a column for each of the original columns after
+#' subtraction or division to a reference_gene/column which is dropped.
+#' The function returns ignores non numeric columns. When tidy is TRUE the
+#' returns a tidy data.frame with the columns: gene and average as
+#' well as any non numeric columns such as a grouping variable group/amount.
 #'
 #' @examples
 #' # locate and read raw ct data
@@ -119,6 +122,7 @@ pcr_average <- function(df, group_var, amount, tidy = FALSE) {
 #' # normalize by division
 #' pcr_normalize(ave, 'GAPDH', mode = 'divide')
 #'
+#' @importFrom magrittr %>%
 #' @importFrom dplyr select mutate_if starts_with
 #'
 #' @export
@@ -147,22 +151,23 @@ pcr_normalize <- function(df, reference_gene, mode = 'subtract', tidy = FALSE) {
   return(norm)
 }
 
-#' calibrate ct values to a reference group
+#' Calibrate values by a row
 #'
-#' Takes a data.frame of the ct or normalized ct values for each gene in each
-#' condition and returns a data.frame of the calibrated ct value of each gene
-#' e.x. (delta ct of gene of interest - delta ct value of same gene in
-#' reference group)
+#' Uses subtraction or division to caliberate values in all rows to a sepcified
+#' row
 #'
-#' @param df A data.frame of ct or normalized ct values for each gene and a
-#' grouping variable such as the output of the \link{pcr_normalize}
-#' @param reference_group A character string of the reference group as it is
-#' recorded in the grouping variable
-#' @inheritParams pcr_normalize
 #' @inheritParams pcr_average
+#' @inheritParams pcr_normalize
+#' @param reference_group A character string of the the entery in the rows of a
+#' grouping variable
 #'
-#' @return A data.frame of the calibrated ct values for each gene in a grouping
-#' variable by a reference group
+#' @details Used to calibrate average ct or input amounts by a reference_group/row
+#'
+#' @return A data.frame of the same dimensions after subtracting or dividing by
+#' a reference_group/row. The function returns ignores non numeric columns.
+#' When tidy is TRUE returns a tidy data.frame with the columns: gene and
+#' calibrated as well as any non numeric columns such as a grouping variable
+#' group/amount.
 #'
 #' @examples
 #' # locate and read raw ct data
@@ -184,6 +189,7 @@ pcr_normalize <- function(df, reference_gene, mode = 'subtract', tidy = FALSE) {
 #' # calculate delta delta ct and return a tidy data.frame
 #' pcr_calibrate(dct, 'brain', tidy = TRUE)
 #'
+#' @importFrom magrittr %>%
 #' @importFrom dplyr filter select mutate_if
 #' @importFrom tidyr gather
 #'
@@ -210,13 +216,19 @@ pcr_calibrate <- function(df, reference_group, mode = 'subtract', tidy = FALSE) 
   return(calib)
 }
 
-#' Calculate standard error value
+#' Calculate standard deviation
+#'
+#' Uses a group_by statement to calculate the standard deviations of values in
+#' a data.fram grouped by a variable
 #'
 #' @inheritParams pcr_average
 #'
-#' @return A data.frame of ncol n and nrow equals the number of unique
-#' grouping variables containing the standard error values of each gene in each
-#' group
+#' @details Used to calculate the standard devaitions of ct after grouping by a
+#' group_var for the experimental groups
+#'
+#' @return A data.frame with a column for the grouping variable; group_var and
+#' one for each of the original columns. When tidy is TRUE the
+#' returns a tidy data.frame with 3 columns; group/amount, gene and error.
 #'
 #' @examples
 #' # locate and read raw ct data
@@ -232,6 +244,7 @@ pcr_calibrate <- function(df, reference_group, mode = 'subtract', tidy = FALSE) 
 #' # calculate standard deviations and return a tidy data.frame
 #' pcr_sd(ct1, group_var = group_var, tidy = TRUE)
 #'
+#' @importFrom magrittr %>%
 #' @importFrom dplyr mutate group_by summarise_all
 #' @importFrom tidyr gather
 #' @importFrom stats sd
@@ -253,16 +266,22 @@ pcr_sd <- function(df, group_var, tidy = FALSE) {
   return(sd)
 }
 
-#' Calculate error value
+#' Calculate error terms
 #'
-#' @param df A data.frame of ncol n and nrow equals the number of unique
-#' grouping variables containing the standard error values of each gene in each
-#' group
+#' Uses a specified column as a reference to calculate the error between it
+#' and another column.
+#'
 #' @inheritParams pcr_normalize
 #' @inheritParams pcr_average
 #'
-#' @return A data.frame of error values for each gene and a grouping
-#' variable. The column corresponding to the reference gene is dropped.
+#' @details Used to sum the error of a gene and a reference_gene/column
+#'
+#' @return A data.frame with a column for each of the original columns after
+#' taking the square root of the squared standard deviations of a target gene
+#' and a reference_gene/column which is dropped. The function ignores
+#' non numeric columns. When tidy is TRUE the returns a tidy data.frame with
+#' the columns: gene and error as well as any non numeric columns such as a
+#' grouping variable group/amount.
 #'
 #' @examples
 #' # locate and read raw ct data
@@ -278,13 +297,15 @@ pcr_sd <- function(df, group_var, tidy = FALSE) {
 #' # calculate errors
 #' pcr_error(sds, reference_gene = 'GAPDH')
 #'
+#' @importFrom magrittr %>%
 #' @importFrom dplyr select starts_with mutate_if
 #' @importFrom tidyr gather
 #'
 #' @export
 pcr_error <- function(df, reference_gene, tidy = FALSE) {
   # get the reference_gene column and unlist
-  ref <- select(df, reference_gene) %>% unlist(use.names = FALSE)
+  ref <- select(df, reference_gene) %>%
+    unlist(use.names = FALSE)
 
   # drop the reference gene column
   # ignore non numeric columns
@@ -301,19 +322,82 @@ pcr_error <- function(df, reference_gene, tidy = FALSE) {
   return(error)
 }
 
+#' Calculates the coefficient of variation
+#'
+#' Calculates the coefficient of variation of a gene by deviding standard
+#' deviations of each group by their averages
+#'
+#' @param amounts A data.frame of the calculated input amounts returned by
+#' \code{\link{pcr_amount}}
+#' @inheritParams pcr_average
+#'
+#' @details Used to calculate the coefficient of variation of the input amounts
+#'  after grouping by a grouping variable; group_var for experimental groups.
+#'
+#' @return A data.frame with a column for the grouping variable; group_var and
+#' one for each of the original columns. When tidy is TRUE the
+#' returns a tidy data.frame with 3 columns; group/amount, gene and error
+#'
+#' @examples
+#' # locate and read data
+#' fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
+#' ct3 <- readr::read_csv(fl)
+#'
+#' fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
+#' ct1 <- readr::read_csv(fl)
+#'
+#' # make a vector of RNA amounts
+#' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
+#'
+#' # calculate curve
+#' standard_curve <- pcr_assess(ct3, amount = amount, method = 'standard_curve')
+#' intercept <- standard_curve$intercept
+#' slope <- standard_curve$slope
+#'
+#' # calculate amounts
+#' input_amounts <- pcr_amount(ct1,
+#'                             intercept = intercept,
+#'                             slope = slope)
+#'
+#' # make grouping variable
+#' group <- rep(c('brain', 'kidney'), each = 6)
+#'
+#' # calculate cv errors
+#' pcr_cv(input_amounts,
+#'        group_var = group)
+#'
+#' @importFrom tidyr gather spread
+#' @importFrom dplyr group_by summarise ungroup
+#'
+#' @export
+pcr_cv <- function(amounts, group_var, tidy = FALSE) {
+  # group_by group_var and calculate cv
+  cv <- mutate(amounts, group = group_var) %>%
+    group_by(group) %>%
+    summarise_all(function(x) sd(x)/mean(x))
+
+  # return a tidy data.frame when tidy == TRUE
+  if(tidy == TRUE) {
+    cv <- gather(cv, gene, error, -group)
+  }
+
+  return(cv)
+}
+
 #' Calculate PCR RNA amounts
 #'
-#' Calculate the amount of RNA in a PCR experimental sample using the
+#'
+#' @inheritParams pcr_average
+#' @param intercept A numeric vector of length equals the number of columns of df,
+#'  one for each gene such as the output of \link{pcr_assess}
+#' @param slope A numeric vector of length equals the number of columns of df,
+#' one for each gene such as the output of \link{pcr_assess}
+#'
+#' @details Used to alculate the amount of RNA in a PCR experimental sample using the
 #' information provided by the standard curve, namely the slope and the
 #' intercept calculated in advance for each gene in a similar expermiment.
 #'
-#' @inheritParams pcr_average
-#' @param intercept A numeric vector of length equals ncol(df), one for each
-#' gene such as the output of \link{pcr_assess}
-#' @param slope A numeric vector of length ncol(df), one for each gene such as
-#' the output of \link{pcr_assess}
-#'
-#' @return A data.frame of dimensions equal that of the input df containing the
+#' @return A data.frame with the same dimensions as df containing the
 #' amount of RNA in each sample in each gene
 #'
 #' @importFrom magrittr %>%
@@ -361,75 +445,24 @@ pcr_amount <- function(df, intercept, slope) {
     bind_cols()
 }
 
-#' Calculates cv
+#' Calculate the linear trend
 #'
-#' Error terms for the standard curve relative quantification
+#' Calculates the linear trend; intercept and slope between two variables
 #'
-#' @param amounts A data.frame of calculated input RNA amounts
-#' @param mode A character string; 'separate_tube' or 'same_tube'
-#' @inheritParams pcr_average
-#' @inheritParams pcr_normalize
+#' @param df A data.frame of raw ct values or the delta ct values calculated
+#' by \link{pcr_normalize}
+#' @param amount A numeric vector input amounts/dilutions of legnth equals the
+#' number of thr rows of df.
 #'
-#' @return A data.frame of the cv term for each gene in each sample
-#'
-#' @examples
-#' # locate and read data
-#' fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-#' ct3 <- readr::read_csv(fl)
-#'
-#' fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-#' ct1 <- readr::read_csv(fl)
-#'
-#' # make a vector of RNA amounts
-#' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
-#'
-#' # calculate curve
-#' standard_curve <- pcr_assess(ct3, amount = amount, method = 'standard_curve')
-#' intercept <- standard_curve$intercept
-#' slope <- standard_curve$slope
-#'
-#' # calculate amounts
-#' input_amounts <- pcr_amount(ct1,
-#'                             intercept = intercept,
-#'                             slope = slope)
-#'
-#' # make grouping variable
-#' group <- rep(c('brain', 'kidney'), each = 6)
-#'
-#' # calculate cv errors
-#' pcr_cv(input_amounts,
-#'        group_var = group,
-#'        reference_gene = 'GAPDH')
-#'
-#' @importFrom tidyr gather spread
-#' @importFrom dplyr group_by summarise ungroup
-#'
-#' @export
-pcr_cv <- function(amounts, group_var, reference_gene, mode = 'average_amount',
-                   tidy = FALSE) {
-  # group_by group_var and calculate cv
-  cv <- mutate(amounts, group = group_var) %>%
-    group_by(group) %>%
-    summarise_all(function(x) sd(x)/mean(x))
-
-  # return a tidy data.frame when tidy == TRUE
-  if(tidy == TRUE) {
-    cv <- gather(cv, gene, error, -group)
-  }
-
-  return(cv)
-}
-
-#' Calculate the linear trend for the standard curve
-#'
-#' @inheritParams pcr_average
+#' @details Used to calculate the linear trend; intercept and slope for a line
+#' between each column of ct or delta ct values and the log10 input amount
 #'
 #' @return A data.frame of 4 columns
 #' \itemize{
-#'   \item gene
-#'   \item intercept
-#'   \item slope
-#'   \item r_squared
+#'   \item gene The column names of df
+#'   \item intercept The intercept of the line
+#'   \item slope The slope of teh line
+#'   \item r_squared The squared correlation
 #' }
 #'
 #' @examples

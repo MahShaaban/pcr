@@ -102,8 +102,7 @@ test_that("pcr_cv calculates the correct cv", {
   # calculate cv
   group = rep(c('brain', 'kidney'), each = 6)
   cv <- pcr_cv(amounts2,
-               group_var = group,
-               reference_gene = 'GAPDH')
+               group_var = group)
 
 })
 

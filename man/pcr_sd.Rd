@@ -2,25 +2,29 @@
 % Please edit documentation in R/helper_fun.R
 \name{pcr_sd}
 \alias{pcr_sd}
-\title{Calculate standard error value}
+\title{Calculate standard deviation}
 \usage{
 pcr_sd(df, group_var, tidy = FALSE)
 }
 \arguments{
-\item{df}{A data.frame of numeric ct value of n genes in columns and m
-samples in raws}
+\item{df}{A data.frame}
 
-\item{group_var}{A vector of length m as a grouping variables of samples}
+\item{group_var}{A vector or lenght equals the number or rows of df}
 
 \item{tidy}{A logical, default FALSE. When TRUE returns a tidy data.frame}
 }
 \value{
-A data.frame of ncol n and nrow equals the number of unique
-grouping variables containing the standard error values of each gene in each
-group
+A data.frame with a column for the grouping variable; group_var and
+one for each of the original columns. When tidy is TRUE the
+returns a tidy data.frame with 3 columns; group/amount, gene and error.
 }
 \description{
-Calculate standard error value
+Uses a group_by statement to calculate the standard deviations of values in
+a data.fram grouped by a variable
+}
+\details{
+Used to calculate the standard devaitions of ct after grouping by a
+group_var for the experimental groups
 }
 \examples{
 # locate and read raw ct data

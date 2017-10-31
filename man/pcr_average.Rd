@@ -2,29 +2,31 @@
 % Please edit documentation in R/helper_fun.R
 \name{pcr_average}
 \alias{pcr_average}
-\title{Calculate average ct value}
+\title{Average values by a variable}
 \usage{
 pcr_average(df, group_var, amount, tidy = FALSE)
 }
 \arguments{
-\item{df}{A data.frame of numeric ct value of n genes in columns and m
-samples in raws}
+\item{df}{A data.frame}
 
-\item{group_var}{A vector of length m as a grouping variables of samples}
+\item{group_var}{A vector or lenght equals the number or rows of df}
 
-\item{amount}{A numeric vector of the input dilutions or amounts}
+\item{amount}{A vector or lenght equals the number or rows of df}
 
 \item{tidy}{A logical, default FALSE. When TRUE returns a tidy data.frame}
 }
 \value{
-A data.frame with a column for each and an addition colum for the,
-grouping variable that was provided, and a raw for each unique the  entry
-in the group_var or amount. When tidy is TRUE the function returns a tidy
-data.frame with three columns; group/amount, gene and average.
+A data.frame with a column for the grouping variable; group_var or
+amount and one for each of the original columns. When tidy is TRUE the
+returns a tidy data.frame with 3 columns; group/amount, gene and average.
 }
 \description{
-Takes a data.frame of raw ct values and returns the averages in different
-groups or dilutions
+Uses a group_by statement to average values in a data.fram by a variable
+}
+\details{
+Used to average ct or input amounts (or their averages) by a
+grouping variable; group_var for experimental groups or amount for serial
+dilutions.
 }
 \examples{
 # using a group_var variabale

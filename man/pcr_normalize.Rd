@@ -2,12 +2,12 @@
 % Please edit documentation in R/helper_fun.R
 \name{pcr_normalize}
 \alias{pcr_normalize}
-\title{Normalize ct values to a reference gene}
+\title{Normalize values by a column}
 \usage{
 pcr_normalize(df, reference_gene, mode = "subtract", tidy = FALSE)
 }
 \arguments{
-\item{df}{A data.frame of such as that returned by \link{pcr_average}}
+\item{df}{A data.frame}
 
 \item{reference_gene}{A character string of the name of the column
 corresponding to the reference gene}
@@ -18,15 +18,19 @@ is 'subtract'. Other possible modes include 'divide'}
 \item{tidy}{A logical, default FALSE. When TRUE returns a tidy data.frame}
 }
 \value{
-A data.frame of normalized ct values for each gene and a
-grouping variable. When mode is 'subtract' (default) each the reference gene
- is subtracted from each column, and division is used instead when mode is
-'divide'. The function returns ignores non numeric columns and drops the one
-that corresponds to the reference_gene
+A data.frame with a column for each of the original columns after
+subtraction or division to a reference_gene/column which is dropped.
+The function returns ignores non numeric columns. When tidy is TRUE the
+returns a tidy data.frame with the columns: gene and average as
+well as any non numeric columns such as a grouping variable group/amount.
 }
 \description{
-Takes a data.frame of ct values or average ct values for each gene in each
-condition and returns the ct values normalized to a reference gene.
+Uses subtraction or division to normalize values in all columns to a certain
+specified column
+}
+\details{
+Used to normalize ct or input amounts (or their averages) by a
+a reference_gene/column
 }
 \examples{
 # locate and read raw ct data

@@ -2,27 +2,32 @@
 % Please edit documentation in R/helper_fun.R
 \name{pcr_trend}
 \alias{pcr_trend}
-\title{Calculate the linear trend for the standard curve}
+\title{Calculate the linear trend}
 \usage{
 pcr_trend(df, amount)
 }
 \arguments{
-\item{df}{A data.frame of numeric ct value of n genes in columns and m
-samples in raws}
+\item{df}{A data.frame of raw ct values or the delta ct values calculated
+by \link{pcr_normalize}}
 
-\item{amount}{A numeric vector of the input dilutions or amounts}
+\item{amount}{A numeric vector input amounts/dilutions of legnth equals the
+number of thr rows of df.}
 }
 \value{
 A data.frame of 4 columns
 \itemize{
-  \item gene
-  \item intercept
-  \item slope
-  \item r_squared
+  \item gene The column names of df
+  \item intercept The intercept of the line
+  \item slope The slope of teh line
+  \item r_squared The squared correlation
 }
 }
 \description{
-Calculate the linear trend for the standard curve
+Calculates the linear trend; intercept and slope between two variables
+}
+\details{
+Used to calculate the linear trend; intercept and slope for a line
+between each column of ct or delta ct values and the log10 input amount
 }
 \examples{
 # locate and read file

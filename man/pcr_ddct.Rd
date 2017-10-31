@@ -2,37 +2,58 @@
 % Please edit documentation in R/analyses_fun.R
 \name{pcr_ddct}
 \alias{pcr_ddct}
-\title{Calculate the delta_delta_ct}
+\title{Calculate the delta_delta_ct model}
 \usage{
 pcr_ddct(df, group_var, reference_gene, reference_group,
   mode = "separate_tube")
 }
 \arguments{
-\item{df}{A data.frame of ct values}
+\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
+in rows rows}
 
-\item{group_var}{A character vector of a grouping variable}
+\item{group_var}{A character vector of a grouping variable. The length of
+this variable should equal the number of rows of df}
 
 \item{reference_gene}{A character string of the column name of a control gene}
 
-\item{reference_group}{A character string of the control group}
+\item{reference_group}{A character string of the control group in group_var}
 
-\item{mode}{A character string of; 'separate_tube' or 'same_tube'}
+\item{mode}{A character string of; 'separate_tube' (default) or 'same_tube'.
+This is to indicate whether the different genes were run in separate or the
+same PCR tube}
 }
 \value{
-A data.frame of 8 columns
+A data.frame of 8 columns:
 \itemize{
-  \item group
-  \item gene
-  \item normalized
-  \item calibrated
-  \item relative_expression
-  \item error
-  \item lower
-  \item upper
+  \item group The unique entries in group_var
+  \item gene The column names of df. reference_gene is dropped
+  \item normalized The \eqn{C_T} value (or the average \eqn{C_T} value) of target genes
+  after subtracting that of the reference_gene
+  \item calibrated The normalized average \eqn{C_T} value of target genes after
+  subtracting that of the reference_group
+  \item relative_expression The expression of target genes normalized by
+  a reference_gene and caliberated by a reference_group
+  \item error The standard deviation of the relative_xpression
+  \item lower The lower interval of the relative_expression
+  \item upper The upper interval of the relative_expression
 }
 }
 \description{
-Calculate the delta_delta_ct
+Uses the \eqn{C_T} values and a reference gene and a group to calculate the delta
+delta \eqn{C_T} model to estimate the normalized relative expresssion of target
+genes.
+}
+\details{
+The comparitive \eqn{C_T} methods assume that the cDNA templates of the
+ gene/s of interest as well as the control/reference gene have similar
+ amplification efficiency. And that this amplification efficiency is near
+ perfect. Meaning, at a certain threshold during the linear portion of the
+ PCR reaction, the amount of the gene of the interest and the control double
+  each cycle. Another assumptios is that, the expression difference between
+  two genes or two samples can be captured by subtracting one (gene or
+  sample of interest) from another (reference).  This final assumption
+  requires also that these references doesnt change with the treatment or
+  the course in question.
 }
 \examples{
 ## locate and read raw ct data

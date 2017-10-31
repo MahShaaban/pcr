@@ -2,21 +2,25 @@
 % Please edit documentation in R/analyses_fun.R
 \name{pcr_curve}
 \alias{pcr_curve}
-\title{Calculate the standard_curve}
+\title{Calculate the standard curve model}
 \usage{
 pcr_curve(df, group_var, reference_gene, reference_group,
   mode = "separate_tube", intercept, slope)
 }
 \arguments{
-\item{df}{A data.frame of ct values}
+\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
+in rows rows}
 
-\item{group_var}{A character vector of a grouping variable}
+\item{group_var}{A character vector of a grouping variable. The length of
+this variable should equal the number of rows of df}
 
 \item{reference_gene}{A character string of the column name of a control gene}
 
-\item{reference_group}{A character string of the control group}
+\item{reference_group}{A character string of the control group in group_var}
 
-\item{mode}{A character string; 'separate_tube' or 'same_tube'}
+\item{mode}{A character string of; 'separate_tube' (default) or 'same_tube'.
+This is to indicate whether the different genes were run in separate or the
+same PCR tube}
 
 \item{intercept}{A numeric vector of intercept and length equals the number of genes}
 
@@ -25,17 +29,33 @@ pcr_curve(df, group_var, reference_gene, reference_group,
 \value{
 A data.frame of 7 columns
 \itemize{
-  \item group
-  \item gene
-  \item normalized
-  \item calibrated
-  \item error
-  \item lower
-  \item upper
+  \item group The unique entries in group_var
+  \item gene The column names of df
+  \item normalized The normalized expresison of target genes relative to a reference_gene
+  \item calibrated The calibrated expression of target genes relative to a reference_group
+  \item error The standard deviation of normalized relative expression
+  \item lower The lower interval of the normalized relative expression
+  \item upper The upper interval of the normalized relative expression
 }
 }
 \description{
-Calculate the standard_curve
+Uses the \eqn{C_T} values and a reference gene and a group, in addition to the
+intercept and slope of each gene form a serial dilution experiment, to calculate
+the standard curve model and estimate the normalized relative expresssion of the
+target genes.
+}
+\details{
+this model doesn't assume perfect amplificaion but rather actively
+use the amplificaion in calculating the relative expresion. So when the
+amplification efficiency of all genes are 100\% both methods should give
+similar results. The standard curve method is applied using two steps.
+First, serial dilutions of the mRNAs from the samples of interest are used
+as input to the PCR reaction. The linear trend of the log input amount and
+the resulting \eqn{C_T} values for each gene are used to calculate an intercept
+and a slope. Secondly, these intercepts and slopes are used to calculate the
+ amounts of mRNA of the genes of interest and the control/reference in the
+ samples of interest and the control sample/reference. These amounts are
+ finally used to calculate the relative expression.
 }
 \examples{
 # locate and read file
@@ -57,9 +77,17 @@ slope <- standard_curve$slope
 group <- rep(c('brain', 'kidney'), each = 6)
 
 # apply the standard curve method
-pcr_ddct(ct1,
-         group_var = group,
-         reference_gene = 'GAPDH',
-         reference_group = 'brain')
+pcr_curve(ct1,
+          group_var = group,
+          reference_gene = 'GAPDH',
+          reference_group = 'brain',
+          intercept = intercept,
+          slope = slope)
 
+}
+\references{
+Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of
+Relative Gene Expression Data Using Real-Time Quantitative PCR and the
+\eqn{2^{-\Delta \Delat C_T}} Method.” Methods 25 (4). ELSEVIER.
+doi:10.1006/meth.2001.1262.
 }

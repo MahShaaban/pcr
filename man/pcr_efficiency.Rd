@@ -7,22 +7,47 @@
 pcr_efficiency(df, amount, reference_gene, plot = FALSE)
 }
 \arguments{
-\item{df}{A data.frame of numeric ct value of n genes in columns and m
-samples in raws}
+\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
+in rows rows. Each sample are replicates of a known input/dilution given by amount}
 
-\item{amount}{A numeric vector of the input dilutions or amounts}
+\item{amount}{A numeric vector of the input amounts or dilusions. The length
+of this vector should equalt the row number of df}
 
-\item{reference_gene}{A character string of the name of the column
-corresponding to the reference gene}
+\item{reference_gene}{A character string of the column name of a control gene}
 
-\item{plot}{A logical (default FALSE)}
+\item{plot}{A logical (default FALSE) to indicate whether to return a data.frame
+or a plot}
 }
 \value{
-A data.frame of 4 columns when plot == FALSE. Returned by calling
-\link{pcr_trend}
+When plot is FALSE returns a data.frame of 4 columns describing the line
+between the \eqn{\Delta C_T} of target genes and the log of amount
+\itemize{
+  \item gene The column names of df. reference_gene is dropped
+  \item intercept The intercept of the line
+  \item slope The slope of the line
+  \item r_squared The squared correlation
+}
+
+When plot is TRUE returns a graph insead shows the average and
+standard deviation of of the \eqn{\Delta C_T} at different input amounts.
+In addition, a linear trend line is drawn.
 }
 \description{
-Calculate amplification efficiency
+Uses the \eqn{C_T} values from a serial dilusion experiment to calculate the
+amplificaiton efficiency of a PCR reaction.
+}
+\details{
+Fortuanlty, regardless of the method used in the analysis of qPCR
+data, The quality asssesment are done in a similar way. It requires an
+experiment similar to that of calculating the standard curve. Serial
+dilutions of the genes of interest and controls are used as input to the
+reaction and diferent calculations are made. The amplificaion efficiency is
+approximated be the linear trend between the difference between the \eqn{C_T}
+value of a gene of interest and a control/reference (\eqn{\Delta C_T}) and
+the log input amount. This piece of information is required when using the
+\eqn{\Delta\DeltaC_T} model. Typically, the slope of the curve should be very
+small and thr \eqn{R^2} value should be very close to one. Other analysis
+methods are recommended when this is not the case.
 }
 \examples{
 # locate and read file
@@ -43,4 +68,10 @@ pcr_efficiency(ct3,
                reference_gene = 'GAPDH',
                plot = TRUE)
 
+}
+\references{
+Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of
+Relative Gene Expression Data Using Real-Time Quantitative PCR and the
+\eqn{2^{-\Delta \Delat C_T}} Method.” Methods 25 (4). ELSEVIER.
+doi:10.1006/meth.2001.1262.
 }

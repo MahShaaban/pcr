@@ -2,16 +2,15 @@
 % Please edit documentation in R/helper_fun.R
 \name{pcr_calibrate}
 \alias{pcr_calibrate}
-\title{calibrate ct values to a reference group}
+\title{Calibrate values by a row}
 \usage{
 pcr_calibrate(df, reference_group, mode = "subtract", tidy = FALSE)
 }
 \arguments{
-\item{df}{A data.frame of ct or normalized ct values for each gene and a
-grouping variable such as the output of the \link{pcr_normalize}}
+\item{df}{A data.frame}
 
-\item{reference_group}{A character string of the reference group as it is
-recorded in the grouping variable}
+\item{reference_group}{A character string of the the entery in the rows of a
+grouping variable}
 
 \item{mode}{A character string of the normalization mode to be used. Default
 is 'subtract'. Other possible modes include 'divide'}
@@ -19,14 +18,18 @@ is 'subtract'. Other possible modes include 'divide'}
 \item{tidy}{A logical, default FALSE. When TRUE returns a tidy data.frame}
 }
 \value{
-A data.frame of the calibrated ct values for each gene in a grouping
-variable by a reference group
+A data.frame of the same dimensions after subtracting or dividing by
+a reference_group/row. The function returns ignores non numeric columns.
+When tidy is TRUE returns a tidy data.frame with the columns: gene and
+calibrated as well as any non numeric columns such as a grouping variable
+group/amount.
 }
 \description{
-Takes a data.frame of the ct or normalized ct values for each gene in each
-condition and returns a data.frame of the calibrated ct value of each gene
-e.x. (delta ct of gene of interest - delta ct value of same gene in
-reference group)
+Uses subtraction or division to caliberate values in all rows to a sepcified
+row
+}
+\details{
+Used to calibrate average ct or input amounts by a reference_group/row
 }
 \examples{
 # locate and read raw ct data

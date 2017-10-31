@@ -7,21 +7,23 @@
 pcr_amount(df, intercept, slope)
 }
 \arguments{
-\item{df}{A data.frame of numeric ct value of n genes in columns and m
-samples in raws}
+\item{df}{A data.frame}
 
-\item{intercept}{A numeric vector of length equals ncol(df), one for each
-gene such as the output of \link{pcr_assess}}
+\item{intercept}{A numeric vector of length equals the number of columns of df,
+one for each gene such as the output of \link{pcr_assess}}
 
-\item{slope}{A numeric vector of length ncol(df), one for each gene such as
-the output of \link{pcr_assess}}
+\item{slope}{A numeric vector of length equals the number of columns of df,
+one for each gene such as the output of \link{pcr_assess}}
 }
 \value{
-A data.frame of dimensions equal that of the input df containing the
+A data.frame with the same dimensions as df containing the
 amount of RNA in each sample in each gene
 }
 \description{
-Calculate the amount of RNA in a PCR experimental sample using the
+Calculate PCR RNA amounts
+}
+\details{
+Used to alculate the amount of RNA in a PCR experimental sample using the
 information provided by the standard curve, namely the slope and the
 intercept calculated in advance for each gene in a similar expermiment.
 }

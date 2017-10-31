@@ -7,17 +7,48 @@
 pcr_assess(df, method = "standard_curve", ...)
 }
 \arguments{
-\item{df}{A data.frame of numeric ct value of n genes in columns and m
-samples in raws}
+\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
+in rows rows. Each sample are replicates of a known input/dilution given by amount}
 
-\item{method}{A character string; 'standard_curve' defalult or 'efficiency'}
+\item{method}{A character string; 'standard_curve' (default) or 'efficiency'
+for invoking a certain quality assessment model}
 
-\item{...}{Arguments passed to other methods}
+\item{...}{Arguments passed to the methods}
 }
 \value{
 A data.frame or a plot. For details; \link{pcr_standard} and
 \link{pcr_efficiency}
 }
 \description{
-Assess qPCR data quality
+A unified interface to invoke different quality assessment methods of qPCR data.
+}
+\details{
+The different quality assessment methods can be invoked using the
+argument method with 'standard_curve' or 'efficiency'. Alternaltively, the
+same methods can be applied by using the corresponding functions:
+\link{pcr_standard} or \link{pcr_efficiency} for calculating the
+amplificaiton efficiency of a PCR reaction or the individual standard
+curves respectively. Unlike the amplification efficiency calculation when,
+using the double delta ct model, the standard curves are required in
+calculating the standard curve analysis model.
+}
+\examples{
+#' # locate and read file
+fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
+ct3 <- readr::read_csv(fl)
+
+# make amount/dilution variable
+amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
+
+# calculate the standard curve
+pcr_assess(ct3,
+           amount = amount,
+           method = 'standard_curve')
+
+# calculate amplification efficiency
+pcr_assess(ct3,
+           amount = amount,
+           reference_gene = 'GAPDH',
+           method = 'efficiency')
+
 }

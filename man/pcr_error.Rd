@@ -2,14 +2,12 @@
 % Please edit documentation in R/helper_fun.R
 \name{pcr_error}
 \alias{pcr_error}
-\title{Calculate error value}
+\title{Calculate error terms}
 \usage{
 pcr_error(df, reference_gene, tidy = FALSE)
 }
 \arguments{
-\item{df}{A data.frame of ncol n and nrow equals the number of unique
-grouping variables containing the standard error values of each gene in each
-group}
+\item{df}{A data.frame}
 
 \item{reference_gene}{A character string of the name of the column
 corresponding to the reference gene}
@@ -17,11 +15,19 @@ corresponding to the reference gene}
 \item{tidy}{A logical, default FALSE. When TRUE returns a tidy data.frame}
 }
 \value{
-A data.frame of error values for each gene and a grouping
-variable. The column corresponding to the reference gene is dropped.
+A data.frame with a column for each of the original columns after
+taking the square root of the squared standard deviations of a target gene
+and a reference_gene/column which is dropped. The function ignores
+non numeric columns. When tidy is TRUE the returns a tidy data.frame with
+the columns: gene and error as well as any non numeric columns such as a
+grouping variable group/amount.
 }
 \description{
-Calculate error value
+Uses a specified column as a reference to calculate the error between it
+and another column.
+}
+\details{
+Used to sum the error of a gene and a reference_gene/column
 }
 \examples{
 # locate and read raw ct data

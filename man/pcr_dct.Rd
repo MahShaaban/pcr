@@ -2,36 +2,48 @@
 % Please edit documentation in R/analyses_fun.R
 \name{pcr_dct}
 \alias{pcr_dct}
-\title{Calculate the delta_ct}
+\title{Calculate the delta_ct model}
 \usage{
 pcr_dct(df, group_var, reference_gene, reference_group,
   mode = "separate_tube")
 }
 \arguments{
-\item{df}{A data.frame of ct values}
+\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
+in rows rows}
 
-\item{group_var}{A character vector of a grouping variable}
+\item{group_var}{A character vector of a grouping variable. The length of
+this variable should equal the number of rows of df}
 
 \item{reference_gene}{A character string of the column name of a control gene}
 
-\item{reference_group}{A character string of the control group}
+\item{reference_group}{A character string of the control group in group_var}
 
-\item{mode}{A character string of; 'separate_tube' or 'same_tube'}
+\item{mode}{A character string of; 'separate_tube' (default) or 'same_tube'.
+This is to indicate whether the different genes were run in separate or the
+same PCR tube}
 }
 \value{
 A data.frame of 7 columns
 \itemize{
-  \item group
-  \item gene
-  \item calibrated
-  \item fold_change
-  \item error
-  \item lower
-  \item upper
+  \item group The unique entries in group_var
+  \item gene The column names of df
+  \item calibrated The average \eqn{C_T} value of target genes after
+  subtracting that of the reference_group
+  \item fold_change The fold change of genes relative to a reference_group
+  \item error The standard deviation of the fold_change
+  \item lower The lower interval of the fold_change
+  \item upper The upper interval of the fold_change
 }
 }
 \description{
-Calculate the delta_ct
+Uses the \eqn{C_T} values and a reference group to calculate the delta \eqn{C_T}
+model to estimate the relative fold change of a gene between groups
+}
+\details{
+This method is a variation of the double delta \eqn{C_T} model,
+\code{\link{pcr_ddct}}. It can be used to caculate the fold change
+of in one sample relative to the others. For example, it can be used to
+compare and choosing a control/referece genes.
 }
 \examples{
 # locate and read file
@@ -51,4 +63,10 @@ pcr_dct(pcr_hk,
         group_var = group_var,
         reference_group = 'brain')
 
+}
+\references{
+Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of
+Relative Gene Expression Data Using Real-Time Quantitative PCR and the
+\eqn{2^{-\Delta \Delat C_T}} Method.” Methods 25 (4). ELSEVIER.
+doi:10.1006/meth.2001.1262.
 }

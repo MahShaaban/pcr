@@ -7,19 +7,42 @@
 pcr_standard(df, amount, plot = FALSE)
 }
 \arguments{
-\item{df}{A data.frame of numeric ct value of n genes in columns and m
-samples in raws}
+\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
+in rows rows. Each sample are replicates of a known input/dilution given by amount}
 
-\item{amount}{A numeric vector of the input dilutions or amounts}
+\item{amount}{A numeric vector of the input amounts or dilusions. The length
+of this vector should equalt the row number of df}
 
-\item{plot}{A logical (default FALSE)}
+\item{plot}{A logical (default FALSE) to indicate whether to return a data.frame
+or a plot}
 }
 \value{
-A data.frame of 4 columns when plot == FALSE. Returned by calling
-\link{pcr_trend}
+When plot is FALSE returns a data.frame of 4 columns describing the line
+between the \eqn{C_T} of each gene and the log of amount
+\itemize{
+  \item gene The column names of df
+  \item intercept The intercept of the line
+  \item slope The slope of the line
+  \item r_squared The squared correlation
+}
+
+When plot is TRUE returns a graph insead shows the average and
+standard deviation of of the \eqn{C_T} at different input amounts.
 }
 \description{
-Calculate the standard curve
+Uses the \eqn{C_T} values from a serial dilusion experiment to calculate the
+a curve for each gene and the log of the input amount
+}
+\details{
+Fortuanlty, regardless of the method used in the analysis of qPCR
+data, The quality asssesment are done in a similar way. It requires an
+experiment similar to that of calculating the standard curve. Serial
+dilutions of the genes of interest and controls are used as input to
+the reaction and diferent calculations are made.
+Curves are required for each gene using the $C_T$ value and the log of the
+input amount. In this case, a separte slope and intercept are required for
+ the calculation of the relative expression when applying the standard curve
+ model.
 }
 \examples{
 # locate and read file
@@ -30,13 +53,18 @@ ct3 <- readr::read_csv(fl)
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 
 # calculate the standard curve
-pcr_efficiency(ct3,
-               amount = amount,
-               reference_gene = 'GAPDH')
+pcr_standard(ct3,
+             amount = amount)
 
 # plot the standard curve
 pcr_standard(ct3,
              amount = amount,
              plot = TRUE)
 
+}
+\references{
+Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of
+Relative Gene Expression Data Using Real-Time Quantitative PCR and the
+\eqn{2^{-\Delta \Delat C_T}} Method.” Methods 25 (4). ELSEVIER.
+doi:10.1006/meth.2001.1262.
 }

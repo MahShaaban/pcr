@@ -7,18 +7,83 @@
 pcr_analyze(df, method = "delta_delta_ct", ...)
 }
 \arguments{
-\item{df}{A data.frame of numeric ct value of n genes in columns and m
-samples in raws}
+\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
+in rows rows}
 
 \item{method}{A character string; 'delta_delta_ct' default, 'delta_ct' or
-'relative_curve'}
+'relative_curve' for invoking a certain analysis model}
 
-\item{...}{Arguments passed to other methods}
+\item{...}{Arguments passed to the methods}
 }
 \value{
-A data.frame or a plot. For details; \link{pcr_ddct}, \link{pcr_dct} and
+A data.frame. For details; \link{pcr_ddct}, \link{pcr_dct} and
 \link{pcr_curve}
 }
 \description{
-Apply qPCR analysis methods
+A unified interface to invoke different analysis methods of qPCR data.
+}
+\details{
+The different analysis methods can be invoked using the
+argument method with 'delta_delta_ct' default, 'delta_ct' or
+'relative_curve' for the double delta \eqn{C_T}, delta ct or the standard curve
+model respectively. Alternativel, the same methods can be applied by using
+the corresponding functions direcly: \link{pcr_ddct}, \link{pcr_dct} or
+\link{pcr_curve}
+}
+\examples{
+# applying the delta delta ct method
+## locate and read raw ct data
+fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
+ct1 <- readr::read_csv(fl)
+
+# add grouping variable
+group_var <- rep(c('brain', 'kidney'), each = 6)
+
+# calculate all values and errors in one step
+pcr_analyze(ct1,
+            group_var = group_var,
+            reference_gene = 'GAPDH',
+            reference_group = 'brain',
+            method = 'delta_delta_ct')
+
+# applying the delta ct method
+# make a data.frame of two identical columns
+pcr_hk <- data.frame(
+  GAPDH1 = ct1$GAPDH,
+  GAPDH2 = ct1$GAPDH
+  )
+
+# calculate caliberation
+pcr_analyze(pcr_hk,
+            group_var = group_var,
+            reference_group = 'brain',
+            method = 'delta_ct')
+
+# applying the standard curve method
+# locate and read file
+fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
+ct3 <- readr::read_csv(fl)
+
+# make a vector of RNA amounts
+amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
+
+# calculate curve
+standard_curve <- pcr_assess(ct3, amount = amount, method = 'standard_curve')
+intercept <- standard_curve$intercept
+slope <- standard_curve$slope
+
+# apply the standard curve method
+pcr_analyze(ct1,
+           group_var = group_var,
+           reference_gene = 'GAPDH',
+           reference_group = 'brain',
+           intercept = intercept,
+           slope = slope,
+           method = 'relative_curve')
+}
+\references{
+Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of
+Relative Gene Expression Data Using Real-Time Quantitative PCR and the
+\eqn{2^{-\Delta \Delat C_T}} Method.” Methods 25 (4). ELSEVIER.
+doi:10.1006/meth.2001.1262.
 }

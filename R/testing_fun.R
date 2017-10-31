@@ -1,19 +1,44 @@
 #' Statistical testing of PCR data
 #'
-#' @inheritParams pcr_average
-#' @inheritParams pcr_normalize
-#' @inheritParams pcr_calibrate
-#' @param test A character string; 't.test' default, 'wilcox.test' or lm
+#' A unified interface to different statistical significance tests for qPCR data
+#'
+#' @inheritParams pcr_ddct
+#' @param test A character string; 't.test' default, 'wilcox.test' or 'lm'
+#' @param ... Other arguments for the testing methods
 #'
 #' @return A data.frame of 5 columns in addition to term when test == 'lm'
 #' \itemize{
-#'   \item term
-#'   \item gene
-#'   \item estimate
-#'   \item p_value
-#'   \item lower
-#'   \item upper
+#'   \item term The linear regression comparison terms
+#'   \item gene The column names of df. reference_gene is dropped
+#'   \item estimate The estimate for each term
+#'   \item p_value The p-value fot each term
+#'   \item lower The low 95\% confidence interval
+#'   \item upper The high 95\% confidence interval
 #' }
+#' For details about the test methods themselves and different parameters,
+#' consult \code{\link[stats]{t.test}}, \code{\link[stats]{wilcox.test}}
+#' and \code{\link[stats]{lm}}
+#'
+#' @details The simple t-test can be used to test the significance of the
+#' difference between two condtions \eqn{\Delta C_T}. t-test assumes in addition,
+#'  that the input \eqn{C_T} values are normally distributed and the variance
+#'  between condtions are comprable.
+#' Wilcoxon test can be used when sample size is samll and those two last a
+#' ssumpiton are hard to achieve.
+#'
+#' Two use the linear regression here. A null hypothesis is formulated as following,
+#' \deqn{
+#'   C_{T, target, treatment} - C_{T, control, treatment} =
+#'   C_{T, target, control} - C_{T, control, control}
+#'   \quad \textrm{or} \quad  \Delta\Delta C_T
+#' }
+#' This is exactly the \eqn{\Delta\Delta C_T} as explained earlier. So the
+#' \eqn{\Delta\Delta C_T} is estimated and the null is rejected when
+#' \eqn{\Delta\Delta C_T \ne 0}.
+#'
+#' @references Yuan, Joshua S, Ann Reed, Feng Chen, and Neal Stewart. 2006.
+#' “Statistical Analysis of Real-Time PCR Data.” BMC Bioinformatics 7 (85).
+#' BioMed Central. doi:10.1186/1471-2105-7-85.
 #'
 #' @examples
 #' # locate and read data
@@ -36,6 +61,7 @@
 #'          reference_gene = 'ref',
 #'          reference_group = 'control',
 #'          test = 'wilcox.test')
+#'
 #' # testing using lm
 #' pcr_test(ct4,
 #'          group_var = group,
@@ -50,7 +76,7 @@
 #'
 #' @export
 pcr_test <- function(df, group_var, reference_gene, reference_group,
-                     test = 't.test') {
+                     test = 't.test', ...) {
   # calculate the delta_ct values
   norm <- pcr_normalize(df, reference_gene = reference_gene)
 
@@ -68,7 +94,7 @@ pcr_test <- function(df, group_var, reference_gene, reference_group,
   dat <- switch(test,
                 't.test' = {
                   map(norm, function(x) {
-                    t_test <- t.test(x ~ group_var)
+                    t_test <- t.test(x ~ group_var, ...)
                     t_test <- tidy(t_test)
                     t_test <- with(t_test,
                                    data_frame(
@@ -81,7 +107,7 @@ pcr_test <- function(df, group_var, reference_gene, reference_group,
                   },
                 'wilcox.test' = {
                   map(norm, function(x) {
-                    wilcox_test <- wilcox.test(x ~ group_var, conf.int = TRUE)
+                    wilcox_test <- wilcox.test(x ~ group_var, conf.int = TRUE, ...)
                     wilcox_test <- tidy(wilcox_test)
                     wilcox_test <- with(wilcox_test,
                                    data_frame(
@@ -94,8 +120,8 @@ pcr_test <- function(df, group_var, reference_gene, reference_group,
                 },
                 'lm' = {
                   map(norm, function(x) {
-                    linear_model <- lm(x ~ group_var)
-                    conf_int <- confint(linear_model)
+                    linear_model <- lm(x ~ group_var, ...)
+                    conf_int <- confint(linear_model, ...)
 
                     linear_model <- tidy(linear_model)[-1,]
                     conf_int <- tidy(conf_int)[-1,]

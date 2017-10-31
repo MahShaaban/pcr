@@ -2,28 +2,30 @@
 % Please edit documentation in R/helper_fun.R
 \name{pcr_cv}
 \alias{pcr_cv}
-\title{Calculates cv}
+\title{Calculates the coefficient of variation}
 \usage{
-pcr_cv(amounts, group_var, reference_gene, mode = "average_amount",
-  tidy = FALSE)
+pcr_cv(amounts, group_var, tidy = FALSE)
 }
 \arguments{
-\item{amounts}{A data.frame of calculated input RNA amounts}
+\item{amounts}{A data.frame of the calculated input amounts returned by
+\code{\link{pcr_amount}}}
 
-\item{group_var}{A vector of length m as a grouping variables of samples}
-
-\item{reference_gene}{A character string of the name of the column
-corresponding to the reference gene}
-
-\item{mode}{A character string; 'separate_tube' or 'same_tube'}
+\item{group_var}{A vector or lenght equals the number or rows of df}
 
 \item{tidy}{A logical, default FALSE. When TRUE returns a tidy data.frame}
 }
 \value{
-A data.frame of the cv term for each gene in each sample
+A data.frame with a column for the grouping variable; group_var and
+one for each of the original columns. When tidy is TRUE the
+returns a tidy data.frame with 3 columns; group/amount, gene and error
 }
 \description{
-Error terms for the standard curve relative quantification
+Calculates the coefficient of variation of a gene by deviding standard
+deviations of each group by their averages
+}
+\details{
+Used to calculate the coefficient of variation of the input amounts
+ after grouping by a grouping variable; group_var for experimental groups.
 }
 \examples{
 # locate and read data
@@ -51,7 +53,6 @@ group <- rep(c('brain', 'kidney'), each = 6)
 
 # calculate cv errors
 pcr_cv(input_amounts,
-       group_var = group,
-       reference_gene = 'GAPDH')
+       group_var = group)
 
 }

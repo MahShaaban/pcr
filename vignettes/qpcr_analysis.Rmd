@@ -253,11 +253,11 @@ Fortuanlty, regardless of the method used in the analysis of qPCR data, The qual
 
 ## Testing statistical significance   
 
-Using the later two methods and there assuptions, useful statistics such as p-values and confidence intervals can be calculated. 
+Using the later two methods and there assumptions, useful statistics such as p-values and confidence intervals can be calculated. 
 
 ### Two-group tests  
 
-Assuming that the assumptions of the first methods are holding true, the simple t-test can be used to test the significance of the difference between two condtions ($\Delta C_T$). t-test assumes in addtion, that the input $C_T$ values are normally distributed and the variance between condtions are comprable. Wilcoxon test can be used when sample size is samll and those two last assumpiton are hard to achieve.  
+Assuming that the assumptions of the first methods are holding true, the simple t-test can be used to test the significance of the difference between two condtions ($\Delta C_T$). t-test assumes in addition, that the input $C_T$ values are normally distributed and the variance between condtions are comprable. Wilcoxon test can be used when sample size is samll and those two last assumpiton are hard to achieve.  
 
 ### Linear regression  
 
@@ -418,7 +418,7 @@ Wilcoxon test & -0.6354 & \textless 0.0001 & (-0.4227, -0.8805) \\ \hline
 
 ## Assess `pcr_assess`  
 
-`pcr_efficiency` is a wrapper for the implemented quality assessment methods; `pcr_efficiency` and `pcr_standard`. Both methods can be called direcly using the method names or through `pcr_assess` by passing a string to the argument `method`; 'efficiency' or 'standard_curve' for calculating the amplificaion efficiency or the standard curve for each gene respectively.  
+`pcr_assess` is a wrapper for the implemented quality assessment methods; `pcr_efficiency` and `pcr_standard`. Both methods can be called direcly using the method names or through `pcr_assess` by passing a string to the argument `method`; 'efficiency' or 'standard_curve' for calculating the amplificaion efficiency or the standard curve for each gene respectively.  
 
 ### Amplification efficiency `pcr_efficiency` 
 

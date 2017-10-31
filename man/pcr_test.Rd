@@ -4,35 +4,57 @@
 \alias{pcr_test}
 \title{Statistical testing of PCR data}
 \usage{
-pcr_test(df, group_var, reference_gene, reference_group, test = "t.test")
+pcr_test(df, group_var, reference_gene, reference_group, test = "t.test", ...)
 }
 \arguments{
-\item{df}{A data.frame of numeric ct value of n genes in columns and m
-samples in raws}
+\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
+in rows rows}
 
-\item{group_var}{A vector of length m as a grouping variables of samples}
+\item{group_var}{A character vector of a grouping variable. The length of
+this variable should equal the number of rows of df}
 
-\item{reference_gene}{A character string of the name of the column
-corresponding to the reference gene}
+\item{reference_gene}{A character string of the column name of a control gene}
 
-\item{reference_group}{A character string of the reference group as it is
-recorded in the grouping variable}
+\item{reference_group}{A character string of the control group in group_var}
 
-\item{test}{A character string; 't.test' default, 'wilcox.test' or lm}
+\item{test}{A character string; 't.test' default, 'wilcox.test' or 'lm'}
+
+\item{...}{Other arguments for the testing methods}
 }
 \value{
 A data.frame of 5 columns in addition to term when test == 'lm'
 \itemize{
-  \item term
-  \item gene
-  \item estimate
-  \item p_value
-  \item lower
-  \item upper
+  \item term The linear regression comparison terms
+  \item gene The column names of df. reference_gene is dropped
+  \item estimate The estimate for each term
+  \item p_value The p-value fot each term
+  \item lower The low 95\% confidence interval
+  \item upper The high 95\% confidence interval
 }
+For details about the test methods themselves and different parameters,
+consult \code{\link[stats]{t.test}}, \code{\link[stats]{wilcox.test}}
+and \code{\link[stats]{lm}}
 }
 \description{
-Statistical testing of PCR data
+A unified interface to different statistical significance tests for qPCR data
+}
+\details{
+The simple t-test can be used to test the significance of the
+difference between two condtions \eqn{\Delta C_T}. t-test assumes in addition,
+ that the input \eqn{C_T} values are normally distributed and the variance
+ between condtions are comprable.
+Wilcoxon test can be used when sample size is samll and those two last a
+ssumpiton are hard to achieve.
+
+Two use the linear regression here. A null hypothesis is formulated as following,
+\deqn{
+  C_{T, target, treatment} - C_{T, control, treatment} =
+  C_{T, target, control} - C_{T, control, control}
+  \quad \textrm{or} \quad  \Delta\Delta C_T
+}
+This is exactly the \eqn{\Delta\Delta C_T} as explained earlier. So the
+\eqn{\Delta\Delta C_T} is estimated and the null is rejected when
+\eqn{\Delta\Delta C_T \ne 0}.
 }
 \examples{
 # locate and read data
@@ -55,6 +77,7 @@ pcr_test(ct4,
          reference_gene = 'ref',
          reference_group = 'control',
          test = 'wilcox.test')
+
 # testing using lm
 pcr_test(ct4,
          group_var = group,
@@ -62,4 +85,9 @@ pcr_test(ct4,
          reference_group = 'control',
          test = 'lm')
 
+}
+\references{
+Yuan, Joshua S, Ann Reed, Feng Chen, and Neal Stewart. 2006.
+“Statistical Analysis of Real-Time PCR Data.” BMC Bioinformatics 7 (85).
+BioMed Central. doi:10.1186/1471-2105-7-85.
 }
