@@ -171,7 +171,7 @@ In contrast with the absoute quantifiction of the amount of mRNA in a sample, re
 
 ### Comparative $C_T$ methods  
 The comparitive $C_T$ methods assume that the cDNA templates of the gene/s of interest as well as the control/reference gene have similar amplification efficiency. And that this amplification efficiency is near perfect. Meaning, at a certain threshold during the linear portion of the PCR reaction, the amount of the gene of the interest and the control double each cycle. Another assumptios is that, the expression difference between two genes or two samples can be captured by subtracting one (gene or sample of interest) from another (reference).  This final assumption requires also that these references doesn't change with the treatment or the course in question.  
-The formal derivation of the double delta $C_T$ model is described here [ref]. Briefly,  
+The formal derivation of the double delta $C_T$ model is described here [@Livak2001]. Briefly,  
 The $\Delta\Delta C_T$ is given by:  
 
 $$
@@ -203,8 +203,8 @@ Where:
 ### Standard curve methods  
 
 In comparison, this model doesn't assume perfect amplificaion but rather actively use the amplificaion in calculating the relative expresion. So when the amplification efficiency of all genes are 100% both methods should give similar results. The standard curve method is applied using two steps. First, serial dilutions of the mRNAs from the samples of interest are used as input to the PCR reaction. The linear trend of the log input amount and the resulting $C_T$ values for each gene are used to calculate an intercept and a slope. Secondly, these intercepts and slopes are used to calculate the amounts of mRNA of the genes of interest and the control/reference in the samples of interest and the control sample/reference. These amounts are finally used to calculate the relative expression in a manner similar to the later method, just using division instead of subtraction.  
-The formal deriviation of the model is described here [ref]. Briefly,  
-The amount of RNA in a sample is given by:
+The formal deriviation of the model is described here [@Yuan2006]. Briefly,  
+The amount of RNA in a sample is given by:  
 
 $$
 \log amount = \dfrac{C_T - b}{m}

@@ -4,6 +4,9 @@
 #'
 #' @inheritParams pcr_ddct
 #' @param test A character string; 't.test' default, 'wilcox.test' or 'lm'
+#' @param model_matrix A model matrix for advanced experimental design. for
+#' constructing such a matrix with different variables check
+#' \code{\link[stats]{model.matrix}}
 #' @param ... Other arguments for the testing methods
 #'
 #' @return A data.frame of 5 columns in addition to term when test == 'lm'
@@ -69,21 +72,34 @@
 #'          reference_group = 'control',
 #'          test = 'lm')
 #'
+#' # testing advanced designs using a model matrix
+#' # make a model matrix
+#' group <- rep(c('control', 'treatment'), each = 12)
+#' dose <- rep(c(10, 2, 0.4, .08), each = 3, times = 2)
+#'
+#' mm <- model.matrix(~group:dose, data = data.frame(group, dose))
+#'
+#' # test using t-test
+#' pcr_test(ct4,
+#'          reference_gene = 'ref',
+#'          model_matrix = mm,
+#'          test = 'lm')
+#'
 #' @importFrom purrr map
 #' @importFrom dplyr data_frame
 #' @importFrom broom tidy
-#' @importFrom stats t.test wilcox.test lm confint relevel
+#' @importFrom stats t.test wilcox.test lm confint relevel model.matrix
 #'
 #' @export
 pcr_test <- function(df, group_var, reference_gene, reference_group,
-                     test = 't.test', ...) {
+                     test = 't.test', model_matrix = NULL, ...) {
   # calculate the delta_ct values
   norm <- .pcr_normalize(df, reference_gene = reference_gene)
 
   # adjust group_var for formuls
-  if(test == 'lm') {
+  if(test == 'lm' & is.null(model_matrix)) {
     group_var <- relevel(factor(group_var), ref = reference_group)
-  } else {
+  } else if (test != 'lm') {
     group_levels <- unique(group_var)
     if(length(group_levels) != 2) {
       stop('t.test and wilcox are only applied to two group comparisons')
@@ -120,8 +136,13 @@ pcr_test <- function(df, group_var, reference_gene, reference_group,
                 },
                 'lm' = {
                   map(norm, function(x) {
-                    linear_model <- lm(x ~ group_var, ...)
-                    conf_int <- confint(linear_model, ...)
+                    if(is.null(model_matrix)) {
+                      linear_model <- lm(x ~ group_var, ...)
+                      conf_int <- confint(linear_model, ...)
+                    } else {
+                      linear_model <- lm(x ~ model_matrix + 0, ...)
+                      conf_int <- confint(linear_model, ...)
+                    }
 
                     linear_model <- tidy(linear_model)[-1,]
                     conf_int <- tidy(conf_int)[-1,]
