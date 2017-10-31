@@ -84,6 +84,6 @@ pcr_analyze(ct1,
 \references{
 Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of
 Relative Gene Expression Data Using Real-Time Quantitative PCR and the
-\eqn{2^{-\Delta \Delat C_T}} Method.” Methods 25 (4). ELSEVIER.
+Double Delta CT Method.” Methods 25 (4). ELSEVIER.
 doi:10.1006/meth.2001.1262.
 }
