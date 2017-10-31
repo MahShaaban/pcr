@@ -60,7 +60,7 @@ test_that("pcr_test runs the lm correctly", {
   # make group variable
   group <- rep(c('control', 'treatment'), each = 12)
 
-  # test using t-test
+  # test using lm
   res <- pcr_test(ct4,
                   group_var = group,
                   reference_gene = 'ref',
@@ -94,7 +94,7 @@ test_that("pcr_test runs the lm correctly with multiple groups", {
   # make dose variable
   dose <- rep(c(10, 2, 0.4, .08), each = 3)
 
-  # test using t-test
+  # test using lm
   res <- pcr_test(ct_treated,
                   group_var = as.character(dose),
                   reference_gene = 'ref',
@@ -121,10 +121,65 @@ test_that("pcr_test runs the lm correctly with a model matrix", {
 
   # make a model matrix
   group <- rep(c('control', 'treatment'), each = 12)
+  group <- relevel(factor(group), ref = 'control')
   dose <- rep(c(10, 2, 0.4, .08), each = 3, times = 2)
-  mm <- model.matrix(~group:dose, data = data.frame(group, dose))
+  mm <- model.matrix(~group+dose+group:dose, data = data.frame(group, dose))
 
-  # test using t-test
+  # test using lm
+  res <- pcr_test(ct4,
+                  reference_gene = 'ref',
+                  model_matrix = mm,
+                  test = 'lm')
+
+  norm <- ct4$target - ct4$ref
+  ll <- tidy(lm(norm ~ mm + 0))[-1,]
+  conf_int <- confint(lm(norm ~ mm + 0))[-1,]
+
+  expect_equal(res$estimate, ll$estimate)
+  expect_equal(res$p_value, ll$p.value)
+  expect_equal(res$lower, unname(conf_int[,1]))
+  expect_equal(res$upper, unname(conf_int[,2]))
+})
+
+test_that("pcr_test runs the lm to adjust for separate runs", {
+  fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
+  ct4 <- readr::read_csv(fl)
+
+  # make a model matrix
+  group <- rep(c('control', 'treatment'), each = 12)
+  group <- relevel(factor(group), ref = 'control')
+  set.seed(1234)
+  run <- factor(rep(c(1:3), 8))
+  mm <- model.matrix(~group + group:run, data = data.frame(group, run))
+
+  # test using lm
+  res <- pcr_test(ct4,
+                  reference_gene = 'ref',
+                  model_matrix = mm,
+                  test = 'lm')
+
+  norm <- ct4$target - ct4$ref
+  ll <- tidy(lm(norm ~ mm + 0))[-1,]
+  conf_int <- confint(lm(norm ~ mm + 0))[-1,]
+
+  expect_equal(res$estimate, ll$estimate)
+  expect_equal(res$p_value, ll$p.value)
+  expect_equal(res$lower, unname(conf_int[,1]))
+  expect_equal(res$upper, unname(conf_int[,2]))
+})
+
+test_that("pcr_test runs the lm to adjust for rna quality", {
+  fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
+  ct4 <- readr::read_csv(fl)
+
+  # make a model matrix
+  group <- rep(c('control', 'treatment'), each = 12)
+  group <- relevel(factor(group), ref = 'control')
+  set.seed(1234)
+  quality <- scale(rnorm(n = 24, mean = 1.9, sd = .1))
+  mm <- model.matrix(~group + group:quality, data = data.frame(group, quality))
+
+  # test using lm
   res <- pcr_test(ct4,
                   reference_gene = 'ref',
                   model_matrix = mm,

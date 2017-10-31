@@ -152,7 +152,7 @@ res <- pcr_assess(ct3,
 res
 ```
 
-In the case of using the $\Delta\Delta C_T$, the assumption of the amplification efficiency is critical for the reliability of the model. In particulare, the *slope* and the *R^2* of the line between thel log input amount and $\Delta C_T$ or differnce between the $C_T$ value of the target **c-myc** and GAPDH. Typically, The *slope* should be very small (less than 0.01). `slope` here is appropriate `r res$slope`, so the assumption holds true.  
+In the case of using the $\Delta\Delta C_T$, the assumption of the amplification efficiency is critical for the reliability of the model. In particulare, the *slope* and the *R^2* of the line between thel log input amount and $\Delta C_T$ or differnce between the $C_T$ value of the target **c-myc** and GAPDH. Typically, The *slope* should be very small (less than 0.01). `slope` here is appropriate `r res$slope`, A value of the amplification efficiency itselt is given by $10 ^ {-1/slope}$, so the assumption holds true.  
 
 # Background  
 
@@ -248,7 +248,7 @@ Where:
 
 Fortuanlty, regardless of the method used in the analysis of qPCR data, The quality asssesment are done in a similar way. It requires an experiment similar to that of calculating the standard curve. Serial dilutions of the genes of interest and controls are used as input to the reaction and diferent calculations are made.  
 
-  * The amplificaion efficiency is approximated be the linear trend between the difference between the $C_T$ value of a gene of interest and a control/reference ($\Delta C_T$) and the log input amount. This piece of information is required when using the $\Delta\Delta C_T$ model. Typically, the slope of the curve should be very small and thr $R^2$ value should be very close to one. Other analysis methods are recommended when this is not the case.  
+  * The amplificaion efficiency is approximated be the linear trend between the difference between the $C_T$ value of a gene of interest and a control/reference ($\Delta C_T$) and the log input amount. This piece of information is required when using the $\Delta\Delta C_T$ model. Typically, the slope of the curve should be very small and thr $R^2$ value should be very close to one. A value of the amplification efficiency itselt is given by $10 ^ {-1/slope}$ and should be close to 2. Other analysis methods are recommended when this is not the case.  
   * Similar curves are required for each gene using the $C_T$ value instead of the differnce for applying the standard curve method. In this case, a separte slope and intercept are required for the calculation of the relative expression.  
 
 ## Testing statistical significance   
@@ -448,7 +448,7 @@ res <- pcr_assess(ct3,
 knitr::kable(res, caption = '\\label{table:table7} Amplificaion efficiency of c-myc')
 ```
 
-The output of `pcr_assess` is a `data.frame` of 4 columns and *n* rows equals the input genes except for the reference. For each gene an *intercept*, *slope* and $R^2$ is calculated for a the difference between it and the reference ($\Delta C_T$) (Table \ref{table:table7}).  
+The output of `pcr_assess` is a `data.frame` of 4 columns and *n* rows equals the input genes except for the reference. For each gene an *intercept*, *slope* and $R^2$ is calculated for a the difference between it and the reference ($\Delta C_T$) (Table \ref{table:table7}). 
 
 When the argument `plot` is `TRUE` a graph is produced insead shows the average and standard deviation of of the $\Delta C_T$ at difference input amounts. In addition, a linear trend line is drawn (Fig \ref{fig:fig1}).  
 
@@ -464,7 +464,7 @@ gg +
         strip.text = element_blank())
 ```
 
-The relavant summaries in calculating *efficiency* is the `slope`. Typically, `slope` should be very low (less than 0.1). Means the $\Delta C_T$ are not changing much as consequnce of changing the input concentration.  
+The relavant summaries in calculating *efficiency* is the `slope`. Typically, `slope` should be very low (less than 0.1). Means the $\Delta C_T$ are not changing much as consequnce of changing the input concentration. A value of the amplification efficiency itselt is given by $10 ^ {-1/slope}$ and should be close to 2.
 
 ### Standard curve `pcr_standard`  
 
