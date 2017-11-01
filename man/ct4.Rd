@@ -3,14 +3,21 @@
 \docType{data}
 \name{ct4}
 \alias{ct4}
-\title{PCR experiment clean data
-https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1395339/}
-\format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 24 rows and 2 columns.}
+\title{\eqn{C_T} values from qPCR (Serial dilutions)}
+\format{A data.frame with 24 rows and 2 variables:
+\describe{
+  \item{ref}{\eqn{C_T} values of the reference gene}
+  \item{target}{\eqn{C_T} values of the target gene}
+}}
+\source{
+\url{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1395339/}
+}
 \usage{
 ct4
 }
 \description{
-PCR experiment clean data
-https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1395339/
+A dataset containing the \eqn{C_T} values of two genes from a controlled serial
+ dilution qPCR experiment. The data were prepaired from four different dilutions
+ (10, 2, 0.4 and 0.08) and two control groups; control and treatment (n = 12) each.
 }
 \keyword{datasets}

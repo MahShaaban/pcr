@@ -3,12 +3,26 @@
 \docType{data}
 \name{ct2}
 \alias{ct2}
-\title{PCR same wells experiment raw data}
-\format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 12 rows and 2 columns.}
+\title{\eqn{C_T} values from qPCR (same tubes)}
+\format{A data.frame with 12 rows and 2 variables:
+\describe{
+  \item{c_myc}{\eqn{C_T} values of the target gene \strong{c-myc}}
+  \item{GAPDH}{\eqn{C_T} values of the control gene \strong{GAPDH}}
+}}
+\source{
+\url{http://www3.appliedbiosystems.com/cms/groups/mcb_support/documents/generaldocuments/cms_040980.pdf}
+}
 \usage{
 ct2
 }
 \description{
-PCR same wells experiment raw data
+A dataset containing the \eqn{C_T} values of two genes from a qPCR experiment.
+Samples were prepared from human tissues; Brain and kidney (n = 6) each.
+Primers for both genes were run in the same tubes with different reporting dyes.
+}
+\seealso{
+\code{\link{ct1}}
+
+\code{\link{ct3}}
 }
 \keyword{datasets}

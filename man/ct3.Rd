@@ -3,15 +3,28 @@
 \docType{data}
 \name{ct3}
 \alias{ct3}
-\title{Regenerated PCR ct values of different dilutions}
-\format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 21 rows and 2 columns.}
+\title{\eqn{C_T} values from qPCR (Serial dilutions)}
+\format{A data.frame with 21 rows and 2 variables:
+\describe{
+  \item{c_myc}{\eqn{C_T} values of the target gene \strong{c-myc}}
+  \item{GAPDH}{\eqn{C_T} values of the control gene \strong{GAPDH}}
+}}
+\source{
+\url{http://www3.appliedbiosystems.com/cms/groups/mcb_support/documents/generaldocuments/cms_040980.pdf}
+}
 \usage{
 ct3
 }
 \description{
-Regenerated PCR ct values of different dilutions
+A dataset containing the \eqn{C_T} values of two genes from a serial dilution
+qPCR experiment. The original dataset shows only the averages and standard
+deviations of each of the 7 different diluions (1, .5, .2, .1, .05, .02 and .01).
+These summarise were used to regenerate 3 replicates for each of the dilutions
+to be used in testing and examples of the different functions.
 }
-\references{
-\url{http://www3.appliedbiosystems.com/cms/groups/mcb_support/documents/generaldocuments/cms_040980.pdf}
+\seealso{
+\code{\link{ct1}}
+
+\code{\link{ct2}}
 }
 \keyword{datasets}
