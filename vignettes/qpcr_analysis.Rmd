@@ -6,14 +6,12 @@ output:
   pdf_document:
     fig_caption: yes
     fig_crop: no
-    keep_tex: yes
     number_sections: yes
     toc: yes
     toc_depth: 2
 header-includes: 
 - \usepackage{graphicx}
 - \usepackage{float}
-- \usepackage{svg}
 references:
 - id: Yuan2006
   title: Statistical analysis of real-time PCR data
@@ -37,7 +35,7 @@ references:
     year: 2006
     month: 2
 - id: Livak2001
-  title: Analysis of Relative Gene Expression Data Using Real-Time Quantitative PCR and the $2^{-\Delta\Delta C_T}$ Method
+  title: Analysis of Relative Gene Expression Data Using Real-Time Quantitative PCR and the Double Delta CT Method
   author:
   - family: Livak
     given: Kenneth J
