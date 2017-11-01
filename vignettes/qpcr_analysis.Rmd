@@ -77,7 +77,7 @@ references:
     year: 2014
     month: 9
 vignette: >
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Analysis of real-time qPCR data}
   %\usepackage[UTF-8]{inputenc}
 ---
