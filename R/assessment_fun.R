@@ -62,7 +62,7 @@
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr full_join mutate
-#' @import ggplot2
+#' @importFrom ggplot2 ggplot aes geom_point geom_errorbar facet_wrap geom_smooth
 #'
 #' @export
 pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
@@ -155,7 +155,7 @@ pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate full_join
 #' @importFrom tidyr gather
-#' @import ggplot2
+#' @importFrom ggplot2 ggplot aes geom_point facet_wrap
 #'
 #' @export
 pcr_standard <- function(df, amount, plot = FALSE) {

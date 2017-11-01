@@ -6,5 +6,5 @@
 \alias{pcr-package}
 \title{\code{pcr} package}
 \description{
-Process quantitative pcr data
+Analyzing real-time quantitative PCR data
 }

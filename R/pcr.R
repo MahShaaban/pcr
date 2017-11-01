@@ -1,6 +1,9 @@
 #' \code{pcr} package
 #'
-#' Process quantitative pcr data
+#' Analyzing real-time quantitative PCR data
+#'
+#' @importFrom devtools install_github
+#' @importFrom readr read_csv
 #'
 #' @docType package
 #' @name pcr
@@ -18,4 +21,5 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c('group',
                                                         'ct',
                                                         'upper',
                                                         'lower',
-                                                        'log_amount'))
+                                                        'log_amount',
+                                                        'ct3'))

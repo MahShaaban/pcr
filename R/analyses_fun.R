@@ -161,7 +161,7 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group,
     dct <- .pcr_calibrate(ave, reference_group = reference_group)
   } else if(mode == 'same_tube') {
     # calibrate ct and average
-    dct <- .pcr_calibrate(df, reference_group = reference_group)
+  dct <- .pcr_calibrate(df, reference_group = reference_group)
     dct <- .pcr_average(dct, group_var = group_var)
   }
 
