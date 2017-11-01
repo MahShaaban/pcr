@@ -73,12 +73,12 @@ res
 
 In the case of using the Double Delta C_T, the assumption of the amplification efficiency is critical for the reliability of the model. In particulare, the *slope* and the *R^2* of the line between the log input amount and Delta C_T or differnce between the CT value of the target **c-myc** and GAPDH. Typically, The *slope* should be very small (less than 0.01). The `slope` here is appropriate, so the assumption holds true.  
 
-### Other analysis methods `?pcr_analyze`
+### Other analysis methods `?pcr_analyze`  
 
 * Delta CT method  
 * Relative standard curve method  
 
-### Testing statistical significance `?pcr_test`
+### Testing statistical significance `?pcr_test`  
 
 * Two group testing *t*-test and *wilcoxon* test  
 * Linear regression testing  
