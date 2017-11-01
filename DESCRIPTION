@@ -1,10 +1,11 @@
 Package: pcr
 Version: 1.0.0
-Title: Analyzing real-time quantitative PCR data
+Title: Analyzing Real-Time Quantitative PCR Data
 Description: Quality assessing, analyzing and testing the statistical significance of real-time quantitative PCR data.
 Authors@R: person("Mahmoud", "Ahmded",
   email = "mahmoud.s.fahmy@students.kasralainy.edu.eg",
   role = c("aut", "cre"))
+Maintainer: ‘Mahmoud Ahmded <mahmoud.s.fahmy@students.kasralainy.edu.eg>’
 URL: https://github.com/MahShaaban/pcr
 BugReports: https://github.com/MahShaaban/pcr/issues
 Depends: R (>= 3.4.2)
