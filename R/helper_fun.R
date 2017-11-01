@@ -460,7 +460,7 @@
 #' @param df A data.frame of raw ct values or the delta ct values calculated
 #' by \link{.pcr_normalize}
 #' @param amount A numeric vector input amounts/dilutions of legnth equals the
-#' number of thr rows of df.
+#' number of the rows of df.
 #'
 #' @details Used to calculate the linear trend; intercept and slope for a line
 #' between each column of ct or delta ct values and the log10 input amount

@@ -17,7 +17,7 @@ ct4
 }
 \description{
 A dataset containing the \eqn{C_T} values of two genes from a controlled serial
- dilution qPCR experiment. The data were prepaired from four different dilutions
+ dilution qPCR experiment. The data were prepared from four different dilutions
  (10, 2, 0.4 and 0.08) and two control groups; control and treatment (n = 12) each.
 }
 \keyword{datasets}

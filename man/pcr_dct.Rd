@@ -41,9 +41,9 @@ model to estimate the relative fold change of a gene between groups
 }
 \details{
 This method is a variation of the double delta \eqn{C_T} model,
-\code{\link{pcr_ddct}}. It can be used to caculate the fold change
+\code{\link{pcr_ddct}}. It can be used to calculate the fold change
 of in one sample relative to the others. For example, it can be used to
-compare and choosing a control/referece genes.
+compare and choosing a control/reference genes.
 }
 \examples{
 # locate and read file

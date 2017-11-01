@@ -18,8 +18,8 @@ ct3
 \description{
 A dataset containing the \eqn{C_T} values of two genes from a serial dilution
 qPCR experiment. The original dataset shows only the averages and standard
-deviations of each of the 7 different diluions (1, .5, .2, .1, .05, .02 and .01).
-These summarise were used to regenerate 3 replicates for each of the dilutions
+deviations of each of the 7 different dilutions (1, .5, .2, .1, .05, .02 and .01).
+These summaries were used to regenerate 3 replicates for each of the dilutions
 to be used in testing and examples of the different functions.
 }
 \seealso{

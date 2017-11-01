@@ -24,10 +24,10 @@ A unified interface to invoke different quality assessment methods of qPCR data.
 }
 \details{
 The different quality assessment methods can be invoked using the
-argument method with 'standard_curve' or 'efficiency'. Alternaltively, the
+argument method with 'standard_curve' or 'efficiency'. Alternatively, the
 same methods can be applied by using the corresponding functions:
 \link{pcr_standard} or \link{pcr_efficiency} for calculating the
-amplificaiton efficiency of a PCR reaction or the individual standard
+amplification efficiency of a PCR reaction or the individual standard
 curves respectively. Unlike the amplification efficiency calculation when,
 using the double delta ct model, the standard curves are required in
 calculating the standard curve analysis model.

@@ -1,7 +1,7 @@
 #' Calculate the delta_delta_ct model
 #'
 #' Uses the \eqn{C_T} values and a reference gene and a group to calculate the delta
-#' delta \eqn{C_T} model to estimate the normalized relative expresssion of target
+#' delta \eqn{C_T} model to estimate the normalized relative expression of target
 #' genes.
 #'
 #' @param df A data.frame of \eqn{C_T} values with genes in the columns and samples
@@ -23,21 +23,21 @@
 #'   \item calibrated The normalized average \eqn{C_T} value of target genes after
 #'   subtracting that of the reference_group
 #'   \item relative_expression The expression of target genes normalized by
-#'   a reference_gene and caliberated by a reference_group
-#'   \item error The standard deviation of the relative_xpression
+#'   a reference_gene and calibrated by a reference_group
+#'   \item error The standard deviation of the relative_expression
 #'   \item lower The lower interval of the relative_expression
 #'   \item upper The upper interval of the relative_expression
 #' }
 #'
-#' @details The comparitive \eqn{C_T} methods assume that the cDNA templates of the
+#' @details The comparative \eqn{C_T} methods assume that the cDNA templates of the
 #'  gene/s of interest as well as the control/reference gene have similar
 #'  amplification efficiency. And that this amplification efficiency is near
 #'  perfect. Meaning, at a certain threshold during the linear portion of the
 #'  PCR reaction, the amount of the gene of the interest and the control double
-#'   each cycle. Another assumptios is that, the expression difference between
+#'   each cycle. Another assumptions is that, the expression difference between
 #'   two genes or two samples can be captured by subtracting one (gene or
 #'   sample of interest) from another (reference).  This final assumption
-#'   requires also that these references doesnt change with the treatment or
+#'   requires also that these references doesn't change with the treatment or
 #'   the course in question.
 #'
 #' @examples
@@ -119,9 +119,9 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group, mode = 'sep
 #' }
 #'
 #' @details This method is a variation of the double delta \eqn{C_T} model,
-#' \code{\link{pcr_ddct}}. It can be used to caculate the fold change
+#' \code{\link{pcr_ddct}}. It can be used to calculate the fold change
 #' of in one sample relative to the others. For example, it can be used to
-#' compare and choosing a control/referece genes.
+#' compare and choosing a control/reference genes.
 #'
 #' @references Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of
 #' Relative Gene Expression Data Using Real-Time Quantitative PCR and the
@@ -190,7 +190,7 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group, mode = 'sepa
 #'
 #' Uses the \eqn{C_T} values and a reference gene and a group, in addition to the
 #' intercept and slope of each gene form a serial dilution experiment, to calculate
-#' the standard curve model and estimate the normalized relative expresssion of the
+#' the standard curve model and estimate the normalized relative expression of the
 #' target genes.
 #'
 #' @inheritParams pcr_ddct
@@ -201,15 +201,15 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group, mode = 'sepa
 #' \itemize{
 #'   \item group The unique entries in group_var
 #'   \item gene The column names of df
-#'   \item normalized The normalized expresison of target genes relative to a reference_gene
+#'   \item normalized The normalized expression of target genes relative to a reference_gene
 #'   \item calibrated The calibrated expression of target genes relative to a reference_group
 #'   \item error The standard deviation of normalized relative expression
 #'   \item lower The lower interval of the normalized relative expression
 #'   \item upper The upper interval of the normalized relative expression
 #' }
 #'
-#' @details this model doesn't assume perfect amplificaion but rather actively
-#' use the amplificaion in calculating the relative expresion. So when the
+#' @details this model doesn't assume perfect amplification but rather actively
+#' use the amplification in calculating the relative expression. So when the
 #' amplification efficiency of all genes are 100\% both methods should give
 #' similar results. The standard curve method is applied using two steps.
 #' First, serial dilutions of the mRNAs from the samples of interest are used
@@ -314,8 +314,8 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group, mode = 'se
 #' @details The different analysis methods can be invoked using the
 #' argument method with 'delta_delta_ct' default, 'delta_ct' or
 #' 'relative_curve' for the double delta \eqn{C_T}, delta ct or the standard curve
-#' model respectively. Alternativel, the same methods can be applied by using
-#' the corresponding functions direcly: \link{pcr_ddct}, \link{pcr_dct} or
+#' model respectively. Alternatively, the same methods can be applied by using
+#' the corresponding functions directly: \link{pcr_ddct}, \link{pcr_dct} or
 #' \link{pcr_curve}
 #'
 #' @references Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of

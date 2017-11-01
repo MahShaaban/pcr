@@ -26,8 +26,8 @@ A unified interface to invoke different analysis methods of qPCR data.
 The different analysis methods can be invoked using the
 argument method with 'delta_delta_ct' default, 'delta_ct' or
 'relative_curve' for the double delta \eqn{C_T}, delta ct or the standard curve
-model respectively. Alternativel, the same methods can be applied by using
-the corresponding functions direcly: \link{pcr_ddct}, \link{pcr_dct} or
+model respectively. Alternatively, the same methods can be applied by using
+the corresponding functions directly: \link{pcr_ddct}, \link{pcr_dct} or
 \link{pcr_curve}
 }
 \examples{

@@ -31,7 +31,7 @@ A data.frame of 7 columns
 \itemize{
   \item group The unique entries in group_var
   \item gene The column names of df
-  \item normalized The normalized expresison of target genes relative to a reference_gene
+  \item normalized The normalized expression of target genes relative to a reference_gene
   \item calibrated The calibrated expression of target genes relative to a reference_group
   \item error The standard deviation of normalized relative expression
   \item lower The lower interval of the normalized relative expression
@@ -41,12 +41,12 @@ A data.frame of 7 columns
 \description{
 Uses the \eqn{C_T} values and a reference gene and a group, in addition to the
 intercept and slope of each gene form a serial dilution experiment, to calculate
-the standard curve model and estimate the normalized relative expresssion of the
+the standard curve model and estimate the normalized relative expression of the
 target genes.
 }
 \details{
-this model doesn't assume perfect amplificaion but rather actively
-use the amplificaion in calculating the relative expresion. So when the
+this model doesn't assume perfect amplification but rather actively
+use the amplification in calculating the relative expression. So when the
 amplification efficiency of all genes are 100\% both methods should give
 similar results. The standard curve method is applied using two steps.
 First, serial dilutions of the mRNAs from the samples of interest are used

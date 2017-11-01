@@ -10,8 +10,8 @@ pcr_efficiency(df, amount, reference_gene, plot = FALSE)
 \item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
 in rows rows. Each sample are replicates of a known input/dilution given by amount}
 
-\item{amount}{A numeric vector of the input amounts or dilusions. The length
-of this vector should equalt the row number of df}
+\item{amount}{A numeric vector of the input amounts or dilutions. The length
+of this vector should equal the row number of df}
 
 \item{reference_gene}{A character string of the column name of a control gene}
 
@@ -28,25 +28,25 @@ between the \eqn{\Delta C_T} of target genes and the log of amount
   \item r_squared The squared correlation
 }
 
-When plot is TRUE returns a graph insead shows the average and
+When plot is TRUE returns a graph instead shows the average and
 standard deviation of of the \eqn{\Delta C_T} at different input amounts.
 In addition, a linear trend line is drawn.
 }
 \description{
-Uses the \eqn{C_T} values from a serial dilusion experiment to calculate the
-amplificaiton efficiency of a PCR reaction.
+Uses the \eqn{C_T} values from a serial dilution experiment to calculate the
+amplification efficiency of a PCR reaction.
 }
 \details{
-Fortuanlty, regardless of the method used in the analysis of qPCR
-data, The quality asssesment are done in a similar way. It requires an
+Fortunately, regardless of the method used in the analysis of qPCR
+data, The quality assessment are done in a similar way. It requires an
 experiment similar to that of calculating the standard curve. Serial
 dilutions of the genes of interest and controls are used as input to the
-reaction and diferent calculations are made. The amplificaion efficiency is
+reaction and different calculations are made. The amplification efficiency is
 approximated be the linear trend between the difference between the \eqn{C_T}
 value of a gene of interest and a control/reference (\eqn{\Delta C_T}) and
 the log input amount. This piece of information is required when using the
 \eqn{\Delta\DeltaC_T} model. Typically, the slope of the curve should be very
-small and thr \eqn{R^2} value should be very close to one. Other analysis
+small and the \eqn{R^2} value should be very close to one. Other analysis
 methods are recommended when this is not the case.
 }
 \examples{

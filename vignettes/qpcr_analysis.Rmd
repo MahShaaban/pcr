@@ -170,7 +170,7 @@ In the case of using the $\Delta\Delta C_T$, the assumption of the amplification
 In contrast with the absoute quantifiction of the amount of mRNA in a sample, relative quantification uses a internal control (reference gene) and/or a control group (reference group) to quantify the mRNA of interest relative to these references. This relative quantification is sufficent to draw conculsions in most of the biomedical applications involving qPCR. A few methods were developed to perform these relative quantification. These methods require different assumptions and models. The most commen two of these methods are explained here.  
 
 ### Comparative $C_T$ methods  
-The comparitive $C_T$ methods assume that the cDNA templates of the gene/s of interest as well as the control/reference gene have similar amplification efficiency. And that this amplification efficiency is near perfect. Meaning, at a certain threshold during the linear portion of the PCR reaction, the amount of the gene of the interest and the control double each cycle. Another assumptios is that, the expression difference between two genes or two samples can be captured by subtracting one (gene or sample of interest) from another (reference).  This final assumption requires also that these references doesn't change with the treatment or the course in question.  
+The comparative $C_T$ methods assume that the cDNA templates of the gene/s of interest as well as the control/reference gene have similar amplification efficiency. And that this amplification efficiency is near perfect. Meaning, at a certain threshold during the linear portion of the PCR reaction, the amount of the gene of the interest and the control double each cycle. Another assumptions is that, the expression difference between two genes or two samples can be captured by subtracting one (gene or sample of interest) from another (reference).  This final assumption requires also that these references doesn't change with the treatment or the course in question.  
 The formal derivation of the double delta $C_T$ model is described here [@Livak2001]. Briefly,  
 The $\Delta\Delta C_T$ is given by:  
 
@@ -202,7 +202,7 @@ Where:
   
 ### Standard curve methods  
 
-In comparison, this model doesn't assume perfect amplificaion but rather actively use the amplificaion in calculating the relative expresion. So when the amplification efficiency of all genes are 100% both methods should give similar results. The standard curve method is applied using two steps. First, serial dilutions of the mRNAs from the samples of interest are used as input to the PCR reaction. The linear trend of the log input amount and the resulting $C_T$ values for each gene are used to calculate an intercept and a slope. Secondly, these intercepts and slopes are used to calculate the amounts of mRNA of the genes of interest and the control/reference in the samples of interest and the control sample/reference. These amounts are finally used to calculate the relative expression in a manner similar to the later method, just using division instead of subtraction.  
+In comparison, this model doesn't assume perfect amplification but rather actively use the amplification in calculating the relative expression. So when the amplification efficiency of all genes are 100% both methods should give similar results. The standard curve method is applied using two steps. First, serial dilutions of the mRNAs from the samples of interest are used as input to the PCR reaction. The linear trend of the log input amount and the resulting $C_T$ values for each gene are used to calculate an intercept and a slope. Secondly, these intercepts and slopes are used to calculate the amounts of mRNA of the genes of interest and the control/reference in the samples of interest and the control sample/reference. These amounts are finally used to calculate the relative expression in a manner similar to the later method, just using division instead of subtraction.  
 The formal deriviation of the model is described here [@Yuan2006]. Briefly,  
 The amount of RNA in a sample is given by:  
 
@@ -246,10 +246,10 @@ Where:
 
 ## Quality Assessment of qPCR  
 
-Fortuanlty, regardless of the method used in the analysis of qPCR data, The quality asssesment are done in a similar way. It requires an experiment similar to that of calculating the standard curve. Serial dilutions of the genes of interest and controls are used as input to the reaction and diferent calculations are made.  
+Fortunately, regardless of the method used in the analysis of qPCR data, The quality assessment are done in a similar way. It requires an experiment similar to that of calculating the standard curve. Serial dilutions of the genes of interest and controls are used as input to the reaction and different calculations are made.  
 
-  * The amplificaion efficiency is approximated be the linear trend between the difference between the $C_T$ value of a gene of interest and a control/reference ($\Delta C_T$) and the log input amount. This piece of information is required when using the $\Delta\Delta C_T$ model. Typically, the slope of the curve should be very small and thr $R^2$ value should be very close to one. A value of the amplification efficiency itselt is given by $10 ^ {-1/slope}$ and should be close to 2. Other analysis methods are recommended when this is not the case.  
-  * Similar curves are required for each gene using the $C_T$ value instead of the differnce for applying the standard curve method. In this case, a separte slope and intercept are required for the calculation of the relative expression.  
+  * The amplification efficiency is approximated be the linear trend between the difference between the $C_T$ value of a gene of interest and a control/reference ($\Delta C_T$) and the log input amount. This piece of information is required when using the $\Delta\Delta C_T$ model. Typically, the slope of the curve should be very small and thr $R^2$ value should be very close to one. A value of the amplification efficiency itselt is given by $10 ^ {-1/slope}$ and should be close to 2. Other analysis methods are recommended when this is not the case.  
+  * Similar curves are required for each gene using the $C_T$ value instead of the differnce for applying the standard curve method. In this case, a separate slope and intercept are required for the calculation of the relative expression.  
 
 ## Testing statistical significance   
 
@@ -257,7 +257,7 @@ Using the later two methods and there assumptions, useful statistics such as p-v
 
 ### Two-group tests  
 
-Assuming that the assumptions of the first methods are holding true, the simple t-test can be used to test the significance of the difference between two condtions ($\Delta C_T$). t-test assumes in addition, that the input $C_T$ values are normally distributed and the variance between condtions are comprable. Wilcoxon test can be used when sample size is samll and those two last assumpiton are hard to achieve.  
+Assuming that the assumptions of the first methods are holding true, the simple t-test can be used to test the significance of the difference between two conditions ($\Delta C_T$). t-test assumes in addition, that the input $C_T$ values are normally distributed and the variance between conditions are comparable. Wilcoxon test can be used when sample size is small and those two last assumpiton are hard to achieve.  
 
 ### Linear regression  
 
@@ -273,7 +273,7 @@ This is exactly the ($\Delta\Delta C_T$) as explained earlier. So the $\Delta\De
 
 ## Motivation   
 
-To illustrate the use of the `pcr` packge in applying these methods on qPCR data, we use real qPCR real qPCR datasets from two published papers. In addtion, we compare the results obtained by the `pcr` package to that of the original paper to ensure the reliablity. First, Livak *et al.* [@Livak2001] obtained total RNA from human tissues; brain and kidney. c-myc and GAPDH primers were then used for cDNA synthesis and used as input in the PCR reaction. 6 replicates for each tissue were run in separte sample. This dataset is refered to as `ct1` through this document and is shown along with the difference calculations in Table \ref{table1} and \ref{table2}. Another dataset was generated from separate assay. Only running the samples in the same tube this time with pairs of primates that has different reporting dyes. This is refered to as `ct2` and is shown in Table  \ref{table3} and \ref{table4}. Finally, $C_T$ values from a qPCR experiment using differnt input amounts of c-myc and GAPDH was conducted. The dataset is refered to as `ct3` and is shown in Table  \ref{table5}. Secondly, Yuan *et al.* [@Yuan2006] extracted total RNA from *Arabidopsis thaliana* plant treated and control samples, 24 samples each. And performed a qPCR to using MT7 and ubiquitin primers. This dataset is refered to as `ct4` and Table \ref{table6} showes the results of the different testing methods that were applied in the original paper.  
+To illustrate the use of the `pcr` packge in applying these methods on qPCR data, we use real qPCR real qPCR datasets from two published papers. In addtion, we compare the results obtained by the `pcr` package to that of the original paper to ensure the reliablity. First, Livak *et al.* [@Livak2001] obtained total RNA from human tissues; brain and kidney. c-myc and GAPDH primers were then used for cDNA synthesis and used as input in the PCR reaction. 6 replicates for each tissue were run in separate sample. This dataset is refered to as `ct1` through this document and is shown along with the difference calculations in Table \ref{table1} and \ref{table2}. Another dataset was generated from separate assay. Only running the samples in the same tube this time with pairs of primates that has different reporting dyes. This is refered to as `ct2` and is shown in Table  \ref{table3} and \ref{table4}. Finally, $C_T$ values from a qPCR experiment using differnt input amounts of c-myc and GAPDH was conducted. The dataset is refered to as `ct3` and is shown in Table  \ref{table5}. Secondly, Yuan *et al.* [@Yuan2006] extracted total RNA from *Arabidopsis thaliana* plant treated and control samples, 24 samples each. And performed a qPCR to using MT7 and ubiquitin primers. This dataset is refered to as `ct4` and Table \ref{table6} showes the results of the different testing methods that were applied in the original paper.  
 
 \begin{table}[H]
 \centering
@@ -418,11 +418,11 @@ Wilcoxon test & -0.6354 & \textless 0.0001 & (-0.4227, -0.8805) \\ \hline
 
 ## Assess `pcr_assess`  
 
-`pcr_assess` is a wrapper for the implemented quality assessment methods; `pcr_efficiency` and `pcr_standard`. Both methods can be called direcly using the method names or through `pcr_assess` by passing a string to the argument `method`; 'efficiency' or 'standard_curve' for calculating the amplificaion efficiency or the standard curve for each gene respectively.  
+`pcr_assess` is a wrapper for the implemented quality assessment methods; `pcr_efficiency` and `pcr_standard`. Both methods can be called directly using the method names or through `pcr_assess` by passing a string to the argument `method`; 'efficiency' or 'standard_curve' for calculating the amplification efficiency or the standard curve for each gene respectively.  
 
 ### Amplification efficiency `pcr_efficiency` 
 
-To calculate the amplificaion efficiency in a qPCR experiment, the main input is a `data.frame` with columns contain the $C_T$ values for each gene and raws correspond to the different input amounts/dilutions (Table \ref{table5}).  
+To calculate the amplification efficiency in a qPCR experiment, the main input is a `data.frame` with columns contain the $C_T$ values for each gene and raws correspond to the different input amounts/dilutions (Table \ref{table5}).  
 
 The following code apply the calculation on the `data.frame`, `ct3`. It has two columns `r names(ct3)[1]` and `r names(ct3)[2]` and 3 raws for each of the input amounts coded in the variable `amounts`. A reference gene passed to the `reference_gene` argument, in this case, the column name `r names(ct3)[2]`.  
 
@@ -446,12 +446,12 @@ res <- pcr_assess(ct3,
                   reference_gene = 'GAPDH',
                   method = 'efficiency')
 knitr::kable(res, 
-             caption = '\\label{table:table7} Amplificaion efficiency of c-myc')
+             caption = '\\label{table:table7} amplification efficiency of c-myc')
 ```
 
 The output of `pcr_assess` is a `data.frame` of 4 columns and *n* rows equals the input genes except for the reference. For each gene an *intercept*, *slope* and $R^2$ is calculated for a the difference between it and the reference ($\Delta C_T$) (Table \ref{table:table7}). 
 
-When the argument `plot` is `TRUE` a graph is produced insead shows the average and standard deviation of of the $\Delta C_T$ at difference input amounts. In addition, a linear trend line is drawn (Fig \ref{fig:fig1}).  
+When the argument `plot` is `TRUE` a graph is produced instead shows the average and standard deviation of of the $\Delta C_T$ at difference input amounts. In addition, a linear trend line is drawn (Fig \ref{fig:fig1}).  
 
 ```{r plot_efficiency, fig.cap='\\label{fig:fig1} Amplification efficiency of c-myc'}
 gg <- pcr_assess(ct3,
@@ -572,7 +572,7 @@ plot_grid(gg1, gg2)
 
 ### Delta $C_T$ ($\Delta C_T$) `pcr_dct` 
 
-This method is a variation of the double delta $C_T$ model. It can be used to caculate the fold change of in one sample relative to the others. For example, it can be used to compare and choosing a control/referece genes.  
+This method is a variation of the double delta $C_T$ model. It can be used to calculate the fold change of in one sample relative to the others. For example, it can be used to compare and choosing a control/reference genes.  
 
 ```{r make_up_dataset}
 ## example to check fold change of control gens
@@ -686,7 +686,7 @@ Testing for statistical significance between conditions is important to ensure v
 
 `pcr_test` provides a unified interface to different testing methods, which is similar to that used before for analysis and quality assessment.  
 
-Here, we used a dataset `ct4` of 48 samples and two gene columns `r names(ct4)[1]` and `r names(ct4)[2]`. The samples came from two groups as indicated in the variable `group`. argumets `reference_gene` and `referece_control` are used to construct the comparison the same way they were used to calculate the relative expression.  
+Here, we used a dataset `ct4` of 48 samples and two gene columns `r names(ct4)[1]` and `r names(ct4)[2]`. The samples came from two groups as indicated in the variable `group`. argumets `reference_gene` and `reference_control` are used to construct the comparison the same way they were used to calculate the relative expression.  
 
 ```{r testing_data}
 # locate and read data
@@ -764,7 +764,7 @@ The output of the `test`, 'lm' contains an extra column `term` to show the diffe
 Pabinger *et al.* surveyed the tools used to analyze qPCR data across different platforms [@Pabinger2014]. They included 9 R packages which provide very useful analysis and visualization methods. Some of these packages focuses one cetain models and some are designed to handle high-throughput qPCR data. Most of these packages are hosted in CRAN and a few on the BioConductor so they adhere to bioconductor methods and data containers. In comparison, `pcr` provides a unified interface for different quality assessment, analysis and testing models. The input and the output are tidy `data.frame`, and the package source code follows the tidyverse paractices. This package is targets the small scale qPCR experimental data and there R user practioners. The interface and documentation choices were made with such users in mind and require no deep knowledge in specific data structures or complex statistical models.  
 
 # Miscellaneous  
-In this section, we discuss briefly some common issues that arises when using real-time qPCR data and some simpliefied solutions using the `pcr` package. Mainy, we use linear models to quantify the effect of variables external to the reaction condtions on the resulting data and analysis. Either to identify such effects or to inform further experiments that are more likely to yeild better results once the sources of the problems were removed. The examples are applied to the `ct4` dataset alone with some artificial variable.  
+In this section, we discuss briefly some common issues that arises when using real-time qPCR data and some simpliefied solutions using the `pcr` package. Mainy, we use linear models to quantify the effect of variables external to the reaction conditions on the resulting data and analysis. Either to identify such effects or to inform further experiments that are more likely to yeild better results once the sources of the problems were removed. The examples are applied to the `ct4` dataset alone with some artificial variable.  
 
 ## Testing advanced desgins and hypotheses  
 
@@ -787,7 +787,7 @@ knitr::kable(res,
              caption = "\\label{table:table17} Testing advanced hypotheses")
 ```
 
-In this case, the `estimate` effect of the interaction term between `dose` and `group` is very samll and the `p_value` is very large (Table \ref{table:table17}).  
+In this case, the `estimate` effect of the interaction term between `dose` and `group` is very small and the `p_value` is very large (Table \ref{table:table17}).  
 
 ## Varying RNA quality among samples  
 
@@ -834,7 +834,7 @@ knitr::kable(res,
              caption = "\\label{table:table19} Combining data from multiple qPCR runs")
 ```
 
-Here, we contructed a variable `run` to similate a situation in which a dataset was generated in three separate runs. By including `run` in a `model_matrix`, its effect can be estimated. In this case, the `estimate` are very samll and the `p_value` are very large, so it can be igored (Table \ref{table:table19}).  
+Here, we contructed a variable `run` to similate a situation in which a dataset was generated in three separate runs. By including `run` in a `model_matrix`, its effect can be estimated. In this case, the `estimate` are very small and the `p_value` are very large, so it can be igored (Table \ref{table:table19}).  
 
 # Citation  
 

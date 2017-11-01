@@ -14,7 +14,7 @@
 #'   \item term The linear regression comparison terms
 #'   \item gene The column names of df. reference_gene is dropped
 #'   \item estimate The estimate for each term
-#'   \item p_value The p-value fot each term
+#'   \item p_value The p-value for each term
 #'   \item lower The low 95\% confidence interval
 #'   \item upper The high 95\% confidence interval
 #' }
@@ -23,11 +23,11 @@
 #' and \code{\link[stats]{lm}}
 #'
 #' @details The simple t-test can be used to test the significance of the
-#' difference between two condtions \eqn{\Delta C_T}. t-test assumes in addition,
+#' difference between two conditions \eqn{\Delta C_T}. t-test assumes in addition,
 #'  that the input \eqn{C_T} values are normally distributed and the variance
-#'  between condtions are comprable.
-#' Wilcoxon test can be used when sample size is samll and those two last a
-#' ssumpiton are hard to achieve.
+#'  between conditions are comparable.
+#' Wilcoxon test can be used when sample size is small and those two last
+#' assumpiton are hard to achieve.
 #'
 #' Two use the linear regression here. A null hypothesis is formulated as following,
 #' \deqn{
