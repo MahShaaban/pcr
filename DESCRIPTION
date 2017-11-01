@@ -1,5 +1,5 @@
 Package: pcr
-Version: 0.0.0.9000
+Version: 1.0.0
 Title: Analyzing real-time quantitative PCR data
 Description: Quality assessing, analyzing and testing the statistical significance of real-time quantitative PCR data.
 Authors@R: person("Mahmoud", "Ahmded",
