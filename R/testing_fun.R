@@ -27,7 +27,7 @@
 #'  that the input \eqn{C_T} values are normally distributed and the variance
 #'  between conditions are comparable.
 #' Wilcoxon test can be used when sample size is small and those two last
-#' assumpiton are hard to achieve.
+#' assumptions are hard to achieve.
 #'
 #' Two use the linear regression here. A null hypothesis is formulated as following,
 #' \deqn{

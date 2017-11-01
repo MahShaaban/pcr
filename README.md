@@ -53,7 +53,7 @@ res
 
 The output of `pcr_analyze` is explained in the documnetation of the function `?pcr_analyze` and the method it calls `?pcr_ddct`. Briefly, the input includes the CT value of c-myc `normalized` to the control GAPDH, The `calibrated` value of c-myc in the kidney relative to the brain samples and the final `relative_expression` of c-myc. In addition, an `error` term and a `lower` and `upper` intervals are provided.  
 
-The previous analysis makes a few assumpitons. One of which is a perfect amplification efficiency of the PCR reation. To assess the validity of this assumption, `pcr_assess` provides a method called `efficiency`. The input `data.frame` is the CT values of c-myc and GAPDH at different input amounts/dilutions.  
+The previous analysis makes a few assumptions. One of which is a perfect amplification efficiency of the PCR reation. To assess the validity of this assumption, `pcr_assess` provides a method called `efficiency`. The input `data.frame` is the CT values of c-myc and GAPDH at different input amounts/dilutions.  
 
 ```r
 ## locate and read data

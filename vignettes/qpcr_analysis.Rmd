@@ -134,7 +134,7 @@ res
 
 The output of `pcr_analyze` is explained in the documnetation of the function `?pcr_analyze` and the method it calls `?pcr_ddct` as well as in a later secion of this document. Briefly, the input includes the $C_T$ value of c-myc `normalized` to the control GAPDH, The `calibrated` value of c-myc in the kidney relative to the brain samples and the final `relative_expression` of c-myc. In addition, an `error` term and a `lower` and `upper` intervals are provided.  
 
-The previous analysis makes a few assumpitons that will be explained later in this documnet. One of which is a perfect amplification efficiency of the PCR reation. To assess the validity of this assumption, `pcr_assess` provides a method called `efficiency`. The input `data.frame` is the $C_T$ values of c-myc and GAPDH at different input amounts/dilutions.  
+The previous analysis makes a few assumptions that will be explained later in this documnet. One of which is a perfect amplification efficiency of the PCR reation. To assess the validity of this assumption, `pcr_assess` provides a method called `efficiency`. The input `data.frame` is the $C_T$ values of c-myc and GAPDH at different input amounts/dilutions.  
 
 ```{r assess}
 ## locate and read data
@@ -257,7 +257,7 @@ Using the later two methods and there assumptions, useful statistics such as p-v
 
 ### Two-group tests  
 
-Assuming that the assumptions of the first methods are holding true, the simple t-test can be used to test the significance of the difference between two conditions ($\Delta C_T$). t-test assumes in addition, that the input $C_T$ values are normally distributed and the variance between conditions are comparable. Wilcoxon test can be used when sample size is small and those two last assumpiton are hard to achieve.  
+Assuming that the assumptions of the first methods are holding true, the simple t-test can be used to test the significance of the difference between two conditions ($\Delta C_T$). t-test assumes in addition, that the input $C_T$ values are normally distributed and the variance between conditions are comparable. Wilcoxon test can be used when sample size is small and those two last assumptions are hard to achieve.  
 
 ### Linear regression  
 
