@@ -26,4 +26,4 @@ Suggests: testthat,
     covr,
     cowplot
 VignetteBuilder: knitr
-License: GPL-3 + file LICENSE
+License: GPL-3
