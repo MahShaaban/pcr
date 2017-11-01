@@ -128,7 +128,8 @@
 #'
 #' @keywords internal
 
-.pcr_normalize <- function(df, reference_gene, mode = 'subtract', tidy = FALSE) {
+.pcr_normalize <- function(df, reference_gene, mode = 'subtract',
+                           tidy = FALSE) {
   # get the reference_gene column and unlist
   ref <- select(df, reference_gene) %>% unlist(use.names = FALSE)
 
@@ -197,7 +198,8 @@
 #'
 #' @keywords internal
 
-.pcr_calibrate <- function(df, reference_group, mode = 'subtract', tidy = FALSE) {
+.pcr_calibrate <- function(df, reference_group, mode = 'subtract',
+                           tidy = FALSE) {
   # get the row index of the reference group
   ind <- which(df$group == reference_group)
 

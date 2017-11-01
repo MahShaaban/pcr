@@ -32,7 +32,7 @@
 #' approximated be the linear trend between the difference between the \eqn{C_T}
 #' value of a gene of interest and a control/reference (\eqn{\Delta C_T}) and
 #' the log input amount. This piece of information is required when using the
-#' \eqn{\Delta\DeltaC_T} model. Typically, the slope of the curve should be very
+#' \eqn{\Delta \Delta C_T} model. Typically, the slope of the curve should be very
 #' small and the \eqn{R^2} value should be very close to one. Other analysis
 #' methods are recommended when this is not the case.
 #'

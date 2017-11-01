@@ -147,7 +147,8 @@ pcr_test <- function(df, group_var, reference_gene, reference_group,
                   },
                 'wilcox.test' = {
                   map(norm, function(x) {
-                    wilcox_test <- wilcox.test(x ~ group_var, conf.int = TRUE, ...)
+                    wilcox_test <- wilcox.test(x ~ group_var,
+                                               conf.int = TRUE, ...)
                     wilcox_test <- tidy(wilcox_test)
                     wilcox_test <- with(wilcox_test,
                                    data_frame(

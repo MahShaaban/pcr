@@ -59,7 +59,8 @@
 #' @importFrom dplyr mutate full_join
 #'
 #' @export
-pcr_ddct <- function(df, group_var, reference_gene, reference_group, mode = 'separate_tube') {
+pcr_ddct <- function(df, group_var, reference_gene, reference_group,
+                     mode = 'separate_tube') {
   # calculate the delta_ct
   if(mode == 'separate_tube') {
     # calculate average ct and normalize
@@ -152,7 +153,8 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group, mode = 'sep
 #' @importFrom dplyr mutate full_join
 #'
 #' @export
-pcr_dct <- function(df, group_var, reference_gene, reference_group, mode = 'separate_tube') {
+pcr_dct <- function(df, group_var, reference_gene, reference_group,
+                    mode = 'separate_tube') {
   if(mode == 'separate_tube') {
     # average ct and calibrate to a reference group
     ave <- .pcr_average(df, group_var = group_var)
@@ -256,8 +258,8 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group, mode = 'sepa
 #' @importFrom tidyr gather
 #' @importFrom dplyr full_join mutate
 #' @export
-pcr_curve <- function(df, group_var, reference_gene, reference_group, mode = 'separate_tube',
-                      intercept, slope) {
+pcr_curve <- function(df, group_var, reference_gene, reference_group,
+                      mode = 'separate_tube', intercept, slope) {
   # calculate the amount of rna in samples
   amounts <- .pcr_amount(df,
                         intercept = intercept,
@@ -265,10 +267,14 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group, mode = 'se
   if(mode == 'separate_tube') {
     # average amounts and normalize by a reference_gene
     ave <- .pcr_average(amounts, group_var = group_var)
-    norm <- .pcr_normalize(ave, reference_gene = reference_gene, mode = 'divide')
+    norm <- .pcr_normalize(ave,
+                           reference_gene = reference_gene,
+                           mode = 'divide')
   } else if(mode == 'same_tube') {
     # normalize amounts and average
-    norm <- .pcr_normalize(amounts, reference_gene = reference_gene, mode = 'divide')
+    norm <- .pcr_normalize(amounts,
+                           reference_gene = reference_gene,
+                           mode = 'divide')
     norm <- .pcr_average(norm, group_var = group_var)
   }
 
@@ -285,7 +291,9 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group, mode = 'se
     error <- .pcr_error(cv, reference_gene = reference_gene, tidy = TRUE)
   } else if(mode == 'same_tube') {
     # calculate cv from normalized amounts
-    norm <- .pcr_normalize(amounts, reference_gene = reference_gene, mode = 'divide')
+    norm <- .pcr_normalize(amounts,
+                           reference_gene = reference_gene,
+                           mode = 'divide')
     error <- .pcr_cv(norm, group_var = group_var, tidy = TRUE)
   }
   # join data.frames and calculate intervals

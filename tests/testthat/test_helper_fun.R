@@ -38,8 +38,8 @@ test_that(".pcr_average averages by amount", {
 
 test_that(".pcr_normalize normalizes by subtraction", {
   group_var <- rep(c('brain', 'kidney'), each = 6)
-  ave = .pcr_average(ct1, group_var = group_var)
-  norm = .pcr_normalize(ave, 'GAPDH', mode = 'subtract')
+  ave <- .pcr_average(ct1, group_var = group_var)
+  norm <- .pcr_normalize(ave, 'GAPDH', mode = 'subtract')
 
   norm2 <- ave$c_myc - ave$GAPDH
 
@@ -48,19 +48,19 @@ test_that(".pcr_normalize normalizes by subtraction", {
 
 test_that(".pcr_normalize normalizes by subtraction", {
   group_var <- rep(c('brain', 'kidney'), each = 6)
-  ave = .pcr_average(ct1, group_var = group_var)
-  norm = .pcr_normalize(ave, 'GAPDH', mode = 'divide')
+  ave <- .pcr_average(ct1, group_var = group_var)
+  norm <- .pcr_normalize(ave, 'GAPDH', mode = 'divide')
 
   norm2 <- ave$c_myc / ave$GAPDH
 
   expect_equal(norm$c_myc, norm2)
 })
 
-test_that(".pcr_calibrate calculates the calibrated expression by subtraction", {
+test_that(".pcr_calibrate calculates calibrated expression by subtraction", {
   group_var <- rep(c('brain', 'kidney'), each = 6)
-  ave = .pcr_average(ct1, group_var = group_var)
-  norm = .pcr_normalize(ave, 'GAPDH')
-  calib = .pcr_calibrate(norm, 'brain', mode = 'subtract')
+  ave <- .pcr_average(ct1, group_var = group_var)
+  norm <- .pcr_normalize(ave, 'GAPDH')
+  calib <- .pcr_calibrate(norm, 'brain', mode = 'subtract')
 
   calib2 <- norm$c_myc - norm$c_myc[1]
   expect_equal(calib$c_myc, calib2)
@@ -68,9 +68,9 @@ test_that(".pcr_calibrate calculates the calibrated expression by subtraction", 
 
 test_that(".pcr_calibrate calculates the calibrated expression by division", {
   group_var <- rep(c('brain', 'kidney'), each = 6)
-  ave = .pcr_average(ct1, group_var = group_var)
-  norm = .pcr_normalize(ave, 'GAPDH')
-  calib = .pcr_calibrate(norm, 'brain', mode = 'divide')
+  ave <- .pcr_average(ct1, group_var = group_var)
+  norm <- .pcr_normalize(ave, 'GAPDH')
+  calib <- .pcr_calibrate(norm, 'brain', mode = 'divide')
 
   calib2 <- norm$c_myc / norm$c_myc[1]
   expect_equal(calib$c_myc, calib2)
@@ -78,8 +78,8 @@ test_that(".pcr_calibrate calculates the calibrated expression by division", {
 
 test_that(".pcr_error returns the proper errors in the right format", {
   group_var <- rep(c('brain', 'kidney'), each = 6)
-  sds = .pcr_sd(ct1, group_var = group_var)
-  errors = .pcr_error(sds, reference_gene = 'GAPDH')
+  sds <- .pcr_sd(ct1, group_var = group_var)
+  errors <- .pcr_error(sds, reference_gene = 'GAPDH')
 
   errors2 <- sqrt((sds$c_myc^2) + (sds$GAPDH^2))
   expect_equal(errors$c_myc, errors2)
@@ -100,7 +100,7 @@ test_that(".pcr_cv calculates the correct cv", {
   amounts2 <- .pcr_amount(ct1, intercept, slope)
 
   # calculate cv
-  group = rep(c('brain', 'kidney'), each = 6)
+  group <- rep(c('brain', 'kidney'), each = 6)
   cv <- .pcr_cv(amounts2,
                group_var = group)
 
