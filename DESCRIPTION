@@ -7,10 +7,10 @@ Description: Calculates the amplification efficiency and curves from real-time
   methods Livak & Schmittgen (2001) <doi:10.1006/meth.2001.1262>. Tests for 
   statistical significance using two-group tests and linear regression 
   Yuan et al. (2006) <doi: 10.1186/1471-2105-7-85>.
-Authors@R: person("Mahmoud", "Ahmded",
+Authors@R: person("Mahmoud", "Ahmed",
   email = "mahmoud.s.fahmy@students.kasralainy.edu.eg",
   role = c("aut", "cre"))
-Maintainer: Mahmoud Ahmded <mahmoud.s.fahmy@students.kasralainy.edu.eg>
+Maintainer: Mahmoud Ahmed <mahmoud.s.fahmy@students.kasralainy.edu.eg>
 URL: https://github.com/MahShaaban/pcr
 BugReports: https://github.com/MahShaaban/pcr/issues
 Depends: R (>= 3.4.2)
