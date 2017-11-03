@@ -24,3 +24,17 @@ and only include the restrictions.
 We need add no restrictions to GPL-3 so The **License** field in `DESCRIPTION` 
 was modified to `GPL-3` and the `LICENSE` file was removed. 
 In addition, a file `cran-comments.md` was added to track comments.  
+
+* Second round
+
+> Thanks, please elaborate in your description the used methods (e.g. which tests).   
+  Please add a reference in the 'Description' field of your DESCRIPTION file reference in the form  
+  authors (year) <doi:...>  
+  authors (year) <arXiv:...>  
+  authors (year, ISBN:...)  
+  with no space after 'doi:', 'arXiv:' and angle brackets for auto-linking.  
+  Please explain the acronym PCR in your description.   
+  Please fix and resubmit.  
+
+We rephrased the **Description** field of the `DESCRIPTION` file to elaborate 
+on the methods, explain the acronym PCR and add two references  

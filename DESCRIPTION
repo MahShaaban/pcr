@@ -1,7 +1,12 @@
 Package: pcr
 Version: 1.0.0
 Title: Analyzing Real-Time Quantitative PCR Data
-Description: Quality assessing, analyzing and testing the statistical significance of real-time quantitative PCR data.
+Description: Calculates the amplification efficiency and curves from real-time 
+  quntitative PCR (Polymerase Chain Reaction) data. Estimates the relative 
+  experssion from PCR data using the double delta CT and the statndard curve 
+  methods Livak & Schmittgen (2001) <doi:10.1006/meth.2001.1262>. Tests for 
+  statistical significance using two-group tests and linear regression 
+  Yuan et al. (2006) <doi: 10.1186/1471-2105-7-85>.
 Authors@R: person("Mahmoud", "Ahmded",
   email = "mahmoud.s.fahmy@students.kasralainy.edu.eg",
   role = c("aut", "cre"))
