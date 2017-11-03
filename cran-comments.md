@@ -38,3 +38,7 @@ In addition, a file `cran-comments.md` was added to track comments.
 
 We rephrased the **Description** field of the `DESCRIPTION` file to elaborate 
 on the methods, explain the acronym PCR and add two references  
+
+* v1.0.1 submission
+
+Correcting a typo in the DESCRIPTION file
