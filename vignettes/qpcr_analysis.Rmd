@@ -90,18 +90,18 @@ Quantitative real-time PCR is an imprtant technique in medical and biomedical ap
 
 # Getting started 
 
-The `pcr` is available on github. To install it using `devtools`:  
+The `pcr` is available on CRAN. To install it, use:  
 
-```{r install_master, eval=FALSE}
-# install package from github (under development)
-devtools::install_github('MahShaaban/pcr')
+```{r install_CRAN, eval=FALSE}
+# install package CRAN
+install.packages('pcr')
 ```
 
-The development version of the package can be similarly obtained through:  
+The development version of the package can be obtained through:  
 
-```{r install_develop, eval=FALSE}
+```{r install_github, eval=FALSE}
 # install package from github (under development)
-devtools::install_github('MahShaaban/pcr@develop')
+devtools::install_github('MahShaaban/pcr')
 ```
 
 ```{r load_pcr}

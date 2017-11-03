@@ -2,4 +2,6 @@
 
   - under development
 
+# pcr 1.0.1
 
+  - available on CRAN
