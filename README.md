@@ -2,7 +2,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/y9hfiwwc390cce28?svg=true)](https://ci.appveyor.com/project/MahShaaban/pcr)
 [![Build status](https://ci.appveyor.com/api/projects/status/y9hfiwwc390cce28/branch/master?svg=true)](https://ci.appveyor.com/project/MahShaaban/pcr/branch/master)
 [![Coverage Status](https://img.shields.io/codecov/c/github/MahShaaban/pcr/master.svg)](https://codecov.io/github/MahShaaban/pcr?branch=master)
-
+[![CRAN version](https://img.shields.io/badge/CRAN-v1.0.1-blue.svg)](https://cran.r-project.org/web/packages/pcr/index.html)  
 # pcr  
 
 # Overview  
