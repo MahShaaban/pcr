@@ -5,7 +5,7 @@
 \title{Calculate the delta_delta_ct model}
 \usage{
 pcr_ddct(df, group_var, reference_gene, reference_group,
-  mode = "separate_tube")
+  mode = "separate_tube", plot = FALSE, ...)
 }
 \arguments{
 \item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
@@ -21,6 +21,10 @@ this variable should equal the number of rows of df}
 \item{mode}{A character string of; 'separate_tube' (default) or 'same_tube'.
 This is to indicate whether the different genes were run in separate or the
 same PCR tube}
+
+\item{plot}{A logical (default is FALSE)}
+
+\item{...}{Arguments passed to \link{pcr_plot}}
 }
 \value{
 A data.frame of 8 columns:
@@ -37,6 +41,7 @@ A data.frame of 8 columns:
   \item lower The lower interval of the relative_expression
   \item upper The upper interval of the relative_expression
 }
+When \code{plot} is TRUE, retruns a plot.
 }
 \description{
 Uses the \eqn{C_T} values and a reference gene and a group to calculate the delta
@@ -68,5 +73,12 @@ pcr_ddct(ct1,
          group_var = group_var,
          reference_gene = 'GAPDH',
          reference_group = 'brain')
+
+# return a plot
+pcr_ddct(ct1,
+         group_var = group_var,
+         reference_gene = 'GAPDH',
+         reference_group = 'brain',
+         plot = TRUE)
 
 }

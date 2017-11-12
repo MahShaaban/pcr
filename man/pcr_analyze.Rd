@@ -16,8 +16,8 @@ in rows rows}
 \item{...}{Arguments passed to the methods}
 }
 \value{
-A data.frame. For details; \link{pcr_ddct}, \link{pcr_dct} and
-\link{pcr_curve}
+A data.frame by default, when \code{plot} is TRUE returns a plot.
+For details; \link{pcr_ddct}, \link{pcr_dct} and \link{pcr_curve}.
 }
 \description{
 A unified interface to invoke different analysis methods of qPCR data.

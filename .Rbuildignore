@@ -8,3 +8,4 @@
 ^CONTRIBUTING\.md$
 ^data-raw$
 ^cran-comments\.md$
+^vignettes/qpcr_analysis\.Rmd$

@@ -13,6 +13,8 @@
 #' @param mode A character string of; 'separate_tube' (default) or 'same_tube'.
 #' This is to indicate whether the different genes were run in separate or the
 #' same PCR tube
+#' @param plot A logical (default is FALSE)
+#' @param ... Arguments passed to \link{pcr_plot}
 #'
 #' @return A data.frame of 8 columns:
 #' \itemize{
@@ -28,6 +30,7 @@
 #'   \item lower The lower interval of the relative_expression
 #'   \item upper The upper interval of the relative_expression
 #' }
+#' When \code{plot} is TRUE, retruns a plot.
 #'
 #' @details The comparative \eqn{C_T} methods assume that the cDNA templates of the
 #'  gene/s of interest as well as the control/reference gene have similar
@@ -54,13 +57,20 @@
 #'          reference_gene = 'GAPDH',
 #'          reference_group = 'brain')
 #'
+#' # return a plot
+#' pcr_ddct(ct1,
+#'          group_var = group_var,
+#'          reference_gene = 'GAPDH',
+#'          reference_group = 'brain',
+#'          plot = TRUE)
+#'
 #' @importFrom magrittr %>%
 #' @importFrom tidyr gather
 #' @importFrom dplyr mutate full_join
 #'
 #' @export
 pcr_ddct <- function(df, group_var, reference_gene, reference_group,
-                     mode = 'separate_tube') {
+                     mode = 'separate_tube', plot = FALSE, ...) {
   # calculate the delta_ct
   if(mode == 'separate_tube') {
     # calculate average ct and normalize
@@ -97,7 +107,14 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group,
     mutate(lower = 2 ^ -(calibrated + error),
            upper = 2 ^ -(calibrated - error))
 
-  return(res)
+  # return
+  # return plot when plot == TRUE
+  if(plot == TRUE) {
+    gg <- pcr_plot(res, method = 'delta_delta_ct', ...)
+    return(gg)
+  } else {
+    return(res)
+  }
 }
 
 #' Calculate the delta_ct model
@@ -123,6 +140,7 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group,
 #' \code{\link{pcr_ddct}}. It can be used to calculate the fold change
 #' of in one sample relative to the others. For example, it can be used to
 #' compare and choosing a control/reference genes.
+#' When \code{plot} is TRUE, retruns a plot.
 #'
 #' @references Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of
 #' Relative Gene Expression Data Using Real-Time Quantitative PCR and the
@@ -148,13 +166,19 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group,
 #'         group_var = group_var,
 #'         reference_group = 'brain')
 #'
+#' # returns a plot
+#' pcr_dct(pcr_hk,
+#'         group_var = group_var,
+#'         reference_group = 'brain',
+#'         plot = TRUE)
+#'
 #' @importFrom magrittr %>%
 #' @importFrom tidyr gather
 #' @importFrom dplyr mutate full_join
 #'
 #' @export
 pcr_dct <- function(df, group_var, reference_gene, reference_group,
-                    mode = 'separate_tube') {
+                    mode = 'separate_tube', plot = FALSE, ...) {
   if(mode == 'separate_tube') {
     # average ct and calibrate to a reference group
     ave <- .pcr_average(df, group_var = group_var)
@@ -185,7 +209,14 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group,
     mutate(lower = 2 ^ -(calibrated + error),
            upper = 2 ^ -(calibrated - error))
 
-  return(res)
+  # return
+  # return plot when plot == TRUE
+  if(plot == TRUE) {
+    gg <- pcr_plot(res, method = 'delta_ct', ...)
+    return(gg)
+  } else {
+    return(res)
+  }
 }
 
 #' Calculate the standard curve model
@@ -221,6 +252,7 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group,
 #'  amounts of mRNA of the genes of interest and the control/reference in the
 #'  samples of interest and the control sample/reference. These amounts are
 #'  finally used to calculate the relative expression.
+#' When \code{plot} is TRUE, retruns a plot.
 #'
 #' @references Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of
 #' Relative Gene Expression Data Using Real-Time Quantitative PCR and the
@@ -254,12 +286,23 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group,
 #'           intercept = intercept,
 #'           slope = slope)
 #'
+#' # returns a plot
+#' pcr_curve(ct1,
+#'           group_var = group,
+#'           reference_gene = 'GAPDH',
+#'           reference_group = 'brain',
+#'           intercept = intercept,
+#'           slope = slope,
+#'           plot = TRUE)
+#'
 #' @importFrom magrittr %>%
 #' @importFrom tidyr gather
 #' @importFrom dplyr full_join mutate
+#'
 #' @export
 pcr_curve <- function(df, group_var, reference_gene, reference_group,
-                      mode = 'separate_tube', intercept, slope) {
+                      mode = 'separate_tube', intercept, slope,
+                      plot = FALSE, ...) {
   # calculate the amount of rna in samples
   amounts <- .pcr_amount(df,
                         intercept = intercept,
@@ -303,7 +346,14 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group,
            upper = calibrated + error,
            error = error * normalized)
 
-  return(res)
+  # return
+  # return plot when plot == TRUE
+  if(plot == TRUE) {
+    gg <- pcr_plot(res, method = 'relative_curve', ...)
+    return(gg)
+  } else {
+    return(res)
+  }
 }
 
 #' Apply qPCR analysis methods
@@ -316,8 +366,8 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group,
 #' 'relative_curve' for invoking a certain analysis model
 #' @param ... Arguments passed to the methods
 #'
-#' @return A data.frame. For details; \link{pcr_ddct}, \link{pcr_dct} and
-#' \link{pcr_curve}
+#' @return A data.frame by default, when \code{plot} is TRUE returns a plot.
+#' For details; \link{pcr_ddct}, \link{pcr_dct} and \link{pcr_curve}.
 #'
 #' @details The different analysis methods can be invoked using the
 #' argument method with 'delta_delta_ct' default, 'delta_ct' or

@@ -105,5 +105,3 @@ test_that(".pcr_cv calculates the correct cv", {
                group_var = group)
 
 })
-
-

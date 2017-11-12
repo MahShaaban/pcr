@@ -213,4 +213,65 @@ test_that("pcr_analyze calls the right methods", {
   expect_equal(res$normalized, norm)
   })
 
+test_that("pcr_ddct returns a plot", {
+  ## add grouping variable
+  group_var <- rep(c('brain', 'kidney'), each = 6)
 
+  # calculate all values and errors in one step
+  res <- pcr_ddct(ct1,
+                  group_var = group_var,
+                  reference_gene = 'GAPDH',
+                  reference_group = 'brain',
+                  plot = TRUE)
+
+  expect_identical(class(res), c("gg", "ggplot"))
+})
+
+test_that("pcr_dct returns a plot", {
+  ## add grouping variable
+  group_var <- rep(c('brain', 'kidney'), each = 6)
+
+  # make a data.frame of two identical columns
+  pcr_hk <- data.frame(
+    GAPDH = ct1$GAPDH
+  )
+
+  ## add grouping variable
+  group_var <- rep(c('brain', 'kidney'), each = 6)
+
+  # calculate caliberation
+  res <- pcr_dct(pcr_hk,
+                 group_var = group_var,
+                 reference_group = 'brain',
+                 plot = TRUE)
+
+  expect_identical(class(res), c("gg", "ggplot"))
+})
+
+
+test_that("pcr_curve returns a plot", {
+  # make a vector of RNA amounts
+  amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
+
+  # calculate standard curve
+  standard_curve <- pcr_assess(ct3,
+                               amount = amount,
+                               method = 'standard_curve')
+  intercept <- standard_curve$intercept
+  slope <- standard_curve$slope
+
+  ## add grouping variable
+  group_var <- rep(c('brain', 'kidney'), each = 6)
+
+  # calculate standard amounts and error
+  res <- pcr_curve(ct2,
+                   group_var = group_var,
+                   reference_gene = 'GAPDH',
+                   reference_group = 'brain',
+                   intercept = intercept,
+                   slope = slope,
+                   mode = 'same_tube',
+                   plot = TRUE)
+
+  expect_identical(class(res), c("gg", "ggplot"))
+})

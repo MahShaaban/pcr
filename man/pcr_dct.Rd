@@ -5,7 +5,7 @@
 \title{Calculate the delta_ct model}
 \usage{
 pcr_dct(df, group_var, reference_gene, reference_group,
-  mode = "separate_tube")
+  mode = "separate_tube", plot = FALSE, ...)
 }
 \arguments{
 \item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
@@ -21,6 +21,10 @@ this variable should equal the number of rows of df}
 \item{mode}{A character string of; 'separate_tube' (default) or 'same_tube'.
 This is to indicate whether the different genes were run in separate or the
 same PCR tube}
+
+\item{plot}{A logical (default is FALSE)}
+
+\item{...}{Arguments passed to \link{pcr_plot}}
 }
 \value{
 A data.frame of 7 columns
@@ -44,6 +48,7 @@ This method is a variation of the double delta \eqn{C_T} model,
 \code{\link{pcr_ddct}}. It can be used to calculate the fold change
 of in one sample relative to the others. For example, it can be used to
 compare and choosing a control/reference genes.
+When \code{plot} is TRUE, retruns a plot.
 }
 \examples{
 # locate and read file
@@ -62,6 +67,12 @@ group_var <- rep(c('brain', 'kidney'), each = 6)
 pcr_dct(pcr_hk,
         group_var = group_var,
         reference_group = 'brain')
+
+# returns a plot
+pcr_dct(pcr_hk,
+        group_var = group_var,
+        reference_group = 'brain',
+        plot = TRUE)
 
 }
 \references{

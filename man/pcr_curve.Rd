@@ -5,7 +5,7 @@
 \title{Calculate the standard curve model}
 \usage{
 pcr_curve(df, group_var, reference_gene, reference_group,
-  mode = "separate_tube", intercept, slope)
+  mode = "separate_tube", intercept, slope, plot = FALSE, ...)
 }
 \arguments{
 \item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
@@ -25,6 +25,10 @@ same PCR tube}
 \item{intercept}{A numeric vector of intercept and length equals the number of genes}
 
 \item{slope}{A numeric vector of slopes length equals the number of genes}
+
+\item{plot}{A logical (default is FALSE)}
+
+\item{...}{Arguments passed to \link{pcr_plot}}
 }
 \value{
 A data.frame of 7 columns
@@ -56,6 +60,7 @@ and a slope. Secondly, these intercepts and slopes are used to calculate the
  amounts of mRNA of the genes of interest and the control/reference in the
  samples of interest and the control sample/reference. These amounts are
  finally used to calculate the relative expression.
+When \code{plot} is TRUE, retruns a plot.
 }
 \examples{
 # locate and read file
@@ -83,6 +88,15 @@ pcr_curve(ct1,
           reference_group = 'brain',
           intercept = intercept,
           slope = slope)
+
+# returns a plot
+pcr_curve(ct1,
+          group_var = group,
+          reference_gene = 'GAPDH',
+          reference_group = 'brain',
+          intercept = intercept,
+          slope = slope,
+          plot = TRUE)
 
 }
 \references{
