@@ -60,43 +60,21 @@
 #'                reference_gene = 'GAPDH',
 #'                plot = TRUE)
 #'
-#' @importFrom magrittr %>%
-#' @importFrom dplyr full_join mutate
-#' @importFrom ggplot2 ggplot aes geom_point geom_errorbar facet_wrap geom_smooth
-#'
 #' @export
 pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
-  # calculate delta_ct
-  dct <- .pcr_normalize(df, reference_gene = reference_gene)
-  # calculate trend; intercep, slop and r_squared
-  trend <- .pcr_trend(dct, amount = amount)
 
   # return data when plot is false
   if(plot == TRUE) {
-    # calculate average of normalizex values
-    ave <- .pcr_normalize(ct3, reference_gene = reference_gene) %>%
-      .pcr_average(group_var = amount, tidy = TRUE)
-
-    # calculate the standard deviation
-    sd <- .pcr_normalize(ct3, reference_gene = reference_gene) %>%
-      .pcr_sd(group_var = amount, tidy = TRUE)
-
-    # merge data.frames and calculate intervals
-    dat <- full_join(ave, sd) %>%
-      full_join(trend) %>%
-      mutate(group = log10(group),
-             lower = average - error,
-             upper = average + error)
-
-    # make efficiency plot
-    gg <- ggplot(dat, aes(x = group, y = average)) +
-      geom_point() +
-      geom_errorbar(aes(ymin = lower, ymax = upper)) +
-      facet_wrap(~gene) +
-      geom_smooth(method = 'lm')
+    gg <- pcr_plot_assess(df, amount, reference_gene, method = 'efficiency')
 
     return(gg)
   } else if(plot == FALSE) {
+    # calculate delta_ct
+    dct <- .pcr_normalize(df, reference_gene = reference_gene)
+
+    # calculate trend; intercep, slop and r_squared
+    trend <- .pcr_trend(dct, amount = amount)
+
     return(trend)
   }
 }
@@ -152,29 +130,18 @@ pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
 #'              amount = amount,
 #'              plot = TRUE)
 #'
-#' @importFrom magrittr %>%
-#' @importFrom dplyr mutate full_join
-#' @importFrom tidyr gather
-#' @importFrom ggplot2 ggplot aes geom_point facet_wrap
 #'
 #' @export
 pcr_standard <- function(df, amount, plot = FALSE) {
   # return data when plot is false
-  # calculate trend; intercep, slop and r_squared
-  trend <- .pcr_trend(df, amount)
-
   # when plot == TRUE
   # plot a standard curve for each gene
   if(plot == TRUE) {
-    # make a data.frame of data
-    dat <- mutate(df, log_amount = log10(amount)) %>%
-      gather(gene, ct, -log_amount) %>%
-      full_join(trend)
-    gg <- ggplot(dat, aes(x = log_amount, y = ct)) +
-      geom_point() +
-      facet_wrap(~gene)
-    return(gg)
+    pcr_plot_assess(df, amount, method = 'standard_curve')
     } else if(plot == FALSE) {
+      # calculate trend; intercep, slop and r_squared
+      trend <- .pcr_trend(df, amount)
+
       return(trend)
     }
 }

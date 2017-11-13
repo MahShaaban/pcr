@@ -24,7 +24,7 @@ same PCR tube}
 
 \item{plot}{A logical (default is FALSE)}
 
-\item{...}{Arguments passed to \link{pcr_plot}}
+\item{...}{Arguments passed to \link{pcr_plot_analyze}}
 }
 \value{
 A data.frame of 8 columns:

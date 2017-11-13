@@ -14,7 +14,7 @@
 #' This is to indicate whether the different genes were run in separate or the
 #' same PCR tube
 #' @param plot A logical (default is FALSE)
-#' @param ... Arguments passed to \link{pcr_plot}
+#' @param ... Arguments passed to \link{pcr_plot_analyze}
 #'
 #' @return A data.frame of 8 columns:
 #' \itemize{
@@ -110,7 +110,7 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group,
   # return
   # return plot when plot == TRUE
   if(plot == TRUE) {
-    gg <- pcr_plot(res, method = 'delta_delta_ct', ...)
+    gg <- pcr_plot_analyze(res, method = 'delta_delta_ct', ...)
     return(gg)
   } else {
     return(res)
@@ -212,7 +212,7 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group,
   # return
   # return plot when plot == TRUE
   if(plot == TRUE) {
-    gg <- pcr_plot(res, method = 'delta_ct', ...)
+    gg <- pcr_plot_analyze(res, method = 'delta_ct', ...)
     return(gg)
   } else {
     return(res)
@@ -349,7 +349,7 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group,
   # return
   # return plot when plot == TRUE
   if(plot == TRUE) {
-    gg <- pcr_plot(res, method = 'relative_curve', ...)
+    gg <- pcr_plot_analyze(res, method = 'relative_curve', ...)
     return(gg)
   } else {
     return(res)
@@ -438,4 +438,3 @@ pcr_analyze <- function(df, method = 'delta_delta_ct', ...) {
          'delta_ct' = pcr_dct(df, ...),
          'relative_curve' = pcr_curve(df, ...))
 }
-

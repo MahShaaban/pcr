@@ -4,9 +4,6 @@
 #'
 #' @inheritParams pcr_ddct
 #' @param test A character string; 't.test' default, 'wilcox.test' or 'lm'
-#' @param model_matrix A model matrix for advanced experimental design. for
-#' constructing such a matrix with different variables check
-#' \code{\link[stats]{model.matrix}}
 #' @param ... Other arguments for the testing methods
 #'
 #' @return A data.frame of 5 columns in addition to term when test == 'lm'
@@ -78,7 +75,7 @@
 #' dose <- rep(c(100, 80, 60, 40), each = 3, times = 2)
 #' mm <- model.matrix(~group:dose, data = data.frame(group, dose))
 #'
-#' # test using t-test
+#' # test using lm
 #' pcr_test(ct4,
 #'          reference_gene = 'ref',
 #'          model_matrix = mm,
@@ -109,77 +106,242 @@
 #'          model_matrix = mm,
 #'          test = 'lm')
 #'
+#' @export
+pcr_test <- function(df, test = 't.test', ...) {
+  switch (test,
+    't.test' = pcr_ttest(df, ...),
+    'wilcox.test' = pcr_wilcox(df, ...),
+    'lm' = pcr_lm(df, ...)
+  )
+}
+
+#' t-test qPCR data
+#'
+#' @inheritParams pcr_ddct
+#' @param ... Other arguments to \code{\link[stats]{t.test}}
+#'
+#' @return A data.frame of 5 columns
+#' \itemize{
+#'   \item gene The column names of df. reference_gene is dropped
+#'   \item estimate The estimate for each term
+#'   \item p_value The p-value for each term
+#'   \item lower The low 95\% confidence interval
+#'   \item upper The high 95\% confidence interval
+#' }
+#'
+#' @examples
+#' # locate and read data
+#' fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
+#' ct4 <- readr::read_csv(fl)
+#'
+#' # make group variable
+#' group <- rep(c('control', 'treatment'), each = 12)
+#'
+#' # test
+#' pcr_ttest(ct4,
+#'           group_var = group,
+#'           reference_gene = 'ref',
+#'           reference_group = 'control')
+#'
+#' # test using t.test method
+#' pcr_test(ct4,
+#'          group_var = group,
+#'          reference_gene = 'ref',
+#'          reference_group = 'control',
+#'          test = 't.test')
+#'
 #' @importFrom purrr map
-#' @importFrom dplyr data_frame
+#' @importFrom stats t.test relevel
 #' @importFrom broom tidy
-#' @importFrom stats t.test wilcox.test lm confint relevel model.matrix
+#' @importFrom dplyr data_frame bind_rows
 #'
 #' @export
-pcr_test <- function(df, group_var, reference_gene, reference_group,
-                     test = 't.test', model_matrix = NULL, ...) {
+pcr_ttest <- function(df, group_var, reference_gene, reference_group, ...) {
+  # calculate the delta_ct values
+  norm <- .pcr_normalize(df, reference_gene = reference_gene)
+
+  # adjust the reference group
+  group_levels <- unique(group_var)
+  if(length(group_levels) != 2) {
+    stop('t.test is only applied to two group comparisons.')
+  }
+
+  ref <- group_levels[group_levels != reference_group]
+  group_var <- relevel(factor(group_var), ref = ref)
+
+  # perform test
+  tst <- map(norm, function(x) {
+    t_test <- t.test(x ~ group_var, ...)
+    t_test <- tidy(t_test)
+    t_test <- with(t_test,
+                   data_frame(
+                     estimate = estimate,
+                     p_value = p.value,
+                     lower = conf.low,
+                     upper = conf.high
+                   ))
+  })
+
+  # bind rows
+  tst <- bind_rows(tst, .id = 'gene')
+
+  # return
+  return(tst)
+}
+
+#' Wilcoxon test qPCR data
+#'
+#' @inheritParams pcr_ddct
+#' @param ... Other arguments to \code{\link[stats]{wilcox.test}}
+#'
+#' @return A data.frame of 5 columns
+#' \itemize{
+#'   \item gene The column names of df. reference_gene is dropped
+#'   \item estimate The estimate for each term
+#'   \item p_value The p-value for each term
+#'   \item lower The low 95\% confidence interval
+#'   \item upper The high 95\% confidence interval
+#' }
+#'
+#' @examples
+#' # locate and read data
+#' fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
+#' ct4 <- readr::read_csv(fl)
+#'
+#' # make group variable
+#' group <- rep(c('control', 'treatment'), each = 12)
+#'
+#' # test
+#' pcr_wilcox(ct4,
+#'            group_var = group,
+#'            reference_gene = 'ref',
+#'            reference_group = 'control')
+#'
+#' # test using wilcox.test method
+#' pcr_test(ct4,
+#'          group_var = group,
+#'          reference_gene = 'ref',
+#'          reference_group = 'control',
+#'          test = 'wilcox.test')
+#'
+#' @importFrom purrr map
+#' @importFrom stats wilcox.test relevel
+#' @importFrom broom tidy
+#' @importFrom dplyr data_frame bind_rows
+#'
+#' @export
+pcr_wilcox <- function(df, group_var, reference_gene, reference_group, ...) {
+  # calculate the delta_ct values
+  norm <- .pcr_normalize(df, reference_gene = reference_gene)
+
+  # adjust the reference group
+  group_levels <- unique(group_var)
+  if(length(group_levels) != 2) {
+    stop('wilcox.test is only applied to two group comparisons.')
+  }
+
+  ref <- group_levels[group_levels != reference_group]
+  group_var <- relevel(factor(group_var), ref = ref)
+
+  # perform test
+  tst <- map(norm, function(x) {
+    wilcox_test <- wilcox.test(x ~ group_var,
+                               conf.int = TRUE, ...)
+    wilcox_test <- tidy(wilcox_test)
+    wilcox_test <- with(wilcox_test,
+                        data_frame(
+                          estimate = estimate,
+                          p_value = p.value,
+                          lower = conf.low,
+                          upper = conf.high
+                        ))
+  })
+
+  # bind rows
+  tst <- bind_rows(tst, .id = 'gene')
+
+  # return
+  return(tst)
+}
+
+
+#' Linear regression qPCR data
+#'
+#' @inheritParams pcr_ddct
+#' @param model_matrix A model matrix for advanced experimental design. for
+#' constructing such a matrix with different variables check
+#' \code{\link[stats]{model.matrix}}
+#' @param ... Other arguments to \code{\link[stats]{lm}}
+#'
+#' @return A data.frame of 6 columns
+#' \itemize{
+#'   \item term The term being tested
+#'   \item gene The column names of df. reference_gene is dropped
+#'   \item estimate The estimate for each term
+#'   \item p_value The p-value for each term
+#'   \item lower The low 95\% confidence interval
+#'   \item upper The high 95\% confidence interval
+#' }
+#'
+#' @examples
+#' # locate and read data
+#' fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
+#' ct4 <- readr::read_csv(fl)
+#'
+#' # make group variable
+#' group <- rep(c('control', 'treatment'), each = 12)
+#'
+#' # test
+#' pcr_lm(ct4,
+#'        group_var = group,
+#'        reference_gene = 'ref',
+#'        reference_group = 'control')
+#'
+#' # testing using lm method
+#' pcr_test(ct4,
+#'          group_var = group,
+#'          reference_gene = 'ref',
+#'          reference_group = 'control',
+#'          test = 'lm')
+#'
+#' @importFrom purrr map
+#' @importFrom stats lm confint relevel
+#' @importFrom broom tidy
+#' @importFrom dplyr data_frame bind_rows
+#'
+#' @export
+pcr_lm <- function(df, group_var, reference_gene, reference_group,
+                   model_matrix = NULL, ...) {
   # calculate the delta_ct values
   norm <- .pcr_normalize(df, reference_gene = reference_gene)
 
   # adjust group_var for formuls
-  if(test == 'lm' & is.null(model_matrix)) {
+  if(is.null(model_matrix)) {
     group_var <- relevel(factor(group_var), ref = reference_group)
-  } else if (test != 'lm') {
-    group_levels <- unique(group_var)
-    if(length(group_levels) != 2) {
-      stop('t.test and wilcox are only applied to two group comparisons')
-    }
-    ref <- group_levels[group_levels != reference_group]
-    group_var <- relevel(factor(group_var), ref = ref)
   }
-  dat <- switch(test,
-                't.test' = {
-                  map(norm, function(x) {
-                    t_test <- t.test(x ~ group_var, ...)
-                    t_test <- tidy(t_test)
-                    t_test <- with(t_test,
-                                   data_frame(
-                                     estimate = estimate,
-                                     p_value = p.value,
-                                     lower = conf.low,
-                                     upper = conf.high
-                                   ))
-                    })
-                  },
-                'wilcox.test' = {
-                  map(norm, function(x) {
-                    wilcox_test <- wilcox.test(x ~ group_var,
-                                               conf.int = TRUE, ...)
-                    wilcox_test <- tidy(wilcox_test)
-                    wilcox_test <- with(wilcox_test,
-                                   data_frame(
-                                     estimate = estimate,
-                                     p_value = p.value,
-                                     lower = conf.low,
-                                     upper = conf.high
-                                   ))
-                  })
-                },
-                'lm' = {
-                  map(norm, function(x) {
-                    if(is.null(model_matrix)) {
-                      linear_model <- lm(x ~ group_var, ...)
-                      conf_int <- confint(linear_model, ...)
-                    } else {
-                      linear_model <- lm(x ~ model_matrix + 0, ...)
-                      conf_int <- confint(linear_model, ...)
-                    }
 
-                    linear_model <- tidy(linear_model)[-1,]
-                    conf_int <- tidy(conf_int)[-1,]
+  tst <- map(norm, function(x) {
+    if(is.null(model_matrix)) {
+      linear_model <- lm(x ~ group_var, ...)
+      conf_int <- confint(linear_model, ...)
+    } else {
+      linear_model <- lm(x ~ model_matrix + 0, ...)
+      conf_int <- confint(linear_model, ...)
+    }
 
-                    data_frame(
-                      term = linear_model$term,
-                      estimate = linear_model$estimate,
-                      p_value = linear_model$p.value,
-                      lower = conf_int$`X2.5..`,
-                      upper = conf_int$`X97.5..`
-                    )
-                  })
-                })
-  bind_rows(dat, .id = 'gene')
+    linear_model <- tidy(linear_model)[-1,]
+    conf_int <- tidy(conf_int)[-1,]
+
+    data_frame(
+      term = linear_model$term,
+      estimate = linear_model$estimate,
+      p_value = linear_model$p.value,
+      lower = conf_int$`X2.5..`,
+      upper = conf_int$`X97.5..`
+    )
+  })
+
+  tst <- bind_rows(tst, .id = 'gene')
+
+  return(tst)
 }

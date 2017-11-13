@@ -7,12 +7,20 @@ test_that("pcr_test runs the t.test correctly", {
   # make group variable
   group <- rep(c('control', 'treatment'), each = 12)
 
-  # test using t-test
+  # test using pcr_test
   res <- pcr_test(ct4,
                   group_var = group,
                   reference_gene = 'ref',
                   reference_group = 'control',
                   test = 't.test')
+
+  # test using pcr_ttest
+  res2 <- pcr_ttest(ct4,
+                    group_var = group,
+                    reference_gene = 'ref',
+                    reference_group = 'control')
+
+  expect_identical(res, res2)
 
   norm <- ct4$target - ct4$ref
 
@@ -34,12 +42,20 @@ test_that("pcr_test runs the wilcox.test correctly", {
   # make group variable
   group <- rep(c('control', 'treatment'), each = 12)
 
-  # test using wilcox.test
+  # test using pcr_test
   res <- pcr_test(ct4,
                   group_var = group,
                   reference_gene = 'ref',
                   reference_group = 'control',
                   test = 'wilcox.test')
+
+  # test using pcr_wilcox
+  res2 <- pcr_wilcox(ct4,
+                     group_var = group,
+                     reference_gene = 'ref',
+                     reference_group = 'control' )
+
+  expect_identical(res, res2)
 
   norm <- ct4$target - ct4$ref
 
@@ -60,12 +76,21 @@ test_that("pcr_test runs the lm correctly", {
   # make group variable
   group <- rep(c('control', 'treatment'), each = 12)
 
-  # test using lm
+
+  # test using pcr_test
   res <- pcr_test(ct4,
                   group_var = group,
                   reference_gene = 'ref',
                   reference_group = 'control',
                   test = 'lm')
+
+  # test using pcr_test
+  res2 <- pcr_lm(ct4,
+                 group_var = group,
+                 reference_gene = 'ref',
+                 reference_group = 'control')
+
+  expect_identical(res, res2)
 
   norm <- ct4$target - ct4$ref
 

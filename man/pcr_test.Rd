@@ -4,25 +4,13 @@
 \alias{pcr_test}
 \title{Statistical testing of PCR data}
 \usage{
-pcr_test(df, group_var, reference_gene, reference_group, test = "t.test",
-  model_matrix = NULL, ...)
+pcr_test(df, test = "t.test", ...)
 }
 \arguments{
 \item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
 in rows rows}
 
-\item{group_var}{A character vector of a grouping variable. The length of
-this variable should equal the number of rows of df}
-
-\item{reference_gene}{A character string of the column name of a control gene}
-
-\item{reference_group}{A character string of the control group in group_var}
-
 \item{test}{A character string; 't.test' default, 'wilcox.test' or 'lm'}
-
-\item{model_matrix}{A model matrix for advanced experimental design. for
-constructing such a matrix with different variables check
-\code{\link[stats]{model.matrix}}}
 
 \item{...}{Other arguments for the testing methods}
 }
@@ -96,7 +84,7 @@ group <- relevel(factor(group), ref = 'control')
 dose <- rep(c(100, 80, 60, 40), each = 3, times = 2)
 mm <- model.matrix(~group:dose, data = data.frame(group, dose))
 
-# test using t-test
+# test using lm
 pcr_test(ct4,
          reference_gene = 'ref',
          model_matrix = mm,
