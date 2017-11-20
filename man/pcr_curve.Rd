@@ -41,10 +41,10 @@ A data.frame of 7 columns
   \item lower The lower interval of the normalized relative expression
   \item upper The upper interval of the normalized relative expression
 }
-When \code{plot} is TRUE, retruns a bar graph of the calibrated expression
+When \code{plot} is TRUE, returns a bar graph of the calibrated expression
 of the genes in the column and the groups in the column group. Error bars
 are drawn using the columns lower and upper. When more one gene are plotted
-the default in dodgeed bars. When the argumnet facet is TRUE a separate
+the default in dodge bars. When the argument facet is TRUE a separate
 panel is drawn for each gene.
 }
 \description{

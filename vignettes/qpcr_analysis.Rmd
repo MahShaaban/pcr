@@ -11,6 +11,7 @@ output:
     toc_depth: 2
 header-includes: 
 - \usepackage{graphicx}
+- \usepackage{float}
 references:
 - id: Yuan2006
   title: Statistical analysis of real-time PCR data
@@ -685,7 +686,8 @@ gg2 <- pcr_analyze(ct2,
                    intercept = intercept,
                    slope = slope,
                    method = 'relative_curve',
-                   mode = 'same_tube') +
+                   mode = 'same_tube',
+                   plot = TRUE) +
   labs(x = '', y = 'Relative mRNA expression') +
   ggtitle(label = 'Same tubes')
 ```

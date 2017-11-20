@@ -42,3 +42,8 @@ on the methods, explain the acronym PCR and add two references
 * v1.0.1 submission
 
 Correcting a typo in the DESCRIPTION file
+
+* v1.1.0 submission  
+
+Revised documentation and plotting option  
+
