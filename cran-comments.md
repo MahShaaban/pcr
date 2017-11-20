@@ -46,4 +46,5 @@ Correcting a typo in the DESCRIPTION file
 * v1.1.0 submission  
 
 Revised documentation and plotting option  
+fixed link to the CRAN page 
 
