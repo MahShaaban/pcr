@@ -548,17 +548,22 @@ The only difference here is that the average of the $C_T$ values for the target 
 Figure \ref{fig:fig3} shows the results of these two analysis. Bars represent the average relative expression of c-myc in the kidney, normalized by GAPDH and calibrated by the brain. The error bars are the standard deviations.   
 
 ```{r plot_ddct_separate_tube}
-gg1 <- ggplot(res1, aes(x = group, y = relative_expression)) +
-  geom_col(width = .7) +
-  geom_errorbar(aes(ymin = lower, ymax = upper), width = .5) +
+gg1 <- pcr_analyze(ct1,
+  group_var = group_var,
+  reference_gene = 'GAPDH',
+  reference_group = 'brain',
+  plot = TRUE) +
   labs(x = '', y = 'Relative mRNA expression') +
   ggtitle(label = 'Separate tubes')
 ```
 
 ```{r plote_ddct_same_tube}
-gg2 <- ggplot(res2, aes(x = group, y = relative_expression)) +
-  geom_col(width = .7) +
-  geom_errorbar(aes(ymin = lower, ymax = upper), width = .5) +
+gg2 <- pcr_analyze(ct2,
+  group_var = group_var,
+  reference_gene = 'GAPDH',
+  reference_group = 'brain',
+  mode = 'same_tube',
+  plot = TRUE) +
   labs(x = '', y = 'Relative mRNA expression') +
   ggtitle(label = 'Same tubes')
 ```
@@ -606,9 +611,11 @@ Similarly, the output contains the calculated model and the error terms (Table \
 Figure \ref{fig:fig4} shows the average relative fold change of the identical housekeeping genes and there error terms in two tissue samples.  
 
 ```{r plot_dct_method, fig.cap='\\label{fig:fig4} GAPDH relative fold change using delta $C_T$'}
-ggplot(res, aes(x = group, y = fold_change, group = gene, fill = gene)) +
-  geom_col(position = 'dodge') +
-  geom_errorbar(aes(ymin = lower, ymax = upper, group = gene)) +
+pcr_analyze(pcr_hk,
+            group_var = group_var,
+            reference_group = 'brain',
+            method = 'delta_ct', 
+            plot = TRUE) +
   theme(legend.position = 'top',
         legend.direction = 'horizontal') +
   labs(x = '', y = 'Relative fold change')
@@ -658,17 +665,27 @@ The output is similar to that described earlier (Table \ref{table:table13}).
 Figure \ref{fig:fig5} shows the output of the standard curve method. Relative expression values of c-myc in the kidney normalized by GAPDH and calibrated to the brain are shown as bars, Averages $\pm$ standard deviations.  
 
 ```{r plot_standard_separate_tube}
-gg1 <- ggplot(res1, aes(x = group, y = calibrated)) +
-  geom_col() +
-  geom_errorbar(aes(ymin = lower, ymax = upper), width = .7) +
+gg1 <- pcr_analyze(ct1,
+                   group_var = group_var,
+                   reference_gene = 'GAPDH',
+                   reference_group = 'brain',
+                   intercept = intercept,
+                   slope = slope,
+                   method = 'relative_curve',
+                   plot = TRUE) +
   labs(x = '', y = 'Relative mRNA expression') +
   ggtitle(label = 'Separate tubes')
 ```
 
 ```{r plot_standard_same_tube}
-gg2 <- ggplot(res2, aes(x = group, y = calibrated)) +
-  geom_col() +
-  geom_errorbar(aes(ymin = lower, ymax = upper), width = .7) +
+gg2 <- pcr_analyze(ct2,
+                   group_var = group_var,
+                   reference_gene = 'GAPDH',
+                   reference_group = 'brain',
+                   intercept = intercept,
+                   slope = slope,
+                   method = 'relative_curve',
+                   mode = 'same_tube') +
   labs(x = '', y = 'Relative mRNA expression') +
   ggtitle(label = 'Same tubes')
 ```

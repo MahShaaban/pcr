@@ -46,6 +46,14 @@ pcr_analyze(ct1,
             reference_group = 'brain',
             method = 'delta_delta_ct')
 
+# return a plot
+pcr_analyze(ct1,
+            group_var = group_var,
+            reference_gene = 'GAPDH',
+            reference_group = 'brain',
+            method = 'delta_delta_ct',
+            plot = TRUE)
+
 # applying the delta ct method
 # make a data.frame of two identical columns
 pcr_hk <- data.frame(
@@ -53,11 +61,18 @@ pcr_hk <- data.frame(
   GAPDH2 = ct1$GAPDH
   )
 
-# calculate caliberation
+# calculate fold change
 pcr_analyze(pcr_hk,
             group_var = group_var,
             reference_group = 'brain',
             method = 'delta_ct')
+
+# return a plot
+pcr_analyze(pcr_hk,
+            group_var = group_var,
+            reference_group = 'brain',
+            method = 'delta_ct',
+            plot = TRUE)
 
 # applying the standard curve method
 # locate and read file
@@ -80,6 +95,17 @@ pcr_analyze(ct1,
            intercept = intercept,
            slope = slope,
            method = 'relative_curve')
+
+# return a plot
+pcr_analyze(ct1,
+           group_var = group_var,
+           reference_gene = 'GAPDH',
+           reference_group = 'brain',
+           intercept = intercept,
+           slope = slope,
+           method = 'relative_curve',
+           plot = TRUE)
+
 }
 \references{
 Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of

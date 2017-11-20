@@ -65,7 +65,7 @@ pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
 
   # return data when plot is false
   if(plot == TRUE) {
-    gg <- pcr_plot_assess(df, amount, reference_gene, method = 'efficiency')
+    gg <- .pcr_plot_assess(df, amount, reference_gene, method = 'efficiency')
 
     return(gg)
   } else if(plot == FALSE) {
@@ -130,14 +130,13 @@ pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
 #'              amount = amount,
 #'              plot = TRUE)
 #'
-#'
 #' @export
 pcr_standard <- function(df, amount, plot = FALSE) {
   # return data when plot is false
   # when plot == TRUE
   # plot a standard curve for each gene
   if(plot == TRUE) {
-    pcr_plot_assess(df, amount, method = 'standard_curve')
+    .pcr_plot_assess(df, amount, method = 'standard_curve')
     } else if(plot == FALSE) {
       # calculate trend; intercep, slop and r_squared
       trend <- .pcr_trend(df, amount)
@@ -180,11 +179,24 @@ pcr_standard <- function(df, amount, plot = FALSE) {
 #'            amount = amount,
 #'            method = 'standard_curve')
 #'
+#' # retrun a plot
+#' pcr_assess(ct3,
+#'            amount = amount,
+#'            method = 'standard_curve',
+#'            plot = TRUE)
+#'
 #' # calculate amplification efficiency
 #' pcr_assess(ct3,
 #'            amount = amount,
 #'            reference_gene = 'GAPDH',
 #'            method = 'efficiency')
+#'
+#' # return a plot
+#' pcr_assess(ct3,
+#'            amount = amount,
+#'            reference_gene = 'GAPDH',
+#'            method = 'efficiency',
+#'            plot = TRUE)
 #'
 #' @export
 pcr_assess <- function(df, method = 'standard_curve', ...) {

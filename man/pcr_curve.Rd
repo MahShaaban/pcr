@@ -28,7 +28,7 @@ same PCR tube}
 
 \item{plot}{A logical (default is FALSE)}
 
-\item{...}{Arguments passed to \link{pcr_plot_analyze}}
+\item{...}{Arguments passed to customize plot}
 }
 \value{
 A data.frame of 7 columns
@@ -41,6 +41,11 @@ A data.frame of 7 columns
   \item lower The lower interval of the normalized relative expression
   \item upper The upper interval of the normalized relative expression
 }
+When \code{plot} is TRUE, retruns a bar graph of the calibrated expression
+of the genes in the column and the groups in the column group. Error bars
+are drawn using the columns lower and upper. When more one gene are plotted
+the default in dodgeed bars. When the argumnet facet is TRUE a separate
+panel is drawn for each gene.
 }
 \description{
 Uses the \eqn{C_T} values and a reference gene and a group, in addition to the
@@ -60,7 +65,6 @@ and a slope. Secondly, these intercepts and slopes are used to calculate the
  amounts of mRNA of the genes of interest and the control/reference in the
  samples of interest and the control sample/reference. These amounts are
  finally used to calculate the relative expression.
-When \code{plot} is TRUE, retruns a plot.
 }
 \examples{
 # locate and read file

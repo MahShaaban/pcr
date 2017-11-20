@@ -24,7 +24,7 @@ same PCR tube}
 
 \item{plot}{A logical (default is FALSE)}
 
-\item{...}{Arguments passed to \link{pcr_plot_analyze}}
+\item{...}{Arguments passed to customize plot}
 }
 \value{
 A data.frame of 7 columns
@@ -38,6 +38,11 @@ A data.frame of 7 columns
   \item lower The lower interval of the fold_change
   \item upper The upper interval of the fold_change
 }
+When \code{plot} is TRUE, retruns a bar graph of the fold change of
+the genes in the column and the groups in the column group. Error bars are
+drawn using the columns lower and upper. When more one gene are plotted the
+default in dodgeed bars. When the argumnet facet is TRUE a separate panel is
+ drawn for each gene.
 }
 \description{
 Uses the \eqn{C_T} values and a reference group to calculate the delta \eqn{C_T}
@@ -48,7 +53,6 @@ This method is a variation of the double delta \eqn{C_T} model,
 \code{\link{pcr_ddct}}. It can be used to calculate the fold change
 of in one sample relative to the others. For example, it can be used to
 compare and choosing a control/reference genes.
-When \code{plot} is TRUE, retruns a plot.
 }
 \examples{
 # locate and read file
@@ -61,6 +65,7 @@ pcr_hk <- data.frame(
   GAPDH2 = ct1$GAPDH
   )
 
+# add grouping variable
 group_var <- rep(c('brain', 'kidney'), each = 6)
 
 # calculate caliberation
@@ -73,6 +78,13 @@ pcr_dct(pcr_hk,
         group_var = group_var,
         reference_group = 'brain',
         plot = TRUE)
+
+# returns a plot with facets
+pcr_dct(pcr_hk,
+        group_var = group_var,
+        reference_group = 'brain',
+        plot = TRUE,
+        facet = TRUE)
 
 }
 \references{

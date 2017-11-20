@@ -45,10 +45,23 @@ pcr_assess(ct3,
            amount = amount,
            method = 'standard_curve')
 
+# retrun a plot
+pcr_assess(ct3,
+           amount = amount,
+           method = 'standard_curve',
+           plot = TRUE)
+
 # calculate amplification efficiency
 pcr_assess(ct3,
            amount = amount,
            reference_gene = 'GAPDH',
            method = 'efficiency')
+
+# return a plot
+pcr_assess(ct3,
+           amount = amount,
+           reference_gene = 'GAPDH',
+           method = 'efficiency',
+           plot = TRUE)
 
 }

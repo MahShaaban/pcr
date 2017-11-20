@@ -24,7 +24,7 @@ same PCR tube}
 
 \item{plot}{A logical (default is FALSE)}
 
-\item{...}{Arguments passed to \link{pcr_plot_analyze}}
+\item{...}{Arguments passed to customize plot}
 }
 \value{
 A data.frame of 8 columns:
@@ -41,7 +41,11 @@ A data.frame of 8 columns:
   \item lower The lower interval of the relative_expression
   \item upper The upper interval of the relative_expression
 }
-When \code{plot} is TRUE, retruns a plot.
+When \code{plot} is TRUE, retruns a bar graph of the relative expression of
+the genes in the column and the groups in the column group. Error bars are
+drawn using the columns lower and upper. When more one gene are plotted the
+default in dodgeed bars. When the argumnet facet is TRUE a separate panel is
+ drawn for each gene.
 }
 \description{
 Uses the \eqn{C_T} values and a reference gene and a group to calculate the delta
@@ -57,7 +61,7 @@ The comparative \eqn{C_T} methods assume that the cDNA templates of the
   each cycle. Another assumptions is that, the expression difference between
   two genes or two samples can be captured by subtracting one (gene or
   sample of interest) from another (reference).  This final assumption
-  requires also that these references doesn't change with the treatment or
+  requires also that these references don't change with the treatment or
   the course in question.
 }
 \examples{
