@@ -96,3 +96,8 @@ browseVignettes("pcr")
 ```r
 citation("pcr")
 ```
+
+## PeerJ Article 
+
+For details about the methods and more examples, check out our [PeerJ article](https://peerj.com/articles/4473/?td=bl).
+
