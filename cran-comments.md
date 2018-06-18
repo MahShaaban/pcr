@@ -48,3 +48,6 @@ Correcting a typo in the DESCRIPTION file
 Revised documentation and plotting option  
 fixed link to the CRAN page 
 
+* v1.1.1 submission  
+
+Fixed vignette

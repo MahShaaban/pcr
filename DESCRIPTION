@@ -1,5 +1,5 @@
 Package: pcr
-Version: 1.1.0
+Version: 1.1.1
 Title: Analyzing Real-Time Quantitative PCR Data
 Description: Calculates the amplification efficiency and curves from real-time 
   quantitative PCR (Polymerase Chain Reaction) data. Estimates the relative 

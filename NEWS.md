@@ -10,3 +10,7 @@
 
   - Added plotting option to `pcr_analyze`  
   - Revised documentation and vignette  
+
+# pcr 1.1.1
+
+  - Fixed a minor issue in the package vignette
