@@ -9,9 +9,6 @@ output:
     number_sections: yes
     toc: yes
     toc_depth: 2
-header-includes: 
-- \usepackage{graphicx}
-- \usepackage{float}
 references:
 - id: Yuan2006
   title: Statistical analysis of real-time PCR data
@@ -81,7 +78,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(error = FALSE, message = FALSE, fig.align = 'center', fig.height = 3.5, fig.width = 3.5, fig.pos = 'H')
+knitr::opts_chunk$set(error = FALSE, message = FALSE, fig.align = 'center', fig.height = 3.5, fig.width = 3.5)
 ```
 
 # Overview  
