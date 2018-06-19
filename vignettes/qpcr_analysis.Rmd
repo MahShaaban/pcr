@@ -272,7 +272,7 @@ To illustrate the use of the `pcr` package in applying these methods on qPCR dat
 
 \begin{table}
 \centering
-\caption{Relative quantification using comparative ($\Delta\Delta C_T$) method (separate tubes)}
+%\caption{Relative quantification using comparative ($\Delta\Delta C_T$) method (separate tubes)}
 \label{table1}
 \begin{tabular}{lccccc}
 \hline
@@ -299,7 +299,7 @@ Kidney & 27.06 & 22.76 &  &  &  \\
 
 \begin{table}
 \centering
-\caption{Relative quantification using the standard curve method (separate tube)}
+%\caption{Relative quantification using the standard curve method (separate tube)}
 \label{table2}
 \begin{tabular}{@{}lcccc@{}}
 \hline
@@ -326,7 +326,7 @@ Kidney & 0.40 & 0.96 &  &  \\
 
 \begin{table}
 \centering
-\caption{Relative quantification using comparative ($\Delta\Delta C_T$) method (same tube)}
+%\caption{Relative quantification using comparative ($\Delta\Delta C_T$) method (same tube)}
 \label{table3}
 \begin{tabular}{lccccc}
 \hline
@@ -353,7 +353,7 @@ Average &  &  & 4.47 $\pm$ 0.14 & –2.53 $\pm$ 0.14 & 5.77 (5.23–6.37) \\
 
 \begin{table}
 \centering
-\caption{Relative quantification using the standard curve method (same tube)}
+%\caption{Relative quantification using the standard curve method (same tube)}
 \label{table4}
 \begin{tabular}{lcccc}
 \hline
@@ -380,7 +380,7 @@ Kidney & 0.365 & 0.049 & 0.35 &  \\
 
 \begin{table}
 \centering
-\caption{Average $C_T$ value for c-myc and GAPDH at different input amounts}
+%\caption{Average $C_T$ value for c-myc and GAPDH at different input amounts}
 \label{table5}
 \begin{tabular}{@{}cccc@{}}
 \hline
@@ -399,7 +399,7 @@ Kidney & 0.365 & 0.049 & 0.35 &  \\
 
 \begin{table}
 \centering
-\caption{Statistical significance using different testing methods}
+%\caption{Statistical significance using different testing methods}
 \label{table6}
 \begin{tabular}{@{}lccc@{}}
 \hline
@@ -440,15 +440,16 @@ res <- pcr_assess(ct3,
                   amount = amount,
                   reference_gene = 'GAPDH',
                   method = 'efficiency')
-knitr::kable(res, 
-             caption = '\\label{table:table7} amplification efficiency of c-myc')
+#knitr::kable(res, caption = '\\label{table:table7} amplification efficiency of c-myc')
+res
 ```
 
 The output of `pcr_assess` is a `data.frame` of 4 columns and *n* rows equals the input genes except for the reference. For each gene an *intercept*, *slope* and $R^2$ is calculated for a the difference between it and the reference ($\Delta C_T$) (Table \ref{table:table7}). 
 
 When the argument `plot` is `TRUE` a graph is produced instead shows the average and standard deviation of of the $\Delta C_T$ at difference input amounts. In addition, a linear trend line is drawn (Fig \ref{fig:fig1}).  
 
-```{r plot_efficiency, fig.cap='\\label{fig:fig1} Amplification efficiency of c-myc'}
+```{r plot_efficiency} 
+#fig.cap='\\label{fig:fig1} Amplification efficiency of c-myc'
 gg <- pcr_assess(ct3,
            amount = amount,
            reference_gene = 'GAPDH',
@@ -471,8 +472,8 @@ To calculate the standard curve for individual genes, `pcr_assess` takes a `data
 res <- pcr_assess(ct3,
                   amount = amount,
                   method = 'standard_curve')
-knitr::kable(res, 
-             caption = '\\label{table:table8} Standard curves of c-myc and GAPDH')
+#knitr::kable(res, caption = '\\label{table:table8} Standard curves of c-myc and GAPDH')
+res
 ```
 
 The output put is similar to the previous call, except when 'standard_curve' is passed to `method` curves are calculated for individual genes, column `gene` (Table \ref{table:table8}). 
@@ -486,7 +487,8 @@ slope <- res$slope
 
 When the argument `plot` is `TRUE` a graph is returned instead. A panel for each gene showing the raw $C_T$ values and the log input amounts  (Fig. \ref{fig:fig2}).  
 
-```{r plot_curves, fig.width=8, fig.cap='\\label{fig:fig2} Standard curve of c-myc and GAPDH'}
+```{r plot_curves, fig.width=8}
+#fig.cap='\\label{fig:fig2} Standard curve of c-myc and GAPDH'
 gg <- pcr_assess(ct3,
            amount = amount,
            method = 'standard_curve',
@@ -521,8 +523,8 @@ res1 <- pcr_analyze(ct1,
   reference_gene = 'GAPDH',
   reference_group = 'brain')
 
-knitr::kable(res1,
-             caption = '\\label{table:table9} Double delta $C_T$ method (separate tubes)')
+#knitr::kable(res1, caption = '\\label{table:table9} Double delta $C_T$ method (separate tubes)')
+res1
 ```
 
 The output of `pcr_analyze` is 8 columns; contains the calculations of each gene in each group and the error terms (Table \ref{table:table9}). This analysis uses the default `mode`, 'separate_tube' as the input dataset came for an experiment where the target `r names(ct1)[1]` and the control gene `r names(ct1)[2]` were ran in separate tubes.  
@@ -538,7 +540,8 @@ res2 <- pcr_analyze(ct2,
   reference_group = 'brain',
   mode = 'same_tube')
 
-knitr::kable(res2, caption = '\\label{table:table10} Double delta $C_T$ method (same tube)')
+#knitr::kable(res2, caption = '\\label{table:table10} Double delta $C_T$ method (same tube)')
+res2
 ```
 
 The only difference here is that the average of the $C_T$ values for the target gene `r names(ct1)[1]` is calculated after normalizing by the reference gene `r names(ct1)[2]`. The rest of the calculations are expected to be slightly different than the previous case (Table \ref{table:table10}).  
@@ -566,7 +569,8 @@ gg2 <- pcr_analyze(ct2,
   ggtitle(label = 'Same tubes')
 ```
 
-```{r plot_expression, fig.width=8, fig.cap='\\label{fig:fig3} Relative expression of c-myc using double delta $C_T$'}
+```{r plot_expression, fig.width=8}
+#fig.cap='\\label{fig:fig3} Relative expression of c-myc using double delta $C_T$'
 plot_grid(gg1, gg2)
 ```
 
@@ -601,14 +605,16 @@ res <- pcr_analyze(pcr_hk,
             reference_group = 'brain',
             method = 'delta_ct')
 
-knitr::kable(res, caption = '\\label{table:table11} Delta $C_T$ method')
+#knitr::kable(res, caption = '\\label{table:table11} Delta $C_T$ method')
+res
 ```
 
 Similarly, the output contains the calculated model and the error terms (Table \ref{table:table11}). The difference here will be skipping the normalization step and calibrating the $C_T$ values of all genes to  a `reference_group`.  
 
 Figure \ref{fig:fig4} shows the average relative fold change of the identical housekeeping genes and there error terms in two tissue samples.  
 
-```{r plot_dct_method, fig.cap='\\label{fig:fig4} GAPDH relative fold change using delta $C_T$'}
+```{r plot_dct_method}
+#fig.cap='\\label{fig:fig4} GAPDH relative fold change using delta $C_T$'
 pcr_analyze(pcr_hk,
             group_var = group_var,
             reference_group = 'brain',
@@ -635,8 +641,8 @@ res1 <- pcr_analyze(ct1,
                    slope = slope,
                    method = 'relative_curve')
 
-knitr::kable(res1, 
-             caption = '\\label{table:table12} Standard curve method (separate tubes)')
+#knitr::kable(res1, caption = '\\label{table:table12} Standard curve method (separate tubes)')
+res1
 ```
 
 The output of `pcr_analyze` is the same as explained before. The calculated averages and error term of target genes in each group relative to the reference gene and group (Table \ref{table:table12}).   
@@ -654,8 +660,8 @@ res2 <- pcr_analyze(ct2,
                    method = 'relative_curve',
                    mode = 'same_tube')
 
-knitr::kable(res2, 
-             caption = '\\label{table:table13} Standard curve method (same tube)')
+#knitr::kable(res2, caption = '\\label{table:table13} Standard curve method (same tube)')
+res2
 ```
 
 The output is similar to that described earlier (Table \ref{table:table13}).  
@@ -689,7 +695,8 @@ gg2 <- pcr_analyze(ct2,
   ggtitle(label = 'Same tubes')
 ```
 
-```{r plot_expression2, fig.width=8, fig.cap='\\label{fig:fig5} Relative expression of c-myc using the standard curve'}
+```{r plot_expression2, fig.width=8}
+#fig.cap='\\label{fig:fig5} Relative expression of c-myc using the standard curve'
 plot_grid(gg1, gg2)
 ```
 
@@ -718,7 +725,8 @@ res <- pcr_analyze(ct4,
             reference_group = 'control')
 ```
 
-```{r plot_testing data, fig.cap='\\label{fig:fig6} Relative expression of target gene using delta delta $C_T$'}
+```{r plot_testing data}
+#fig.cap='\\label{fig:fig6} Relative expression of target gene using delta delta $C_T$'
 ggplot(res, aes(x = group, y = relative_expression)) +
   geom_col() +
   labs(x = '', y = 'Relative mRNA expression')
@@ -736,8 +744,8 @@ tst1 <- pcr_test(ct4,
          reference_group = 'control',
          test = 't.test')
 
-knitr::kable(tst1,
-             caption = '\\label{table:table14} t-test summary')
+#knitr::kable(tst1, caption = '\\label{table:table14} t-test summary')
+tst1
 ```
 
 When the argument `test` is set to 't.test' a simple two-group *t*-test is carried out and an `estimate` for the difference between groups for the change in the target relative to a control gene is provided. In addition, a `p_vale`, a `lower` and `upper` 95% confidence intervals are provided as well (Table \ref{table:table14}).  
@@ -750,8 +758,8 @@ tst2 <- pcr_test(ct4,
          reference_group = 'control',
          test = 'wilcox.test')
 
-knitr::kable(tst2,
-             caption = '\\label{table:table15} Wilcoxon test summary')
+#knitr::kable(tst2, caption = '\\label{table:table15} Wilcoxon test summary')
+tst2
 ```
 
 When the argument `test` is set to 'wilcox.test', Wilcoxon test method is used instead and similar output is provided (Table \ref{table:table15}).  
@@ -766,8 +774,8 @@ tst3 <- pcr_test(ct4,
          reference_group = 'control',
          test = 'lm')
 
-knitr::kable(tst3,
-             caption = '\\label{table:table16} Linear regression summary')
+#knitr::kable(tst3, caption = '\\label{table:table16} Linear regression summary')
+tst3
 ```
 
 The output of the `test`, 'lm' contains an extra column `term` to show the different comparison terms used to calculate the results (Table \ref{table:table16}).  
@@ -796,8 +804,8 @@ res <- pcr_test(ct4,
                 model_matrix = mm,
                 test = 'lm')
 
-knitr::kable(res,
-             caption = "\\label{table:table17} Testing advanced hypotheses")
+#knitr::kable(res, caption = "\\label{table:table17} Testing advanced hypotheses")
+res
 ```
 
 In this case, the `estimate` effect of the interaction term between `dose` and `group` is very small and the `p_value` is very large (Table \ref{table:table17}).  
@@ -820,8 +828,8 @@ res <- pcr_test(ct4,
                 model_matrix = mm,
                 test = 'lm')
 
-knitr::kable(res,
-             caption = "\\label{table:table18} Check the effect of varying RNA quality")
+#knitr::kable(res, caption = "\\label{table:table18} Check the effect of varying RNA quality")
+res
 ```
 
 The randomly generated `quality` seems to influence the results as indicated by the big `estimate` for the term 'model_matrixgroupcontrol:quality' and its `p_value` (Table \ref{table:table18}).  
@@ -843,8 +851,8 @@ res <- pcr_test(ct4,
                 model_matrix = mm,
                 test = 'lm')
 
-knitr::kable(res,
-             caption = "\\label{table:table19} Combining data from multiple qPCR runs")
+#knitr::kable(res, caption = "\\label{table:table19} Combining data from multiple qPCR runs")
+res
 ```
 
 Here, we constructed a variable `run` to simulate a situation in which a dataset was generated in three separate runs. By including `run` in a `model_matrix`, its effect can be estimated. In this case, the `estimate` are very small and the `p_value` are very large, so it can be ignored (Table \ref{table:table19}).  
