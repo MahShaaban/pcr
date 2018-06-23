@@ -4,15 +4,10 @@ author: "Mahmoud Ahmed"
 date: "`r Sys.Date()`"
 output:
   html_document:
+    fig_caption: yes
     df_print: paged
     toc: yes
     toc_depth: '2'
-  pdf_document:
-    fig_caption: yes
-    fig_crop: no
-    number_sections: yes
-    toc: yes
-    toc_depth: 2
 references:
 - DOI: 10.1186/1471-2105-7-85
   URL: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1395339/
@@ -273,148 +268,109 @@ This is exactly the ($\Delta\Delta C_T$) as explained earlier. So the $\Delta\De
 
 ## Motivation   
 
-To illustrate the use of the `pcr` package in applying these methods on qPCR data, we use real qPCR real qPCR datasets from two published papers. In addition, we compare the results obtained by the `pcr` package to that of the original paper to ensure the reliability. First, Livak *et al.* [@Livak2001] obtained total RNA from human tissues; brain and kidney. c-myc and GAPDH primers were then used for cDNA synthesis and used as input in the PCR reaction. 6 replicates for each tissue were run in separate sample. This dataset is referred to as `ct1` through this document and is shown along with the difference calculations in Table \ref{table1} and \ref{table2}. Another dataset was generated from separate assay. Only running the samples in the same tube this time with pairs of primates that has different reporting dyes. This is referred to as `ct2` and is shown in Table  \ref{table3} and \ref{table4}. Finally, $C_T$ values from a qPCR experiment using different input amounts of c-myc and GAPDH was conducted. The dataset is referred to as `ct3` and is shown in Table  \ref{table5}. Secondly, Yuan *et al.* [@Yuan2006] extracted total RNA from *Arabidopsis thaliana* plant treated and control samples, 24 samples each. And performed a qPCR to using MT7 and ubiquitin primers. This dataset is referred to as `ct4` and Table \ref{table6} shows the results of the different testing methods that were applied in the original paper.  
+To illustrate the use of the `pcr` package in applying these methods on qPCR data, we use real qPCR real qPCR datasets from two published papers. In addition, we compare the results obtained by the `pcr` package to that of the original paper to ensure the reliability. First, Livak *et al.* [@Livak2001] obtained total RNA from human tissues; brain and kidney. c-myc and GAPDH primers were then used for cDNA synthesis and used as input in the PCR reaction. 6 replicates for each tissue were run in separate sample. This dataset is referred to as `ct1` through this document and is shown along with the difference calculations in Table 1 and 2. Another dataset was generated from separate assay. Only running the samples in the same tube this time with pairs of primates that has different reporting dyes. This is referred to as `ct2` and is shown in Table  3 and 4. Finally, $C_T$ values from a qPCR experiment using different input amounts of c-myc and GAPDH was conducted. The dataset is referred to as `ct3` and is shown in Table  5. Secondly, Yuan *et al.* [@Yuan2006] extracted total RNA from *Arabidopsis thaliana* plant treated and control samples, 24 samples each. And performed a qPCR to using MT7 and ubiquitin primers. This dataset is referred to as `ct4` and Table 6 shows the results of the different testing methods that were applied in the original paper.  
 
-\begin{table}
-\centering
-%\caption{Relative quantification using comparative ($\Delta\Delta C_T$) method (separate tubes)}
-\label{table1}
-\begin{tabular}{lccccc}
-\hline
-Tissue & c-myc $C_T$ & GAPDH $C_T$ & \begin{tabular}[c]{@{}c@{}}$\Delta C_T$\\ c-myc - GAPDH\end{tabular} & \begin{tabular}[c]{@{}c@{}}$\Delta\Delta C_T$\\ $\Delta C_T - \Delta C_{T,Brain}$\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc$_N$\\ Rel. to Brain\end{tabular} \\
-\hline
-Brain & 30.72 & 23.7 &  &  &  \\
- & 30.34 & 23.56 &  &  &  \\
- & 30.58 & 23.47 &  &  &  \\
- & 30.34 & 23.65 &  &  &  \\
- & 30.5 & 23.69 &  &  &  \\
- & 30.43 & 23.68 &  &  &  \\
-\textbf{Average} & 30.49 $\pm$ 0.15 & 23.63 $\pm$ 0.09 & 6.86 $\pm$ 0.17 & 0.00 $\pm$ 0.17 & 1.0 (0.9–1.1) \\
-\hline
-Kidney & 27.06 & 22.76 &  &  &  \\
- & 27.03 & 22.61 &  &  &  \\
- & 27.03 & 22.62 &  &  &  \\
- & 27.1 & 22.6 &  &  &  \\
- & 26.99 & 22.61 &  &  &  \\
- & 26.94 & 24.18 &  &  &  \\
-\textbf{Average} & 27.03 $\pm$ 0.06 & 22.66 $\pm$ 0.08 & 4.37 $\pm$ 0.10 & –2.50 $\pm$ 0.10 & 5.6 (5.3–6.0) \\
-\hline
-\end{tabular}
-\end{table}
+Table: Table 1: Relative quantification using comparative ($\Delta\Delta C_T$) method (separate tubes)
 
-\begin{table}
-\centering
-%\caption{Relative quantification using the standard curve method (separate tube)}
-\label{table2}
-\begin{tabular}{@{}lcccc@{}}
-\hline
-Tissue & c-myc (ng) & GAPDH (ng) & \begin{tabular}[c]{@{}c@{}}c-myc$_N$\\ norm. to GAPDH\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc$_N$ \\ Rel. to Brain\end{tabular} \\ 
-\hline
-Brain & 0.033 & 0.51 &  &  \\
- & 0.043 & 0.56 &  &  \\
- & 0.036 & 0.59 &  &  \\
- & 0.043 & 0.53 &  &  \\
- & 0.039 & 0.51 &  &  \\
- & 0.040 & 0.52 &  &  \\
-\textbf{Average} & 0.039 $\pm$ 0.004 & 0.54 $\pm$ 0.034 & 0.07 $\pm$ 0.008 & 1.0 $\pm$ 0.12 \\
-\hline
-Kidney & 0.40 & 0.96 &  &  \\
- & 0.41 & 1.06 &  &  \\
- & 0.41 & 1.05 &  &  \\
- & 0.39 & 1.07 &  &  \\
- & 0.42 & 1.06 &  &  \\
- & 0.43 & 0.96 &  &  \\
-\textbf{Average} & 0.41 $\pm$ 0.016 & 1.02 $\pm$ 0.052 & 0.40 $\pm$ 0.025 & 5.5 $\pm$ 0.35 \\ 
-\hline
-\end{tabular}
-\end{table}
+| Tissue | c-myc $C_T$ | GAPDH $C_T$ | $\Delta C_T$ (c-myc - GAPDH) | $\Delta\Delta C_T$  ($\Delta C_T - \Delta C_{T,Brain}$) | c-myc$_N$  (Rel. to Brain) |
+|-------------|:----------------:|:----------------:|:----------------------------:|:-------------------------------------------------------:|:--------------------------:|
+| Brain | 30.72 | 23.7 |  |  |  |
+|  | 30.34 | 23.56 |  |  |  |
+|  | 30.58 | 23.47 |  |  |  |
+|  | 30.34 | 23.65 |  |  |  |
+|  | 30.5 | 23.69 |  |  |  |
+|  | 30.43 | 23.68 |  |  |  |
+| **Average** | 30.49 $\pm$ 0.15 | 23.63 $\pm$ 0.09 | 6.86 $\pm$ 0.17 | 0.00 $\pm$ 0.17 | 1.0 (0.9–1.1) |
+| Kidney | 27.06 | 22.76 |  |  |  |
+|  | 27.03 | 22.61 |  |  |  |
+|  | 27.03 | 22.62 |  |  |  |
+|  | 27.1 | 22.6 |  |  |  |
+|  | 26.99 | 22.61 |  |  |  |
+|  | 26.94 | 24.18 |  |  |  |
+| **Average** | 27.03 $\pm$ 0.06 | 22.66 $\pm$ 0.08 | 4.37 $\pm$ 0.10 | –2.50 $\pm$ 0.10 | 5.6 (5.3–6.0) |
 
-\begin{table}
-\centering
-%\caption{Relative quantification using comparative ($\Delta\Delta C_T$) method (same tube)}
-\label{table3}
-\begin{tabular}{lccccc}
-\hline
-Tissue & c-myc $C_T$ & GAPDH $C_T$ & \begin{tabular}[c]{@{}c@{}}$\Delta C_T$\\ c-myc - GAPDH\end{tabular} & \begin{tabular}[c]{@{}c@{}}$\Delta\Delta C_T$\\ $Ave.\Delta C_T - Ave. \Delta C_{T,Brain}$\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc$_N$\\ Rel. to Brain\end{tabular} \\
-\hline
-Brain & 32.38 & 25.07 & 7.31 &  &  \\
- & 32.08 & 25.29 & 6.79 &  &  \\
- & 32.35 & 25.32 & 7.03 &  &  \\
- & 32.08 & 25.24 & 6.84 &  &  \\
- & 32.34 & 25.17 & 7.17 &  &  \\
- & 32.13 & 25.29 & 6.84 &  &  \\
-\textbf{Average} &  &  & 6.99 $\pm$ 0.21 & 0.00 $\pm$ 0.21 & 1.0 (0.86–1.15) \\
-\hline
-Kidney & 28.73 & 24.30 & 4.43 &  &  \\
- & 28.84 & 24.32 & 4.52 &  &  \\
- & 28.51 & 24.31 & 4.20 &  &  \\
- & 28.86 & 24.25 & 4.61 &  &  \\
- & 28.86 & 24.34 & 4.52 &  &  \\
- & 28.70 & 24.18 & 4.52 &  &  \\
-Average &  &  & 4.47 $\pm$ 0.14 & –2.53 $\pm$ 0.14 & 5.77 (5.23–6.37) \\
-\hline
-\end{tabular}
-\end{table}
 
-\begin{table}
-\centering
-%\caption{Relative quantification using the standard curve method (same tube)}
-\label{table4}
-\begin{tabular}{lcccc}
-\hline
-Tissue & c-myc (ng) & GAPDH (ng) & \begin{tabular}[c]{@{}c@{}}c-myc$_N$\\ norm. to GAPDH\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc$_N$\\ Rel. to Brain\end{tabular} \\
-\hline
-Brain & 0.031 & 0.618 & 0.05 &  \\
- & 0.038 & 0.532 & 0.07 &  \\
- & 0.032 & 0.521 & 0.06 &  \\
- & 0.038 & 0.550 & 0.07 &  \\
- & 0.032 & 0.577 & 0.06 &  \\
- & 0.037 & 0.532 & 0.07 &  \\
-\textbf{Average} &  &  & 0.06 $\pm$ 0.008 & 1.0 $\pm$ 0.14 \\
-\hline
-Kidney & 0.365 & 0.049 & 0.35 &  \\
- & 0.338 & 1.035 & 0.33 &  \\
- & 0.423 & 1.042 & 0.41 &  \\
- & 0.334 & 1.086 & 0.31 &  \\
- & 0.334 & 1.021 & 0.33 &  \\
- & 0.372 & 1.139 & 0.33 &  \\
-\textbf{Average} &  &  & 0.34 $\pm$ 0.035 & 5.4 $\pm$ 0.55 \\
-\hline
-\end{tabular}
-\end{table}
+Table: Table 2:Relative quantification using the standard curve method (separate tube)
 
-\begin{table}
-\centering
-%\caption{Average $C_T$ value for c-myc and GAPDH at different input amounts}
-\label{table5}
-\begin{tabular}{@{}cccc@{}}
-\hline
-\begin{tabular}[c]{@{}c@{}}Input RNA\\ (ng)\end{tabular} & \begin{tabular}[c]{@{}c@{}}c-myc\\ Average $C_T$\end{tabular} & \begin{tabular}[c]{@{}c@{}}GAPDH\\ Average $C_T$\end{tabular} & \begin{tabular}[c]{@{}c@{}}$\Delta C_T$\\ c-myc - GAPDH\end{tabular} \\
-\hline
-1.0 & 25.59 $\pm$ 0.04 & 22.64 $\pm$ 0.03 & 2.95 $\pm$ 0.05 \\
-0.5 & 26.77 $\pm$ 0.09 & 23.73 $\pm$ 0.05 & 3.04 $\pm$ 0.10 \\
-0.2 & 28.14 $\pm$ 0.05 & 25.12 $\pm$ 0.10 & 3.02 $\pm$ 0.11 \\
-0.1 & 29.18 $\pm$ 0.13 & 26.16 $\pm$ 0.02 & 3.01 $\pm$ 0.13 \\
-0.05 & 30.14 $\pm$ 0.03 & 27.17 $\pm$ 0.06 & 2.97 $\pm$ 0.07 \\
-0.02 & 31.44 $\pm$ 0.16 & 28.62 $\pm$ 0.10 & 2.82 $\pm$ 0.19 \\
-0.02 & 32.42 $\pm$ 0.12 & 29.45 $\pm$ 0.08 & 2.97 $\pm$ 0.14 \\
-\hline
-\end{tabular}
-\end{table}
+| Tissue | c-myc (ng) | GAPDH (ng) | c-myc$_N$ (norm. to GAPDH) | c-myc$_N$ (Rel. to Brain) |
+|-------------|-------------------|:----------------:|:--------------------------:|:-------------------------:|
+| Brain | 0.033 | 0.51 |  |  |
+|  | 0.043 | 0.56 |  |  |
+|  | 0.036 | 0.59 |  |  |
+|  | 0.043 | 0.53 |  |  |
+|  | 0.039 | 0.51 |  |  |
+|  | 0.040 | 0.52 |  |  |
+| **Average** | 0.039 $\pm$ 0.004 | 0.54 $\pm$ 0.034 | 0.07 $\pm$ 0.008 | 1.0 $\pm$ 0.12 |
+| Kidney | 0.40 | 0.96 |  |  |
+|  | 0.41 | 1.06 |  |  |
+|  | 0.41 | 1.05 |  |  |
+|  | 0.39 | 1.07 |  |  |
+|  | 0.42 | 1.06 |  |  |
+|  | 0.43 | 0.96 |  |  |
+| **Average** | 0.41 $\pm$ 0.016 | 1.02 $\pm$ 0.052 | 0.40 $\pm$ 0.025 | 5.5 $\pm$ 0.35 |
 
-\begin{table}
-\centering
-%\caption{Statistical significance using different testing methods}
-\label{table6}
-\begin{tabular}{@{}lccc@{}}
-\hline
-Test & \begin{tabular}[c]{@{}c@{}}$\Delta\Delta C_T$\\ (estimate)\end{tabular} & \textit{p-value} & Confidence Interval \\ \hline
-Multiple Regression & -0.6848 & \textless 0.0001 & (-0.4435, -0.9262) \\
-ANOVA & -0.6848 & \textless 0.0001 & (-0.4435, -0.9262) \\
-\textit{t-test} & -0.6848 & \textless 0.0001 & (-0.4147, -0.955) \\
-Wilcoxon test & -0.6354 & \textless 0.0001 & (-0.4227, -0.8805) \\ \hline
-\end{tabular}
-\end{table}
+
+Table: Table 3: Relative quantification using comparative ($\Delta\Delta C_T$) method (same tube)
+
+| Tissue | c-myc $C_T$ | GAPDH $C_T$ | $\Delta C_T$ (c-myc - GAPDH) | $\Delta\Delta C_T$ ($Ave.\Delta C_T - Ave. \Delta C_{T,Brain}$) | c-myc$_N$ (Rel. to Brain) |
+|-------------|:-----------:|:-----------:|:----------------------------:|:---------------------------------------------------------------:|:-------------------------:|
+| Brain | 32.38 | 25.07 | 7.31 |  |  |
+|  | 32.08 | 25.29 | 6.79 |  |  |
+|  | 32.35 | 25.32 | 7.03 |  |  |
+|  | 32.08 | 25.24 | 6.84 |  |  |
+|  | 32.34 | 25.17 | 7.17 |  |  |
+|  | 32.13 | 25.29 | 6.84 |  |  |
+| **Average** |  |  | 6.99 $\pm$ 0.21 | 0.00 $\pm$ 0.21 | 1.0 (0.86–1.15) |
+| Kidney | 28.73 | 24.30 | 4.43 |  |  |
+|  | 28.84 | 24.32 | 4.52 |  |  |
+|  | 28.51 | 24.31 | 4.20 |  |  |
+|  | 28.86 | 24.25 | 4.61 |  |  |
+|  | 28.86 | 24.34 | 4.52 |  |  |
+|  | 28.70 | 24.18 | 4.52 |  |  |
+| **Average** |  |  | 4.47 $\pm$ 0.14 | –2.53 $\pm$ 0.14 | 5.77 (5.23–6.37) |
+
+
+Table: Table 4: Relative quantification using the standard curve method (same tube)
+
+| Tissue | c-myc (ng) | GAPDH (ng) | c-myc$_N$ (norm. to GAPDH) | c-myc$_N$ (Rel. to Brain) |
+|-------------|:----------:|:----------:|:--------------------------:|:-------------------------:|
+| Brain | 0.031 | 0.618 | 0.05 |  |
+|  | 0.038 | 0.532 | 0.07 |  |
+|  | 0.032 | 0.521 | 0.06 |  |
+|  | 0.038 | 0.550 | 0.07 |  |
+|  | 0.032 | 0.577 | 0.06 |  |
+|  | 0.037 | 0.532 | 0.07 |  |
+| **Average** |  |  | 0.06 $\pm$ 0.008 | 1.0 $\pm$ 0.14 |
+| Kidney | 0.365 | 0.049 | 0.35 |  |
+|  | 0.338 | 1.035 | 0.33 |  |
+|  | 0.423 | 1.042 | 0.41 |  |
+|  | 0.334 | 1.086 | 0.31 |  |
+|  | 0.334 | 1.021 | 0.33 |  |
+|  | 0.372 | 1.139 | 0.33 |  |
+| **Average** |  |  | 0.34 $\pm$ 0.035 | 5.4 $\pm$ 0.55 |
+
+Table: Table 5: Average $C_T$ value for c-myc and GAPDH at different input amounts
+
+| Input RNA (ng) | c-myc (Average $C_T$) | GAPDH (Average $C_T$) | $\Delta C_T$ (c-myc - GAPDH) |
+|----------------|:---------------------:|:---------------------:|:----------------------------:|
+| 1.0 | 25.59 $\pm$ 0.04 | 22.64 $\pm$ 0.03 | 2.95 $\pm$ 0.05 |
+| 0.5 | 26.77 $\pm$ 0.09 | 23.73 $\pm$ 0.05 | 3.04 $\pm$ 0.10 |
+| 0.2 | 28.14 $\pm$ 0.05 | 25.12 $\pm$ 0.10 | 3.02 $\pm$ 0.11 |
+| 0.1 | 29.18 $\pm$ 0.13 | 26.16 $\pm$ 0.02 | 3.01 $\pm$ 0.13 |
+| 0.05 | 30.14 $\pm$ 0.03 | 27.17 $\pm$ 0.06 | 2.97 $\pm$ 0.07 |
+| 0.02 | 31.44 $\pm$ 0.16 | 28.62 $\pm$ 0.10 | 2.82 $\pm$ 0.19 |
+| 0.02 | 32.42 $\pm$ 0.12 | 29.45 $\pm$ 0.08 | 2.97 $\pm$ 0.14 |
+
+
+Table: Table 6: Statistical significance using different testing methods
+
+| Test | $\Delta\Delta C_T$ (estimate) | p-value | Confidence Interval |
+|---------------------|-------------------------------|:----------------:|:-------------------:|
+| Multiple Regression | -0.6848 | \textless 0.0001 | (-0.4435, -0.9262) |
+| ANOVA | -0.6848 | \textless 0.0001 | (-0.4435, -0.9262) |
+| t-test | -0.6848 | \textless 0.0001 | (-0.4147, -0.955) |
+| Wilcoxon test | -0.6354 | \textless 0.0001 | (-0.4227, -0.8805) |  
+
 
 ## Assess `pcr_assess`  
 
@@ -422,7 +378,7 @@ Wilcoxon test & -0.6354 & \textless 0.0001 & (-0.4227, -0.8805) \\ \hline
 
 ### Amplification efficiency `pcr_efficiency` 
 
-To calculate the amplification efficiency in a qPCR experiment, the main input is a `data.frame` with columns contain the $C_T$ values for each gene and rows correspond to the different input amounts/dilutions (Table \ref{table5}).  
+To calculate the amplification efficiency in a qPCR experiment, the main input is a `data.frame` with columns contain the $C_T$ values for each gene and rows correspond to the different input amounts/dilutions (Table 5).  
 
 The following code apply the calculation on the `data.frame`, `ct3`. It has two columns `r names(ct3)[1]` and `r names(ct3)[2]` and 3 rows for each of the input amounts coded in the variable `amounts`. A reference gene passed to the `reference_gene` argument, in this case, the column name `r names(ct3)[2]`.  
 
@@ -445,16 +401,14 @@ res <- pcr_assess(ct3,
                   amount = amount,
                   reference_gene = 'GAPDH',
                   method = 'efficiency')
-#knitr::kable(res, caption = '\\label{table:table7} amplification efficiency of c-myc')
-res
+knitr::kable(res, caption = 'Figure 7: amplification efficiency of c-myc')
 ```
 
-The output of `pcr_assess` is a `data.frame` of 4 columns and *n* rows equals the input genes except for the reference. For each gene an *intercept*, *slope* and $R^2$ is calculated for a the difference between it and the reference ($\Delta C_T$) (Table \ref{table:table7}). 
+The output of `pcr_assess` is a `data.frame` of 4 columns and *n* rows equals the input genes except for the reference. For each gene an *intercept*, *slope* and $R^2$ is calculated for a the difference between it and the reference ($\Delta C_T$) (Table 7). 
 
-When the argument `plot` is `TRUE` a graph is produced instead shows the average and standard deviation of of the $\Delta C_T$ at difference input amounts. In addition, a linear trend line is drawn (Fig \ref{fig:fig1}).  
+When the argument `plot` is `TRUE` a graph is produced instead shows the average and standard deviation of of the $\Delta C_T$ at difference input amounts. In addition, a linear trend line is drawn (Fig 1).  
 
-```{r plot_efficiency} 
-#fig.cap='\\label{fig:fig1} Amplification efficiency of c-myc'
+```{r plot_efficiency, fig.cap='Figure 1: Amplification efficiency of c-myc'} 
 gg <- pcr_assess(ct3,
            amount = amount,
            reference_gene = 'GAPDH',
@@ -477,11 +431,10 @@ To calculate the standard curve for individual genes, `pcr_assess` takes a `data
 res <- pcr_assess(ct3,
                   amount = amount,
                   method = 'standard_curve')
-#knitr::kable(res, caption = '\\label{table:table8} Standard curves of c-myc and GAPDH')
-res
+knitr::kable(res, caption = 'Figure 8: Standard curves of c-myc and GAPDH')
 ```
 
-The output put is similar to the previous call, except when 'standard_curve' is passed to `method` curves are calculated for individual genes, column `gene` (Table \ref{table:table8}). 
+The output put is similar to the previous call, except when 'standard_curve' is passed to `method` curves are calculated for individual genes, column `gene` (Table 8). 
 
 The information of the standard curves are required when using the standard curve methods, so we retain the relevant ones in the variables `intercept` and `slope`. Typically, the `r_squared` should be close to 1.  
 
@@ -490,10 +443,9 @@ intercept <- res$intercept
 slope <- res$slope
 ```
 
-When the argument `plot` is `TRUE` a graph is returned instead. A panel for each gene showing the raw $C_T$ values and the log input amounts  (Fig. \ref{fig:fig2}).  
+When the argument `plot` is `TRUE` a graph is returned instead. A panel for each gene showing the raw $C_T$ values and the log input amounts  (Fig. 2).  
 
-```{r plot_curves, fig.width=8}
-#fig.cap='\\label{fig:fig2} Standard curve of c-myc and GAPDH'
+```{r plot_curves, fig.width=8, fig.cap='Figure 2: Standard curve of c-myc and GAPDH'}
 gg <- pcr_assess(ct3,
            amount = amount,
            method = 'standard_curve',
@@ -510,7 +462,7 @@ Similarly, `pcr_analyze` is a wrapper and unified interface for difference analy
 
 To apply the double delta $C_T$ model, the default `method` of `pcr_analyze`, the main input is a `data.frame` with columns containing the genes and the rows the $C_T$ values from different samples. In addition, a group variable `group_var` corresponding to these rows/samples is required. Finally, a `reference_gene` and a `reference_group` are entered.  
 
-The following code chunk applies this method to a `data.frame` of 12 samples from 2 groups `ct1` (Table \ref{table1}).  
+The following code chunk applies this method to a `data.frame` of 12 samples from 2 groups `ct1` (Table 1).  
 
 ```{r ddct_separate_tube}
 # default mode delta_delta_ct
@@ -528,13 +480,12 @@ res1 <- pcr_analyze(ct1,
   reference_gene = 'GAPDH',
   reference_group = 'brain')
 
-#knitr::kable(res1, caption = '\\label{table:table9} Double delta $C_T$ method (separate tubes)')
-res1
+knitr::kable(res1, caption = 'Figure 9: Double delta $C_T$ method (separate tubes)')
 ```
 
-The output of `pcr_analyze` is 8 columns; contains the calculations of each gene in each group and the error terms (Table \ref{table:table9}). This analysis uses the default `mode`, 'separate_tube' as the input dataset came for an experiment where the target `r names(ct1)[1]` and the control gene `r names(ct1)[2]` were ran in separate tubes.  
+The output of `pcr_analyze` is 8 columns; contains the calculations of each gene in each group and the error terms (Table 9). This analysis uses the default `mode`, 'separate_tube' as the input dataset came for an experiment where the target `r names(ct1)[1]` and the control gene `r names(ct1)[2]` were ran in separate tubes.  
 
-In contrast, the `ct2` dataset, also shown in Table \ref{table3}, came from an identical experiment except the samples were run in the same tube. So the following analysis invokes a different `mode`, 'same_tube'.  
+In contrast, the `ct2` dataset, also shown in Table 3, came from an identical experiment except the samples were run in the same tube. So the following analysis invokes a different `mode`, 'same_tube'.  
 
 ```{r ddct_same_tube}
 # calculate all values and errors in one step
@@ -545,13 +496,12 @@ res2 <- pcr_analyze(ct2,
   reference_group = 'brain',
   mode = 'same_tube')
 
-#knitr::kable(res2, caption = '\\label{table:table10} Double delta $C_T$ method (same tube)')
-res2
+knitr::kable(res2, caption = 'Figure 10: Double delta $C_T$ method (same tube)')
 ```
 
-The only difference here is that the average of the $C_T$ values for the target gene `r names(ct1)[1]` is calculated after normalizing by the reference gene `r names(ct1)[2]`. The rest of the calculations are expected to be slightly different than the previous case (Table \ref{table:table10}).  
+The only difference here is that the average of the $C_T$ values for the target gene `r names(ct1)[1]` is calculated after normalizing by the reference gene `r names(ct1)[2]`. The rest of the calculations are expected to be slightly different than the previous case (Table 10).  
 
-Figure \ref{fig:fig3} shows the results of these two analysis. Bars represent the average relative expression of c-myc in the kidney, normalized by GAPDH and calibrated by the brain. The error bars are the standard deviations.   
+Figure 3 shows the results of these two analysis. Bars represent the average relative expression of c-myc in the kidney, normalized by GAPDH and calibrated by the brain. The error bars are the standard deviations.   
 
 ```{r plot_ddct_separate_tube}
 gg1 <- pcr_analyze(ct1,
@@ -574,8 +524,7 @@ gg2 <- pcr_analyze(ct2,
   ggtitle(label = 'Same tubes')
 ```
 
-```{r plot_expression, fig.width=8}
-#fig.cap='\\label{fig:fig3} Relative expression of c-myc using double delta $C_T$'
+```{r plot_expression, fig.width=8, fig.cap='Figure 3: Relative expression of c-myc using double delta $C_T$'}
 plot_grid(gg1, gg2)
 ```
 
@@ -610,16 +559,14 @@ res <- pcr_analyze(pcr_hk,
             reference_group = 'brain',
             method = 'delta_ct')
 
-#knitr::kable(res, caption = '\\label{table:table11} Delta $C_T$ method')
-res
+knitr::kable(res, caption = 'Figure 11: Delta $C_T$ method')
 ```
 
-Similarly, the output contains the calculated model and the error terms (Table \ref{table:table11}). The difference here will be skipping the normalization step and calibrating the $C_T$ values of all genes to  a `reference_group`.  
+Similarly, the output contains the calculated model and the error terms (Table 11). The difference here will be skipping the normalization step and calibrating the $C_T$ values of all genes to  a `reference_group`.  
 
-Figure \ref{fig:fig4} shows the average relative fold change of the identical housekeeping genes and there error terms in two tissue samples.  
+Figure 4 shows the average relative fold change of the identical housekeeping genes and there error terms in two tissue samples.  
 
-```{r plot_dct_method}
-#fig.cap='\\label{fig:fig4} GAPDH relative fold change using delta $C_T$'
+```{r plot_dct_method, fig.cap='Figure 4: GAPDH relative fold change using delta $C_T$'}
 pcr_analyze(pcr_hk,
             group_var = group_var,
             reference_group = 'brain',
@@ -634,7 +581,7 @@ pcr_analyze(pcr_hk,
 
 The calculation of the standard curve method involves to steps as explained earlier. First, a standard curve is calculated for each gene to find the *intercept* and the *slope*. Then the relative expression is calculated.  
 
-To apply this method to the `ct1` dataset (Table \ref{table2}). We used the variables `slope` and `intercept` that were calculated earlier using the `ct3` dataset (Table \ref{table:table8}).  
+To apply this method to the `ct1` dataset (Table 2). We used the variables `slope` and `intercept` that were calculated earlier using the `ct3` dataset (Table 8).  
 
 ```{r standard_separate_tube}
 ## calculate standard amounts and error
@@ -646,13 +593,12 @@ res1 <- pcr_analyze(ct1,
                    slope = slope,
                    method = 'relative_curve')
 
-#knitr::kable(res1, caption = '\\label{table:table12} Standard curve method (separate tubes)')
-res1
+knitr::kable(res1, caption = 'Figure 12: Standard curve method (separate tubes)')
 ```
 
-The output of `pcr_analyze` is the same as explained before. The calculated averages and error term of target genes in each group relative to the reference gene and group (Table \ref{table:table12}).   
+The output of `pcr_analyze` is the same as explained before. The calculated averages and error term of target genes in each group relative to the reference gene and group (Table 12).   
 
-The argument `mode` can be can be used to change the way the $C_T$ values are averaged when samples from different genes were ran in the same tube (Table \ref{table4}).  
+The argument `mode` can be can be used to change the way the $C_T$ values are averaged when samples from different genes were ran in the same tube (Table 4).  
 
 ```{r standard_same_tube}
 ## calculate standard amounts and error
@@ -665,13 +611,12 @@ res2 <- pcr_analyze(ct2,
                    method = 'relative_curve',
                    mode = 'same_tube')
 
-#knitr::kable(res2, caption = '\\label{table:table13} Standard curve method (same tube)')
-res2
+knitr::kable(res2, caption = 'Figure 13: Standard curve method (same tube)')
 ```
 
-The output is similar to that described earlier (Table \ref{table:table13}).  
+The output is similar to that described earlier (Table 13).  
 
-Figure \ref{fig:fig5} shows the output of the standard curve method. Relative expression values of c-myc in the kidney normalized by GAPDH and calibrated to the brain are shown as bars, Averages $\pm$ standard deviations.  
+Figure 5 shows the output of the standard curve method. Relative expression values of c-myc in the kidney normalized by GAPDH and calibrated to the brain are shown as bars, Averages $\pm$ standard deviations.  
 
 ```{r plot_standard_separate_tube}
 gg1 <- pcr_analyze(ct1,
@@ -700,8 +645,7 @@ gg2 <- pcr_analyze(ct2,
   ggtitle(label = 'Same tubes')
 ```
 
-```{r plot_expression2, fig.width=8}
-#fig.cap='\\label{fig:fig5} Relative expression of c-myc using the standard curve'
+```{r plot_expression2, fig.width=8, fig.cap='Figure 5: Relative expression of c-myc using the standard curve'}
 plot_grid(gg1, gg2)
 ```
 
@@ -730,16 +674,15 @@ res <- pcr_analyze(ct4,
             reference_group = 'control')
 ```
 
-```{r plot_testing data}
-#fig.cap='\\label{fig:fig6} Relative expression of target gene using delta delta $C_T$'
+```{r plot_testing data, fig.cap='Figure 6: Relative expression of target gene using delta delta $C_T$'}
 ggplot(res, aes(x = group, y = relative_expression)) +
   geom_col() +
   labs(x = '', y = 'Relative mRNA expression')
 ```
 
-We start by analyzing the dataset `ct4` using the default method of `pcr_analyze`, 'delta_delta_ct' and show a bar graph of the results (Fig. \ref{fig:fig6}).  
+We start by analyzing the dataset `ct4` using the default method of `pcr_analyze`, 'delta_delta_ct' and show a bar graph of the results (Fig. 6).  
 
-Finally we used the `pcr_test` to perform different tests. The resulting output tables can be compared to the results from the original paper that provided the dataset (Table \ref{table6}).  
+Finally we used the `pcr_test` to perform different tests. The resulting output tables can be compared to the results from the original paper that provided the dataset (Table 6).  
 
 ```{r testing_t.test}
 # test using t-test
@@ -749,11 +692,10 @@ tst1 <- pcr_test(ct4,
          reference_group = 'control',
          test = 't.test')
 
-#knitr::kable(tst1, caption = '\\label{table:table14} t-test summary')
-tst1
+knitr::kable(tst1, caption = 'Figure 14: t-test summary')
 ```
 
-When the argument `test` is set to 't.test' a simple two-group *t*-test is carried out and an `estimate` for the difference between groups for the change in the target relative to a control gene is provided. In addition, a `p_vale`, a `lower` and `upper` 95% confidence intervals are provided as well (Table \ref{table:table14}).  
+When the argument `test` is set to 't.test' a simple two-group *t*-test is carried out and an `estimate` for the difference between groups for the change in the target relative to a control gene is provided. In addition, a `p_vale`, a `lower` and `upper` 95% confidence intervals are provided as well (Table 14).  
 
 ```{r testing_wilcox}
 # test using wilcox.test
@@ -763,11 +705,10 @@ tst2 <- pcr_test(ct4,
          reference_group = 'control',
          test = 'wilcox.test')
 
-#knitr::kable(tst2, caption = '\\label{table:table15} Wilcoxon test summary')
-tst2
+knitr::kable(tst2, caption = 'Figure 15: Wilcoxon test summary')
 ```
 
-When the argument `test` is set to 'wilcox.test', Wilcoxon test method is used instead and similar output is provided (Table \ref{table:table15}).  
+When the argument `test` is set to 'wilcox.test', Wilcoxon test method is used instead and similar output is provided (Table 15).  
 
 The linear regression can be applied to more than two groups and more advanced comparisons.   
 
@@ -779,11 +720,10 @@ tst3 <- pcr_test(ct4,
          reference_group = 'control',
          test = 'lm')
 
-#knitr::kable(tst3, caption = '\\label{table:table16} Linear regression summary')
-tst3
+knitr::kable(tst3, caption = 'Figure 16: Linear regression summary')
 ```
 
-The output of the `test`, 'lm' contains an extra column `term` to show the different comparison terms used to calculate the results (Table \ref{table:table16}).  
+The output of the `test`, 'lm' contains an extra column `term` to show the different comparison terms used to calculate the results (Table 16).  
 
 # Comparison with existing pacakges  
 
@@ -809,11 +749,10 @@ res <- pcr_test(ct4,
                 model_matrix = mm,
                 test = 'lm')
 
-#knitr::kable(res, caption = "\\label{table:table17} Testing advanced hypotheses")
-res
+knitr::kable(res, caption = "Figure 17: Testing advanced hypotheses")
 ```
 
-In this case, the `estimate` effect of the interaction term between `dose` and `group` is very small and the `p_value` is very large (Table \ref{table:table17}).  
+In this case, the `estimate` effect of the interaction term between `dose` and `group` is very small and the `p_value` is very large (Table 17).  
 
 ## Varying RNA quality among samples  
 
@@ -833,11 +772,10 @@ res <- pcr_test(ct4,
                 model_matrix = mm,
                 test = 'lm')
 
-#knitr::kable(res, caption = "\\label{table:table18} Check the effect of varying RNA quality")
-res
+knitr::kable(res, caption = "Figure 18: Check the effect of varying RNA quality")
 ```
 
-The randomly generated `quality` seems to influence the results as indicated by the big `estimate` for the term 'model_matrixgroupcontrol:quality' and its `p_value` (Table \ref{table:table18}).  
+The randomly generated `quality` seems to influence the results as indicated by the big `estimate` for the term 'model_matrixgroupcontrol:quality' and its `p_value` (Table 18).  
 
 ## Combining data from multiple runs  
 
@@ -856,11 +794,10 @@ res <- pcr_test(ct4,
                 model_matrix = mm,
                 test = 'lm')
 
-#knitr::kable(res, caption = "\\label{table:table19} Combining data from multiple qPCR runs")
-res
+knitr::kable(res, caption = "Figure 19: Combining data from multiple qPCR runs")
 ```
 
-Here, we constructed a variable `run` to simulate a situation in which a dataset was generated in three separate runs. By including `run` in a `model_matrix`, its effect can be estimated. In this case, the `estimate` are very small and the `p_value` are very large, so it can be ignored (Table \ref{table:table19}).  
+Here, we constructed a variable `run` to simulate a situation in which a dataset was generated in three separate runs. By including `run` in a `model_matrix`, its effect can be estimated. In this case, the `estimate` are very small and the `p_value` are very large, so it can be ignored (Table 19).  
 
 # Citation  
 
@@ -890,11 +827,6 @@ My email is: [mahmoud.s.fahmy@students.kasralainy.egu.eg](mahmoud.s.fahmy@studen
 
   * It seems like there is a tiny mistake in the original table presented in [@Livak2001] in calculating the average of $C_T$ values of the GAPDH in the brain samples and the subsequent calculations. The tables shown here from this study are the corrected ones.   
   * The original [@Livak2001] serial dilution dataset provides only averages and standard deviations of $C_T$ values. We used these summaries to regenerate a dataset of raw $C_T$ values using the `rnorm(n = 3, mean = average, sd = sd)` to show how they could be used from the start in a typical analysis. So the subsequent calculations that involve this data set might be slightly different than the original tables in the paper.    
-
-# Tables & Figures  
-
-\listoftables  
-\listoffigures  
 
 # References  
 
