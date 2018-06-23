@@ -50,4 +50,4 @@ fixed link to the CRAN page
 
 * v1.1.1 submission  
 
-Fixed vignette
+Fixed vignette (change vignette type to html)

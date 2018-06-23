@@ -13,4 +13,4 @@
 
 # pcr 1.1.1
 
-  - Fixed a minor issue in the package vignette
+  - Change vignette to html
