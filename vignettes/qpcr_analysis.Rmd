@@ -3,6 +3,10 @@ title: "Analysis of real-time qPCR data"
 author: "Mahmoud Ahmed"
 date: "`r Sys.Date()`"
 output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '2'
   pdf_document:
     fig_caption: yes
     fig_crop: no
@@ -10,8 +14,8 @@ output:
     toc: yes
     toc_depth: 2
 references:
-- id: Yuan2006
-  title: Statistical analysis of real-time PCR data
+- DOI: 10.1186/1471-2105-7-85
+  URL: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1395339/
   author:
   - family: Yuan
     given: Joshua S
@@ -22,34 +26,35 @@ references:
   - family: Stewart
     given: Neal
   container-title: BMC Bioinformatics
-  volume: 7
-  URL: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1395339/'
-  DOI: 10.1186/1471-2105-7-85
+  id: Yuan2006
   issue: 85
-  publisher: BioMed Central
-  type: article-journal
   issued:
-    year: 2006
     month: 2
-- id: Livak2001
-  title: Analysis of Relative Gene Expression Data Using Real-Time Quantitative PCR and the Double Delta CT Method
+    year: 2006
+  publisher: BioMed Central
+  title: Statistical analysis of real-time PCR data
+  type: article-journal
+  volume: 7
+- DOI: 10.1006/meth.2001.1262
+  URL: https://www.ncbi.nlm.nih.gov/pubmed/11846609
   author:
   - family: Livak
     given: Kenneth J
   - family: Schmittgen
     given: Thomas D
   container-title: Methods
-  volume: 25
-  URL: 'https://www.ncbi.nlm.nih.gov/pubmed/11846609'
-  DOI: 10.1006/meth.2001.1262
+  id: Livak2001
   issue: 4
-  publisher: ELSEVIER
-  type: article-journal
   issued:
-    year: 2001
     month: 12
-- id: Pabinger2014
-  title: A survey of tools for the analysis of quantitative PCR (qPCR) data
+    year: 2001
+  publisher: ELSEVIER
+  title: Analysis of Relative Gene Expression Data Using Real-Time Quantitative PCR
+    and the Double Delta CT Method
+  type: article-journal
+  volume: 25
+- DOI: 10.1016/j.bdq.2014.08.002
+  URL: https://www.ncbi.nlm.nih.gov/pubmed/27920994
   author:
   - family: Pabinger
     given: Stephan
@@ -62,19 +67,19 @@ references:
   - family: Weinhausel
     given: Andreas
   container-title: Biomolecular Detection and Quantification
-  volume: 1
-  URL: 'https://www.ncbi.nlm.nih.gov/pubmed/27920994'
-  DOI: 10.1016/j.bdq.2014.08.002
+  id: Pabinger2014
   issue: 1
-  publisher: ELSEVIER
-  type: review
   issued:
-    year: 2014
     month: 9
+    year: 2014
+  publisher: ELSEVIER
+  title: A survey of tools for the analysis of quantitative PCR (qPCR) data
+  type: review
+  volume: 1
 vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Analysis of real-time qPCR data}
-  %\usepackage[UTF-8]{inputenc}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r setup, include=FALSE}
