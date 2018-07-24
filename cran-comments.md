@@ -51,3 +51,8 @@ fixed link to the CRAN page
 * v1.1.1 submission  
 
 Fixed vignette (change vignette type to html)
+
+* v1.1.2 submission
+
+Remove dependency on broom, deprecated tidy.matrix
+

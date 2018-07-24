@@ -14,3 +14,7 @@
 # pcr 1.1.1
 
   - Change vignette to html
+
+# pcr 1.1.2
+  
+  - Remove dependency on broom 
