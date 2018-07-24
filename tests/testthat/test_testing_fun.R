@@ -26,12 +26,12 @@ test_that("pcr_test runs the t.test correctly", {
 
   group <- relevel(factor(group), ref = 'treatment')
 
-  tt <- tidy(t.test(norm ~ group))
+  tt <- t.test(norm ~ group)
 
-  expect_equal(res$estimate, tt$estimate)
+  expect_equal(res$estimate, unname(tt$estimate[1] - tt$estimate[2]))
   expect_equal(res$p_value, tt$p.value)
-  expect_equal(res$lower, tt$conf.low)
-  expect_equal(res$upper, tt$conf.high)
+  expect_equal(res$lower, tt$conf.int[1])
+  expect_equal(res$upper, tt$conf.int[2])
 })
 
 
@@ -61,12 +61,12 @@ test_that("pcr_test runs the wilcox.test correctly", {
 
   group <- relevel(factor(group), ref = 'treatment')
 
-  wt <- tidy(wilcox.test(norm ~ group, conf.int = TRUE))
+  wt <- wilcox.test(norm ~ group, conf.int = TRUE)
 
-  expect_equal(res$estimate, wt$estimate)
+  expect_equal(res$estimate, unname( wt$estimate[1] - wt$estimate[2]))
   expect_equal(res$p_value, wt$p.value)
-  expect_equal(res$lower, wt$conf.low)
-  expect_equal(res$upper, wt$conf.high)
+  expect_equal(res$lower, wt$conf.int[1])
+  expect_equal(res$upper, wt$conf.int[2])
 })
 
 test_that("pcr_test runs the lm correctly", {
@@ -96,14 +96,13 @@ test_that("pcr_test runs the lm correctly", {
 
   group <- relevel(factor(group), ref = 'control')
 
-  ll <- tidy(lm(norm ~ group))[-1,]
+  ll <- lm(norm ~ group)
 
-  conf_int <- tidy(confint(lm(norm ~ group)))[-1,]
+  conf_int <- confint(lm(norm ~ group))
 
-  expect_equal(res$estimate, ll$estimate)
-  expect_equal(res$p_value, ll$p.value)
-  expect_equal(res$lower, conf_int$X2.5..)
-  expect_equal(res$upper, conf_int$X97.5..)
+  expect_equal(res$estimate, unname(ll$coefficients[2]))
+  expect_equal(res$lower, conf_int[-1, 1])
+  expect_equal(res$upper, conf_int[-1, 2])
 })
 
 test_that("pcr_test runs the lm correctly with multiple groups", {
@@ -130,14 +129,9 @@ test_that("pcr_test runs the lm correctly with multiple groups", {
 
   group <- relevel(factor(dose), ref = '40')
 
-  ll <- tidy(lm(norm ~ group))[-1,][c(3,1,2),]
-  conf_int <- tidy(confint(lm(norm ~ group)))[-1,][c(3,1,2),]
+  ll <- lm(norm ~ group)
 
-
-  expect_equal(res$estimate, ll$estimate)
-  expect_equal(res$p_value, ll$p.value)
-  expect_equal(res$lower, conf_int$X2.5..)
-  expect_equal(res$upper, conf_int$X97.5..)
+  expect_equal(res$estimate, unname(ll$coefficients[c(4, 2, 3)]))
 })
 
 test_that("pcr_test runs the lm correctly with a model matrix", {
@@ -157,13 +151,9 @@ test_that("pcr_test runs the lm correctly with a model matrix", {
                   test = 'lm')
 
   norm <- ct4$target - ct4$ref
-  ll <- tidy(lm(norm ~ mm + 0))[-1,]
-  conf_int <- confint(lm(norm ~ mm + 0))[-1,]
+  ll <- lm(norm ~ mm + 0)
 
-  expect_equal(res$estimate, ll$estimate)
-  expect_equal(res$p_value, ll$p.value)
-  expect_equal(res$lower, unname(conf_int[,1]))
-  expect_equal(res$upper, unname(conf_int[,2]))
+  expect_equal(res$estimate, unname(ll$coefficients)[-1])
 })
 
 test_that("pcr_test runs the lm to adjust for separate runs", {
@@ -184,13 +174,9 @@ test_that("pcr_test runs the lm to adjust for separate runs", {
                   test = 'lm')
 
   norm <- ct4$target - ct4$ref
-  ll <- tidy(lm(norm ~ mm + 0))[-1,]
-  conf_int <- confint(lm(norm ~ mm + 0))[-1,]
+  ll <- lm(norm ~ mm + 0)
 
-  expect_equal(res$estimate, ll$estimate)
-  expect_equal(res$p_value, ll$p.value)
-  expect_equal(res$lower, unname(conf_int[,1]))
-  expect_equal(res$upper, unname(conf_int[,2]))
+  expect_equal(res$estimate, unname(ll$coefficients)[-1])
 })
 
 test_that("pcr_test runs the lm to adjust for rna quality", {
@@ -211,11 +197,7 @@ test_that("pcr_test runs the lm to adjust for rna quality", {
                   test = 'lm')
 
   norm <- ct4$target - ct4$ref
-  ll <- tidy(lm(norm ~ mm + 0))[-1,]
-  conf_int <- confint(lm(norm ~ mm + 0))[-1,]
+  ll <- lm(norm ~ mm + 0)
 
-  expect_equal(res$estimate, ll$estimate)
-  expect_equal(res$p_value, ll$p.value)
-  expect_equal(res$lower, unname(conf_int[,1]))
-  expect_equal(res$upper, unname(conf_int[,2]))
+  expect_equal(res$estimate, unname(ll$coefficients)[-1])
 })

@@ -152,7 +152,6 @@ pcr_test <- function(df, test = 't.test', ...) {
 #'
 #' @importFrom purrr map
 #' @importFrom stats t.test relevel
-#' @importFrom broom tidy
 #' @importFrom dplyr data_frame bind_rows
 #'
 #' @export
@@ -172,14 +171,12 @@ pcr_ttest <- function(df, group_var, reference_gene, reference_group, ...) {
   # perform test
   tst <- map(norm, function(x) {
     t_test <- t.test(x ~ group_var, ...)
-    t_test <- tidy(t_test)
-    t_test <- with(t_test,
-                   data_frame(
-                     estimate = estimate,
-                     p_value = p.value,
-                     lower = conf.low,
-                     upper = conf.high
-                   ))
+    t_test <- data_frame(
+      estimate = unname(t_test$estimate[1] - t_test$estimate[2]),
+      p_value = t_test$p.value,
+      lower = t_test$conf.int[1],
+      upper = t_test$conf.int[2]
+      )
   })
 
   # bind rows
@@ -226,7 +223,6 @@ pcr_ttest <- function(df, group_var, reference_gene, reference_group, ...) {
 #'
 #' @importFrom purrr map
 #' @importFrom stats wilcox.test relevel
-#' @importFrom broom tidy
 #' @importFrom dplyr data_frame bind_rows
 #'
 #' @export
@@ -247,14 +243,13 @@ pcr_wilcox <- function(df, group_var, reference_gene, reference_group, ...) {
   tst <- map(norm, function(x) {
     wilcox_test <- wilcox.test(x ~ group_var,
                                conf.int = TRUE, ...)
-    wilcox_test <- tidy(wilcox_test)
-    wilcox_test <- with(wilcox_test,
-                        data_frame(
-                          estimate = estimate,
-                          p_value = p.value,
-                          lower = conf.low,
-                          upper = conf.high
-                        ))
+
+    wilcox_test <- data_frame(
+      estimate = unname(wilcox_test$estimate[1] - wilcox_test$estimate[2]),
+      p_value = wilcox_test$p.value,
+      lower = wilcox_test$conf.int[1],
+      upper = wilcox_test$conf.int[2]
+                        )
   })
 
   # bind rows
@@ -306,7 +301,6 @@ pcr_wilcox <- function(df, group_var, reference_gene, reference_group, ...) {
 #'
 #' @importFrom purrr map
 #' @importFrom stats lm confint relevel
-#' @importFrom broom tidy
 #' @importFrom dplyr data_frame bind_rows
 #'
 #' @export
@@ -320,6 +314,7 @@ pcr_lm <- function(df, group_var, reference_gene, reference_group,
     group_var <- relevel(factor(group_var), ref = reference_group)
   }
 
+
   tst <- map(norm, function(x) {
     if(is.null(model_matrix)) {
       linear_model <- lm(x ~ group_var, ...)
@@ -329,15 +324,14 @@ pcr_lm <- function(df, group_var, reference_gene, reference_group,
       conf_int <- confint(linear_model, ...)
     }
 
-    linear_model <- tidy(linear_model)[-1,]
-    conf_int <- tidy(conf_int)[-1,]
+
 
     data_frame(
-      term = linear_model$term,
-      estimate = linear_model$estimate,
-      p_value = linear_model$p.value,
-      lower = conf_int$`X2.5..`,
-      upper = conf_int$`X97.5..`
+      term = names(linear_model$coefficients)[-1],
+      estimate = unname(linear_model$coefficients)[-1],
+      p_value = summary(linear_model)$coefficients[-1, 4],
+      lower = conf_int[-1, 1],
+      upper = conf_int[-1, 2]
     )
   })
 
