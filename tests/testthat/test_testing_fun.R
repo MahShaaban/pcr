@@ -63,7 +63,7 @@ test_that("pcr_test runs the wilcox.test correctly", {
 
   wt <- wilcox.test(norm ~ group, conf.int = TRUE)
 
-  expect_equal(res$estimate, unname( wt$estimate[1] - wt$estimate[2]))
+  expect_equal(res$estimate, unname( wt$estimate))
   expect_equal(res$p_value, wt$p.value)
   expect_equal(res$lower, wt$conf.int[1])
   expect_equal(res$upper, wt$conf.int[2])

@@ -245,7 +245,7 @@ pcr_wilcox <- function(df, group_var, reference_gene, reference_group, ...) {
                                conf.int = TRUE, ...)
 
     wilcox_test <- data_frame(
-      estimate = unname(wilcox_test$estimate[1] - wilcox_test$estimate[2]),
+      estimate = unname(wilcox_test$estimate),
       p_value = wilcox_test$p.value,
       lower = wilcox_test$conf.int[1],
       upper = wilcox_test$conf.int[2]
