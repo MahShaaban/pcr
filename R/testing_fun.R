@@ -266,6 +266,8 @@ pcr_wilcox <- function(df, group_var, reference_gene, reference_group, ...) {
 #' @param model_matrix A model matrix for advanced experimental design. for
 #' constructing such a matrix with different variables check
 #' \code{\link[stats]{model.matrix}}
+#' @param mode A character string for the normalization mode. Possible values
+#' are "subtract" (default) or "divide".
 #' @param ... Other arguments to \code{\link[stats]{lm}}
 #'
 #' @return A data.frame of 6 columns
@@ -305,9 +307,9 @@ pcr_wilcox <- function(df, group_var, reference_gene, reference_group, ...) {
 #'
 #' @export
 pcr_lm <- function(df, group_var, reference_gene, reference_group,
-                   model_matrix = NULL, ...) {
+                   model_matrix = NULL, mode = 'subtract', ...) {
   # calculate the delta_ct values
-  norm <- .pcr_normalize(df, reference_gene = reference_gene)
+  norm <- .pcr_normalize(df, reference_gene = reference_gene, mode = mode)
 
   # adjust group_var for formuls
   if(is.null(model_matrix)) {
