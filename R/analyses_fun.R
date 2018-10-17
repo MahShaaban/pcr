@@ -484,3 +484,70 @@ pcr_analyze <- function(df, method = 'delta_delta_ct', ...) {
          'relative_curve' = pcr_curve(df, ...))
 }
 
+#' Calculate the geNorm method
+#'
+#' @inheritParams pcr_ddct
+#'
+#' @return A data.frame
+#'
+#' @importFrom magrittr %>%
+#' @importFrom dplyr select mutate group_by summarise
+#'
+#' @export
+pcr_genorm <- function(df, group_var, reference_group, reference_gene) {
+  # caluclate a normalization factor
+  nf <- pcr_nf(df,
+               group_var = group_var,
+               reference_gene = reference_gene,
+               reference_group = reference_group)
+
+  # calculate dct for genes of interest and
+  # transform error term
+  goi <- select(df, -reference_gene) %>%
+    pcr_dct(group_var = group, reference_group = reference_group) %>%
+    mutate(error = fold_change*error*log(2)) %>%
+    select(group, gene, fold_change, error)
+
+  # normalize by normalization factors
+  res <- full_join(goi, nf) %>%
+    group_by(group, gene, factor) %>%
+    summarise(change = fold_change/mean,
+              error = change * sum((sd/mean)^2 + (error/fold_change)^2)^.5 )
+
+  # return resulsts
+  return(res)
+}
+
+#' Calculate normalization factors
+#'
+#' @inheritParams pcr_ddct
+#'
+#' @return A data.frame
+#'
+#' @importFrom magrittr %>%
+#' @importFrom dplyr mutate select group_by summarise
+#' @importFrom FSA geomean
+#'
+#' @export
+pcr_nf <- function(df, group_var, reference_group, reference_gene) {
+  if(length(reference_gene) < 1) {
+    stop()
+  }
+
+  # select reference gene ct values
+  df_ref <- select(df, reference_gene)
+
+  # calculate the dct
+  dct <- pcr_dct(df_ref, group_var = group, reference_group = reference_group)
+
+  # caluculate the mean and sd
+  nf <- dct %>%
+    mutate(error = fold_change*error*log(2)) %>%
+    group_by(group) %>%
+    summarise(mean = geomean(fold_change),
+              sd = mean * sum((error/ (fold_change*3))^2)^.5) %>%
+    mutate(factor = 'NF')
+
+  # return normalization factor
+  return(nf)
+}
