@@ -5,7 +5,7 @@
 \title{Linear regression qPCR data}
 \usage{
 pcr_lm(df, group_var, reference_gene, reference_group, model_matrix = NULL,
-  ...)
+  mode = "subtract", ...)
 }
 \arguments{
 \item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
@@ -21,6 +21,9 @@ this variable should equal the number of rows of df}
 \item{model_matrix}{A model matrix for advanced experimental design. for
 constructing such a matrix with different variables check
 \code{\link[stats]{model.matrix}}}
+
+\item{mode}{A character string for the normalization mode. Possible values
+are "subtract" (default) or "divide".}
 
 \item{...}{Other arguments to \code{\link[stats]{lm}}}
 }

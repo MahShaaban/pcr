@@ -85,7 +85,8 @@
   } else {
     gg <- ggplot(df, aes_string(x = 'group', y = y, fill = 'gene')) +
       geom_col(position = 'dodge') +
-      geom_errorbar(aes_string(ymin = 'lower', ymax = 'upper'))
+      geom_errorbar(aes_string(ymin = 'lower', ymax = 'upper'),
+                    position = 'dodge')
   }
 
   return(gg)
