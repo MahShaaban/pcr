@@ -118,6 +118,8 @@ pcr_test <- function(df, test = 't.test', ...) {
 #' t-test qPCR data
 #'
 #' @inheritParams pcr_ddct
+#' @param tidy A \code{logical} whether to return a \code{list} of \code{htest}
+#' or a tidy \code{data.frame}. Default TRUE.
 #' @param ... Other arguments to \code{\link[stats]{t.test}}
 #'
 #' @return A data.frame of 5 columns
@@ -128,6 +130,7 @@ pcr_test <- function(df, test = 't.test', ...) {
 #'   \item lower The low 95\% confidence interval
 #'   \item upper The high 95\% confidence interval
 #' }
+#' When \code{tidy} is FALSE, returns a \code{list} of \code{htest} objects.
 #'
 #' @examples
 #' # locate and read data
@@ -155,7 +158,8 @@ pcr_test <- function(df, test = 't.test', ...) {
 #' @importFrom dplyr data_frame bind_rows
 #'
 #' @export
-pcr_ttest <- function(df, group_var, reference_gene, reference_group, ...) {
+pcr_ttest <- function(df, group_var, reference_gene, reference_group,
+                      tidy = TRUE, ...) {
   # calculate the delta_ct values
   norm <- .pcr_normalize(df, reference_gene = reference_gene)
 
@@ -170,25 +174,34 @@ pcr_ttest <- function(df, group_var, reference_gene, reference_group, ...) {
 
   # perform test
   tst <- map(norm, function(x) {
-    t_test <- t.test(x ~ group_var, ...)
-    t_test <- data_frame(
-      estimate = unname(t_test$estimate[1] - t_test$estimate[2]),
-      p_value = t_test$p.value,
-      lower = t_test$conf.int[1],
-      upper = t_test$conf.int[2]
-      )
+    t.test(x ~ group_var, ...)
   })
 
-  # bind rows
-  tst <- bind_rows(tst, .id = 'gene')
+  # make a tidy data.frame or return htest object
+  if(tidy) {
+    res <- bind_rows(map(tst, function(x) {
+      data_frame(
+        estimate = unname(x$estimate[1] - x$estimate[2]),
+        p_value = x$p.value,
+        lower = x$conf.int[1],
+        upper = x$conf.int[2]
+      )
+    }),
+    .id = 'gene')
+
+  } else {
+    res <- tst
+  }
 
   # return
-  return(tst)
+  return(res)
 }
 
 #' Wilcoxon test qPCR data
 #'
 #' @inheritParams pcr_ddct
+#' @param tidy A \code{logical} whether to return a \code{list} of \code{htest}
+#' or a tidy \code{data.frame}. Default TRUE.
 #' @param ... Other arguments to \code{\link[stats]{wilcox.test}}
 #'
 #' @return A data.frame of 5 columns
@@ -199,6 +212,8 @@ pcr_ttest <- function(df, group_var, reference_gene, reference_group, ...) {
 #'   \item lower The low 95\% confidence interval
 #'   \item upper The high 95\% confidence interval
 #' }
+#'
+#' When \code{tidy} is FALSE, returns a \code{list} of \code{htest} objects.
 #'
 #' @examples
 #' # locate and read data
@@ -226,7 +241,8 @@ pcr_ttest <- function(df, group_var, reference_gene, reference_group, ...) {
 #' @importFrom dplyr data_frame bind_rows
 #'
 #' @export
-pcr_wilcox <- function(df, group_var, reference_gene, reference_group, ...) {
+pcr_wilcox <- function(df, group_var, reference_gene, reference_group,
+                       tidy = TRUE, ...) {
   # calculate the delta_ct values
   norm <- .pcr_normalize(df, reference_gene = reference_gene)
 
@@ -241,22 +257,26 @@ pcr_wilcox <- function(df, group_var, reference_gene, reference_group, ...) {
 
   # perform test
   tst <- map(norm, function(x) {
-    wilcox_test <- wilcox.test(x ~ group_var,
-                               conf.int = TRUE, ...)
-
-    wilcox_test <- data_frame(
-      estimate = unname(wilcox_test$estimate),
-      p_value = wilcox_test$p.value,
-      lower = wilcox_test$conf.int[1],
-      upper = wilcox_test$conf.int[2]
-                        )
+    wilcox.test(x ~ group_var, conf.int = TRUE, ...)
   })
 
-  # bind rows
-  tst <- bind_rows(tst, .id = 'gene')
+  # make a tidy data.frame or return htest object
+  if(tidy) {
+    res <- bind_rows(map(tst, function(x) {
+      data_frame(
+        estimate = unname(x$estimate),
+        p_value = x$p.value,
+        lower = x$conf.int[1],
+        upper = x$conf.int[2]
+      )
+    }),
+    .id = 'gene')
+  } else {
+    res <- tst
+  }
 
   # return
-  return(tst)
+  return(res)
 }
 
 
@@ -268,6 +288,8 @@ pcr_wilcox <- function(df, group_var, reference_gene, reference_group, ...) {
 #' \code{\link[stats]{model.matrix}}
 #' @param mode A character string for the normalization mode. Possible values
 #' are "subtract" (default) or "divide".
+#' @param tidy A \code{logical} whether to return a \code{list} of
+#' \code{\link[stats]{lm}} or a tidy \code{data.frame}. Default TRUE.
 #' @param ... Other arguments to \code{\link[stats]{lm}}
 #'
 #' @return A data.frame of 6 columns
@@ -279,6 +301,8 @@ pcr_wilcox <- function(df, group_var, reference_gene, reference_group, ...) {
 #'   \item lower The low 95\% confidence interval
 #'   \item upper The high 95\% confidence interval
 #' }
+#' When \code{tidy} is FALSE, returns a \code{list} of \code{\link[stats]{lm}}
+#' objects.
 #'
 #' @examples
 #' # locate and read data
@@ -307,7 +331,8 @@ pcr_wilcox <- function(df, group_var, reference_gene, reference_group, ...) {
 #'
 #' @export
 pcr_lm <- function(df, group_var, reference_gene, reference_group,
-                   model_matrix = NULL, mode = 'subtract', ...) {
+                   model_matrix = NULL, mode = 'subtract', tidy = TRUE,
+                   ...) {
   # calculate the delta_ct values
   norm <- .pcr_normalize(df, reference_gene = reference_gene, mode = mode)
 
@@ -316,28 +341,33 @@ pcr_lm <- function(df, group_var, reference_gene, reference_group,
     group_var <- relevel(factor(group_var), ref = reference_group)
   }
 
-
+  # apply linear models
   tst <- map(norm, function(x) {
     if(is.null(model_matrix)) {
-      linear_model <- lm(x ~ group_var, ...)
-      conf_int <- confint(linear_model, ...)
+      lm(x ~ group_var, ...)
     } else {
-      linear_model <- lm(x ~ model_matrix + 0, ...)
-      conf_int <- confint(linear_model, ...)
+      lm(x ~ model_matrix + 0, ...)
     }
-
-
-
-    data_frame(
-      term = names(linear_model$coefficients)[-1],
-      estimate = unname(linear_model$coefficients)[-1],
-      p_value = summary(linear_model)$coefficients[-1, 4],
-      lower = conf_int[-1, 1],
-      upper = conf_int[-1, 2]
-    )
   })
 
-  tst <- bind_rows(tst, .id = 'gene')
+  # make a tidy data.frame or return wilcox object
+  if(tidy) {
+    res <- bind_rows(map(tst, function(x) {
+      mod <- x
+      conf_int <- confint(mod)
+      data_frame(
+        term = names(mod$coefficients)[-1],
+        estimate = unname(mod$coefficients)[-1],
+        p_value = summary(mod)$coefficients[-1, 4],
+        lower = conf_int[-1, 1],
+        upper = conf_int[-1, 2]
+      )
+    }),
+    .id = 'gene')
+  } else {
+    res <- tst
+  }
 
-  return(tst)
+  # return
+  return(res)
 }

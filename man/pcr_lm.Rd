@@ -5,7 +5,7 @@
 \title{Linear regression qPCR data}
 \usage{
 pcr_lm(df, group_var, reference_gene, reference_group, model_matrix = NULL,
-  mode = "subtract", ...)
+  mode = "subtract", tidy = TRUE, ...)
 }
 \arguments{
 \item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
@@ -25,6 +25,9 @@ constructing such a matrix with different variables check
 \item{mode}{A character string for the normalization mode. Possible values
 are "subtract" (default) or "divide".}
 
+\item{tidy}{A \code{logical} whether to return a \code{list} of
+\code{\link[stats]{lm}} or a tidy \code{data.frame}. Default TRUE.}
+
 \item{...}{Other arguments to \code{\link[stats]{lm}}}
 }
 \value{
@@ -37,6 +40,8 @@ A data.frame of 6 columns
   \item lower The low 95\% confidence interval
   \item upper The high 95\% confidence interval
 }
+When \code{tidy} is FALSE, returns a \code{list} of \code{\link[stats]{lm}}
+objects.
 }
 \description{
 Linear regression qPCR data
