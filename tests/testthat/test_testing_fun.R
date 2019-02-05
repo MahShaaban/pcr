@@ -201,3 +201,64 @@ test_that("pcr_test runs the lm to adjust for rna quality", {
 
   expect_equal(res$estimate, unname(ll$coefficients)[-1])
 })
+
+test_that("pcr_test returns lm objects", {
+  fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
+  ct4 <- readr::read_csv(fl)
+
+  # make group variable
+  group <- rep(c('control', 'treatment'), each = 12)
+
+
+  # test using pcr_test and return a list of lm object
+  res <- pcr_test(ct4,
+                  group_var = group,
+                  reference_gene = 'ref',
+                  reference_group = 'control',
+                  test = 'lm',
+                  tidy = FALSE)
+
+  expect_true(is.list(res))
+  expect_equal(names(res), names(ct4)[-1])
+  expect_s3_class(res[[1]], 'lm')
+})
+
+test_that("pcr_test returns htest objects with wilcox test", {
+  fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
+  ct4 <- readr::read_csv(fl)
+
+  # make group variable
+  group <- rep(c('control', 'treatment'), each = 12)
+
+  # test using pcr_test
+  res <- pcr_test(ct4,
+                  group_var = group,
+                  reference_gene = 'ref',
+                  reference_group = 'control',
+                  test = 'wilcox.test',
+                  tidy = FALSE)
+
+  expect_true(is.list(res))
+  expect_equal(names(res), names(ct4)[-1])
+  expect_s3_class(res[[1]], 'htest')
+})
+
+test_that("pcr_test returns htest objects with t.test test", {
+  fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
+  ct4 <- readr::read_csv(fl)
+
+  # make group variable
+  group <- rep(c('control', 'treatment'), each = 12)
+
+  # test using pcr_test
+  res <- pcr_test(ct4,
+                  group_var = group,
+                  reference_gene = 'ref',
+                  reference_group = 'control',
+                  test = 't.test',
+                  tidy = FALSE)
+
+  expect_true(is.list(res))
+  expect_equal(names(res), names(ct4)[-1])
+  expect_s3_class(res[[1]], 'htest')
+})

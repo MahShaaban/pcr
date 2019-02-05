@@ -4,7 +4,7 @@
 \alias{pcr_wilcox}
 \title{Wilcoxon test qPCR data}
 \usage{
-pcr_wilcox(df, group_var, reference_gene, reference_group, ...)
+pcr_wilcox(df, group_var, reference_gene, reference_group, tidy = TRUE, ...)
 }
 \arguments{
 \item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
@@ -17,6 +17,9 @@ this variable should equal the number of rows of df}
 
 \item{reference_group}{A character string of the control group in group_var}
 
+\item{tidy}{A \code{logical} whether to return a \code{list} of \code{htest}
+or a tidy \code{data.frame}. Default TRUE.}
+
 \item{...}{Other arguments to \code{\link[stats]{wilcox.test}}}
 }
 \value{
@@ -28,6 +31,8 @@ A data.frame of 5 columns
   \item lower The low 95\% confidence interval
   \item upper The high 95\% confidence interval
 }
+
+When \code{tidy} is FALSE, returns a \code{list} of \code{htest} objects.
 }
 \description{
 Wilcoxon test qPCR data
