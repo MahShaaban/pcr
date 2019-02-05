@@ -23,7 +23,8 @@ Imports: devtools,
   tidyr,
   purrr,
   readr,
-  ggplot2
+  ggplot2,
+  FSA
 Suggests: testthat,
     knitr,
     rmarkdown,
