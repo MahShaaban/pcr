@@ -70,3 +70,17 @@
 #'
 #' @source \url{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1395339/}
 "ct4"
+
+#' \eqn{C_T} values from qPCR with multiple reference genes
+#'
+#' A dataset containing the \eqn{C_T} values of one gene of interest and three
+#' reference genes in two control and two treatment samples.
+#'
+#' @format A data.frame with 4 rows and 4 variables:
+#' \describe{
+#'   \item{GOT1}{\eqn{C_T} values of the gene of interest}
+#'   \item{REF1}{\eqn{C_T} values of the first reference gene}
+#'   \item{REF2}{\eqn{C_T} values of the second reference gene}
+#'   \item{REF3}{\eqn{C_T} values of the third reference gene}
+#' }
+"ct5"

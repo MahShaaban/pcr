@@ -22,4 +22,5 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c('group',
                                                         'upper',
                                                         'lower',
                                                         'log_amount',
-                                                        'ct3'))
+                                                        'relative_expression',
+                                                        'fold_change'))

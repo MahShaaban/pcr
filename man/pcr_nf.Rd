@@ -18,8 +18,30 @@ this variable should equal the number of rows of df}
 \item{reference_gene}{A character string of the column name of a control gene}
 }
 \value{
-A data.frame
+A data.frame of 5 columns
+\itemize{
+  \item group The unique entries in group_var
+  \item gene The column names of df. reference_gene is dropped
+  \item mean The average value of the normalization factor
+  \item sd The standard deviation of the normalization factor
+  \item factor The name of the normalization factor 'NF'
+}
 }
 \description{
-Calculate normalization factors
+Calculates a normalization factor from multiple reference genes.
+}
+\examples{
+## locate and read raw ct data
+fl <- system.file('extdata', 'ct5.csv', package = 'pcr')
+ct5 <- readr::read_csv(fl)
+
+# add grouping variable
+group_var <- rep(c('control', 'treatment'), each = 2)
+
+# calculate a normalization factor
+pcr_nf(ct5,
+       group_var = group_var,
+       reference_group = 'control',
+       reference_gene = paste0('REF', 1:3))
+
 }

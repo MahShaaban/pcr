@@ -275,3 +275,43 @@ test_that("pcr_curve returns a plot", {
 
   expect_identical(class(res), c("gg", "ggplot"))
 })
+
+test_that('pcr_nf calculate factor properly.', {
+  # add grouping variable
+  group_var <- rep(c('control', 'treatment'), each = 2)
+
+  # calculate a normalization factor
+  nf <- pcr_nf(ct5,
+               group_var = group_var,
+               reference_group = 'control',
+               reference_gene = paste0('REF', 1:3))
+
+  expect_true(all(nf$factor == 'NF'))
+  expect_equal(nf$mean[nf$group == 'control'], 1)
+})
+
+test_that('pcr_nf stop when single ref gene provided', {
+  # add grouping variable
+  group_var <- rep(c('control', 'treatment'), each = 2)
+
+  # calculate a normalization factor
+  expect_error(pcr_nf(ct5,
+                      group_var = group_var,
+                      reference_group = 'control',
+                      reference_gene = 'REF1'))
+})
+
+test_that('pcr_genorm calculate relative expression properly.', {
+  # add grouping variable
+  group_var <- rep(c('control', 'treatment'), each = 2)
+
+  # calculate a normalization factor
+  re <- pcr_genorm(ct5,
+                   group_var = group_var,
+                   reference_group = 'control',
+                   reference_gene = paste0('REF', 1:3))
+
+  expect_true(all(re$factor == 'NF'))
+  expect_true(all(re$gene == 'GOI1'))
+  expect_equal(re$relative_expression[re$group == 'control'], 1)
+})

@@ -381,19 +381,20 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group,
 #'
 #' @inheritParams pcr_ddct
 #' @inheritParams pcr_curve
-#' @param method A character string; 'delta_delta_ct' default, 'delta_ct' or
-#' 'relative_curve' for invoking a certain analysis model
+#' @param method A character string; 'delta_delta_ct' default, 'delta_ct',
+#' 'relative_curve' or 'genorm' for invoking a certain analysis model.
 #' @param ... Arguments passed to the methods
 #'
 #' @return A data.frame by default, when \code{plot} is TRUE returns a plot.
-#' For details; \link{pcr_ddct}, \link{pcr_dct} and \link{pcr_curve}.
+#' For details; \link{pcr_ddct}, \link{pcr_dct},  \link{pcr_curve} and
+#' \link{pcr_genorm}.
 #'
 #' @details The different analysis methods can be invoked using the
-#' argument method with 'delta_delta_ct' default, 'delta_ct' or
-#' 'relative_curve' for the double delta \eqn{C_T}, delta ct or the standard curve
-#' model respectively. Alternatively, the same methods can be applied by using
-#' the corresponding functions directly: \link{pcr_ddct}, \link{pcr_dct} or
-#' \link{pcr_curve}
+#' argument method with 'delta_delta_ct' default, 'delta_ct', 'relative_curve'
+#' or 'genorm' for the double delta \eqn{C_T}, delta \eqn{C_T}, the standard
+#' curve or the geNorm model respectively. Alternatively, the same methods can
+#' be applied by using the corresponding functions directly: \link{pcr_ddct},
+#' \link{pcr_dct}, \link{pcr_curve} or \link{pcr_genorm}.
 #'
 #' @references Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of
 #' Relative Gene Expression Data Using Real-Time Quantitative PCR and the
@@ -476,19 +477,59 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group,
 #'            method = 'relative_curve',
 #'            plot = TRUE)
 #'
+#' # applying geNorm method
+#' ## locate and read raw ct data
+#' fl <- system.file('extdata', 'ct5.csv', package = 'pcr')
+#' ct5 <- readr::read_csv(fl)
+#'
+#' # add grouping variable
+#' group_var <- rep(c('control', 'treatment'), each = 2)
+#'
+#' # calculate relative expression change
+#' pcr_genorm(ct5,
+#'            group_var = group_var,
+#'            reference_group = 'control',
+#'            reference_gene = paste0('REF', 1:3))
+#'
 #' @export
 pcr_analyze <- function(df, method = 'delta_delta_ct', ...) {
   switch(method,
          'delta_delta_ct' = pcr_ddct(df, ...),
          'delta_ct' = pcr_dct(df, ...),
-         'relative_curve' = pcr_curve(df, ...))
+         'relative_curve' = pcr_curve(df, ...),
+         'genorm' = pcr_genorm(df, ...))
 }
 
 #' Calculate the geNorm method
 #'
+#' Applies the geNorm method by first calculating a normalization facor from
+#' multiple reference genes and then apply the \link{pcr_dct} using the factor.
+#'
 #' @inheritParams pcr_ddct
 #'
-#' @return A data.frame
+#' @return A data.frame of 5 columns:
+#' \itemize{
+#'   \item group The unique entries in group_var
+#'   \item gene The column names of df. reference_gene is dropped
+#'   \item factor The name of the normalization factor 'NF'
+#'   \item relative_expression The expression of target genes normalized by
+#'   a reference_gene and calibrated by a reference_group
+#'   \item error The standard deviation of the relative_expression
+#' }
+#'
+#' @examples
+#' ## locate and read raw ct data
+#' fl <- system.file('extdata', 'ct5.csv', package = 'pcr')
+#' ct5 <- readr::read_csv(fl)
+#'
+#' # add grouping variable
+#' group_var <- rep(c('control', 'treatment'), each = 2)
+#'
+#' # calculate relative expression change
+#' pcr_genorm(ct5,
+#'            group_var = group_var,
+#'            reference_group = 'control',
+#'            reference_gene = paste0('REF', 1:3))
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select mutate group_by summarise
@@ -504,15 +545,15 @@ pcr_genorm <- function(df, group_var, reference_group, reference_gene) {
   # calculate dct for genes of interest and
   # transform error term
   goi <- select(df, -reference_gene) %>%
-    pcr_dct(group_var = group, reference_group = reference_group) %>%
+    pcr_dct(group_var = group_var, reference_group = reference_group) %>%
     mutate(error = fold_change*error*log(2)) %>%
     select(group, gene, fold_change, error)
 
   # normalize by normalization factors
   res <- full_join(goi, nf) %>%
     group_by(group, gene, factor) %>%
-    summarise(change = fold_change/mean,
-              error = change * sum((sd/mean)^2 + (error/fold_change)^2)^.5 )
+    summarise(relative_expression = fold_change/mean,
+              error = relative_expression * sum((sd/mean)^2 + (error/fold_change)^2)^.5 )
 
   # return resulsts
   return(res)
@@ -520,9 +561,32 @@ pcr_genorm <- function(df, group_var, reference_group, reference_gene) {
 
 #' Calculate normalization factors
 #'
+#' Calculates a normalization factor from multiple reference genes.
+#'
 #' @inheritParams pcr_ddct
 #'
-#' @return A data.frame
+#' @return A data.frame of 5 columns
+#' \itemize{
+#'   \item group The unique entries in group_var
+#'   \item gene The column names of df. reference_gene is dropped
+#'   \item mean The average value of the normalization factor
+#'   \item sd The standard deviation of the normalization factor
+#'   \item factor The name of the normalization factor 'NF'
+#' }
+#'
+#' @examples
+#' ## locate and read raw ct data
+#' fl <- system.file('extdata', 'ct5.csv', package = 'pcr')
+#' ct5 <- readr::read_csv(fl)
+#'
+#' # add grouping variable
+#' group_var <- rep(c('control', 'treatment'), each = 2)
+#'
+#' # calculate a normalization factor
+#' pcr_nf(ct5,
+#'        group_var = group_var,
+#'        reference_group = 'control',
+#'        reference_gene = paste0('REF', 1:3))
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate select group_by summarise
@@ -530,22 +594,22 @@ pcr_genorm <- function(df, group_var, reference_group, reference_gene) {
 #'
 #' @export
 pcr_nf <- function(df, group_var, reference_group, reference_gene) {
-  if(length(reference_gene) < 1) {
-    stop()
+  if(length(reference_gene) < 2) {
+    stop('reference gene must be a vector of two or more elements.')
   }
 
   # select reference gene ct values
   df_ref <- select(df, reference_gene)
 
   # calculate the dct
-  dct <- pcr_dct(df_ref, group_var = group, reference_group = reference_group)
+  dct <- pcr_dct(df_ref, group_var = group_var, reference_group = reference_group)
 
   # caluculate the mean and sd
   nf <- dct %>%
     mutate(error = fold_change*error*log(2)) %>%
     group_by(group) %>%
     summarise(mean = geomean(fold_change),
-              sd = mean * sum((error/ (fold_change*3))^2)^.5) %>%
+              sd = mean * sum((error/ (fold_change*length(reference_gene)))^2)^.5) %>%
     mutate(factor = 'NF')
 
   # return normalization factor

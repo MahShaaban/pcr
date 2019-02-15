@@ -18,8 +18,32 @@ this variable should equal the number of rows of df}
 \item{reference_gene}{A character string of the column name of a control gene}
 }
 \value{
-A data.frame
+A data.frame of 5 columns:
+\itemize{
+  \item group The unique entries in group_var
+  \item gene The column names of df. reference_gene is dropped
+  \item factor The name of the normalization factor 'NF'
+  \item relative_expression The expression of target genes normalized by
+  a reference_gene and calibrated by a reference_group
+  \item error The standard deviation of the relative_expression
+}
 }
 \description{
-Calculate the geNorm method
+Applies the geNorm method by first calculating a normalization facor from
+multiple reference genes and then apply the \link{pcr_dct} using the factor.
+}
+\examples{
+## locate and read raw ct data
+fl <- system.file('extdata', 'ct5.csv', package = 'pcr')
+ct5 <- readr::read_csv(fl)
+
+# add grouping variable
+group_var <- rep(c('control', 'treatment'), each = 2)
+
+# calculate relative expression change
+pcr_genorm(ct5,
+           group_var = group_var,
+           reference_group = 'control',
+           reference_gene = paste0('REF', 1:3))
+
 }

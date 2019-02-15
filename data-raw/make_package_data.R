@@ -2,6 +2,7 @@
 library(readr)
 library(dplyr)
 library(tidyr)
+library(readxl)
 
 # ct3
 # regenerate the dilution experiment ct values
@@ -57,3 +58,20 @@ ct4 <- with(ct4, split(ct, gene_type)) %>% bind_rows
 
 # write csv of only ct values and use data
 write_csv(ct4, path = 'inst/extdata/ct4.csv')
+
+# ct5
+# locate and read gnorm_example.xlsx
+fl <- system.file('extdata', 'genorm_example.xlsx', package = 'pcr')
+
+raw_data <- read_xlsx(fl, sheet = 1)
+ct5 <- raw_data %>%
+  fill(Target) %>%
+  select(Target, Sample, `Cq value`) %>%
+  setNames(c('gene', 'group', 'ct')) %>%
+  group_by(gene, group) %>%
+  mutate(row_id = row_number()) %>%
+  spread(gene, ct) %>%
+  ungroup() %>%
+  select(-row_id, -group)
+
+write_csv(ct5, path = 'inst/extdata/ct5.csv')

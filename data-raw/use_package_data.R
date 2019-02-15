@@ -37,3 +37,12 @@ if(file.exists(fl)) {
 } else {
   message(paste("File", fl, "doesn't exist"))
 }
+
+# ct5
+fl <- system.file('extdata', 'ct5.csv', package = 'pcr')
+if(file.exists(fl)) {
+  ct5 <- read_csv(fl)
+  use_data(ct5, overwrite = TRUE)
+} else {
+  message(paste("File", fl, "doesn't exist"))
+}

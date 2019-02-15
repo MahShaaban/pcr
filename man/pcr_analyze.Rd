@@ -10,25 +10,26 @@ pcr_analyze(df, method = "delta_delta_ct", ...)
 \item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
 in rows rows}
 
-\item{method}{A character string; 'delta_delta_ct' default, 'delta_ct' or
-'relative_curve' for invoking a certain analysis model}
+\item{method}{A character string; 'delta_delta_ct' default, 'delta_ct',
+'relative_curve' or 'genorm' for invoking a certain analysis model.}
 
 \item{...}{Arguments passed to the methods}
 }
 \value{
 A data.frame by default, when \code{plot} is TRUE returns a plot.
-For details; \link{pcr_ddct}, \link{pcr_dct} and \link{pcr_curve}.
+For details; \link{pcr_ddct}, \link{pcr_dct},  \link{pcr_curve} and
+\link{pcr_genorm}.
 }
 \description{
 A unified interface to invoke different analysis methods of qPCR data.
 }
 \details{
 The different analysis methods can be invoked using the
-argument method with 'delta_delta_ct' default, 'delta_ct' or
-'relative_curve' for the double delta \eqn{C_T}, delta ct or the standard curve
-model respectively. Alternatively, the same methods can be applied by using
-the corresponding functions directly: \link{pcr_ddct}, \link{pcr_dct} or
-\link{pcr_curve}
+argument method with 'delta_delta_ct' default, 'delta_ct', 'relative_curve'
+or 'genorm' for the double delta \eqn{C_T}, delta \eqn{C_T}, the standard
+curve or the geNorm model respectively. Alternatively, the same methods can
+be applied by using the corresponding functions directly: \link{pcr_ddct},
+\link{pcr_dct}, \link{pcr_curve} or \link{pcr_genorm}.
 }
 \examples{
 # applying the delta delta ct method
@@ -105,6 +106,20 @@ pcr_analyze(ct1,
            slope = slope,
            method = 'relative_curve',
            plot = TRUE)
+
+# applying geNorm method
+## locate and read raw ct data
+fl <- system.file('extdata', 'ct5.csv', package = 'pcr')
+ct5 <- readr::read_csv(fl)
+
+# add grouping variable
+group_var <- rep(c('control', 'treatment'), each = 2)
+
+# calculate relative expression change
+pcr_genorm(ct5,
+           group_var = group_var,
+           reference_group = 'control',
+           reference_gene = paste0('REF', 1:3))
 
 }
 \references{
