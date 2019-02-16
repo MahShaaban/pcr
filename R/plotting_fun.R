@@ -66,6 +66,7 @@
 #' # make a plot
 #' .pcr_plot_analyze(df, method = 'relative_curve')
 #'
+#' @export
 .pcr_plot_analyze <- function(df, method, facets = FALSE) {
   y <- switch (method,
                'delta_delta_ct' = 'relative_expression',
@@ -125,6 +126,7 @@
 #' @importFrom tidyr gather
 #' @importFrom ggplot2 ggplot aes geom_point geom_errorbar facet_wrap geom_smooth
 #'
+#' @export
 .pcr_plot_assess <- function(df, amount, reference_gene, method) {
   switch (method,
     'efficiency' = {

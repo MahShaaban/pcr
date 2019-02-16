@@ -46,3 +46,12 @@ if(file.exists(fl)) {
 } else {
   message(paste("File", fl, "doesn't exist"))
 }
+
+# hk_tissue
+fl <- system.file('extdata', 'hk_tissue.csv', package = 'pcr')
+if(file.exists(fl)) {
+  hk_tissue <- read_csv(fl)
+  use_data(hk_tissue, overwrite = TRUE)
+} else {
+  message(paste("File", fl, "doesn't exist"))
+}

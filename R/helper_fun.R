@@ -49,7 +49,8 @@
 #' @importFrom tidyr gather
 #'
 #' @keywords internal
-
+#'
+#' @export
 .pcr_average <- function(df, group_var, amount, tidy = FALSE) {
   # when group_var is provided
   # calculate the averages using group_var in group_by
@@ -127,7 +128,8 @@
 #' @importFrom dplyr select mutate_if starts_with
 #'
 #' @keywords internal
-
+#'
+#' @export
 .pcr_normalize <- function(df, reference_gene, mode = 'subtract',
                            tidy = FALSE) {
   # get the reference_gene column and unlist
@@ -197,7 +199,8 @@
 #' @importFrom tidyr gather
 #'
 #' @keywords internal
-
+#'
+#' @export
 .pcr_calibrate <- function(df, reference_group, mode = 'subtract',
                            tidy = FALSE) {
   # get the row index of the reference group
@@ -255,7 +258,8 @@
 #' @importFrom stats sd
 #'
 #' @keywords internal
-
+#'
+#' @export
 .pcr_sd <- function(df, group_var, tidy = FALSE) {
   # group_by the group_var
   # calculate standard deviation
@@ -308,7 +312,8 @@
 #' @importFrom tidyr gather
 #'
 #' @keywords internal
-
+#'
+#' @export
 .pcr_error <- function(df, reference_gene, tidy = FALSE) {
   # get the reference_gene column and unlist
   ref <- select(df, reference_gene) %>%
@@ -377,8 +382,8 @@
 #' @importFrom dplyr group_by summarise ungroup
 #'
 #' @keywords internal
-
-
+#'
+#' @export
 .pcr_cv <- function(amounts, group_var, tidy = FALSE) {
   # group_by group_var and calculate cv
   cv <- mutate(amounts, group = group_var) %>%
@@ -435,7 +440,8 @@
 #'            slope = slope)
 #'
 #' @keywords internal
-
+#'
+#' @export
 .pcr_amount <- function(df, intercept, slope) {
   # make a data.frame of intercept, slope ana gene names
   curve <- data_frame(intercept,
@@ -492,7 +498,8 @@
 #' .pcr_trend(ct3, amount = amount)
 #'
 #' @keywords internal
-
+#'
+#' @export
 .pcr_trend <- function(df, amount) {
   # make a trend line using linear regression
   trend_line <- map(df, function(x) {

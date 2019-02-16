@@ -84,3 +84,11 @@
 #'   \item{REF3}{\eqn{C_T} values of the third reference gene}
 #' }
 "ct5"
+
+#' Expression values reference genes
+#'
+#' A dataset containing the relative expression values of ten reference genes
+#' in five different tissues.
+#'
+#' @format A \code{data.frame} with 85 rows and 11 variables
+"hk_tissue"

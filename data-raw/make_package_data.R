@@ -3,6 +3,7 @@ library(readr)
 library(dplyr)
 library(tidyr)
 library(readxl)
+library(stringr)
 
 # ct3
 # regenerate the dilution experiment ct values
@@ -75,3 +76,11 @@ ct5 <- raw_data %>%
   select(-row_id, -group)
 
 write_csv(ct5, path = 'inst/extdata/ct5.csv')
+
+#
+# https://static-content.springer.com/esm/art%3A10.1186%2Fgb-2002-3-7-research0034/MediaObjects/13059_2001_453_MOESM1_ESM.txt
+fl <- system.file('extdata', 'hk_tissues.txt', package = 'pcr')
+raw_data <- read_tsv(fl, skip = 1, n_max = 85)
+hk_tissue <- select(raw_data, -1)
+hk_tissue$tissue <- str_replace_all(raw_data$X1, '\\d+', '')
+write_csv(hk_tissue, path = 'inst/extdata/hk_tissue.csv')
