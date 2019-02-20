@@ -157,3 +157,24 @@ pcr_stability <- function(df, group_var, reference_gene) {
   return(res)
 }
 
+pcr_sne <- function(df, reference_gene) {
+  l1 <- list()
+  for(j in 1:ncol(df)) {
+    v1 <- df[, j]
+    v2 <- df[, -j]
+
+    r1 <- v2/unlist(v1)
+    l1[[j]] <- r1
+  }
+
+  l2 <- list()
+  for(p in 1:nrow(df)) {
+    v1 <- df[p,]
+    v2 <- df[-p,]
+
+    r2 <- apply(v2, 1, function(x) x/unlist(v1))
+    l2[[p]] <- r2
+  }
+
+  return(l2)
+}
