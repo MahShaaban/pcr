@@ -90,7 +90,7 @@ In the case of using the Double Delta C_T, the assumption of the amplification e
 ```r
 browseVignettes("pcr")
 ```
-Alternatively, read the vingette can be found online, [here](http://rpubs.com/MahShaaban/pcr).
+Alternatively, the vingette can be found online, [here](http://rpubs.com/MahShaaban/pcr).
 
 ## Citation  
 
