@@ -2,7 +2,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/y9hfiwwc390cce28?svg=true)](https://ci.appveyor.com/project/MahShaaban/pcr)
 [![Build status](https://ci.appveyor.com/api/projects/status/y9hfiwwc390cce28/branch/master?svg=true)](https://ci.appveyor.com/project/MahShaaban/pcr/branch/master)
 [![Coverage Status](https://img.shields.io/codecov/c/github/MahShaaban/pcr/master.svg)](https://codecov.io/github/MahShaaban/pcr?branch=master)
-[![CRAN version](https://img.shields.io/badge/CRAN-v1.1.1-blue.svg)](https://CRAN.R-project.org/package=pcr) 
+[![CRAN version](https://img.shields.io/badge/CRAN-v1.1.2-blue.svg)](https://CRAN.R-project.org/package=pcr) 
 ![downloads](https://cranlogs.r-pkg.org/badges/grand-total/pcr)  
 
 # pcr  
@@ -89,7 +89,8 @@ In the case of using the Double Delta C_T, the assumption of the amplification e
 
 ```r
 browseVignettes("pcr")
-```  
+```
+Alternatively, read the vingette can be found online, [here](http://rpubs.com/MahShaaban/pcr).
 
 ## Citation  
 
