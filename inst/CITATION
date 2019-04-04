@@ -1,14 +1,13 @@
 citEntry(entry="article",
          title = "pcr: an R package for quality assessment, analysis and testing of qPCR data",
-         author = personList( as.person("Mahmoud Ahmed"),
-                              as.person("Deok Ryong Kim")),
+         author = personList(as.person("Mahmoud Ahmed"),
+                             as.person("Deok Ryong Kim")),
          year = 2018,
          journal = "PeerJ",
          doi = "10.7717/peerj.4473",
          volume = 6,
-         pages = e4473,
-         textVersion = 
-         paste("Ahmed M, Kim DR. 2018.", 
-               "pcr: an R package for quality assessment, analysis and testing of qPCR data.",
-                "PeerJ 6:e4473 https://doi.org/10.7717/peerj.4473" ) )
+         pages = 'e4473',
+         textVersion = paste("Ahmed M, Kim DR. 2018.", 
+                             "pcr: an R package for quality assessment, analysis and testing of qPCR data.",
+                             "PeerJ 6:e4473 https://doi.org/10.7717/peerj.4473"))
                   
