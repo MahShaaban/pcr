@@ -4,7 +4,8 @@
 \alias{pcr_wilcox}
 \title{Wilcoxon test qPCR data}
 \usage{
-pcr_wilcox(df, group_var, reference_gene, reference_group, tidy = TRUE, ...)
+pcr_wilcox(df, group_var, reference_gene, reference_group, tidy = TRUE,
+  ...)
 }
 \arguments{
 \item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples

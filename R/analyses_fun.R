@@ -75,52 +75,72 @@
 #' @export
 pcr_ddct <- function(df, group_var, reference_gene, reference_group,
                      mode = 'separate_tube', plot = FALSE, ...) {
-  # calculate the delta_ct
-  if(mode == 'separate_tube') {
-    # calculate average ct and normalize
-    ave <- .pcr_average(df, group_var = group_var)
-    dct <- .pcr_normalize(ave, reference_gene = reference_gene)
-    } else if(mode == 'same_tube') {
-      # normalize and average normalized ct values
-      dct <- .pcr_normalize(df, reference_gene = reference_gene)
-      dct <- .pcr_average(dct, group_var = group_var)
-    }
-  # retain the normalized ct
-  delta_ct <- gather(dct, gene, normalized, -group)
+  # extract the reference gene and genes of interest
+  ref <- subset(df, select = reference_gene, drop = TRUE)
+  goi <- subset(df, select = names(df) != reference_gene)
 
-  # calculate the delta_delta_ct
-  ddct <- .pcr_calibrate(dct, reference_group = reference_group, tidy = TRUE)
+  # apply the calculations
+  res <- apply(goi,
+               MARGIN = 2,
+               FUN = function(x) {
+                 if (mode == 'separate_tube') {
+                   # calculate the averages
+                   x_ave <- .pcr_average(x, group_var)
+                   ref_ave <- .pcr_average(ref, group_var)
 
-  # calculate the relative expression
-  norm_rel <- mutate(ddct, relative_expression = 2 ^ -calibrated)
+                   # calculate the dct
+                   dct <- .pcr_normalize(x_ave, ref_ave)
 
-  if(mode == 'separate_tube') {
-    # calculate the error from ct values
-    sds <- .pcr_sd(df, group_var = group_var)
-    error <- .pcr_error(sds, reference_gene = reference_gene, tidy = TRUE)
-    } else if(mode == 'same_tube') {
-      # calculate error from normalized ct values
-      dct <- .pcr_normalize(df, reference_gene = reference_gene)
-      error <- .pcr_sd(dct, group_var = group_var, tidy = TRUE)
-    }
+                   # calculate the standard deviations
+                   x_sd <- .pcr_sd(x, group_var)
+                   ref_sd <- .pcr_sd(ref, group_var)
 
-  # merge data.frames and calculate intervals
-  res <- full_join(delta_ct, ddct) %>%
-    full_join(norm_rel) %>%
-    full_join(error) %>%
-    mutate(lower = 2 ^ -(calibrated + error),
-           upper = 2 ^ -(calibrated - error))
+                   # calculate the error terms
+                   error <- .pcr_error(x_sd, ref_sd)
+                 } else if (mode == 'same_tube') {
+                   # normalize first
+                   norm <- .pcr_normalize(x, ref)
 
-  # return
-  # return plot when plot == TRUE
-  if(plot == TRUE) {
-    gg <- .pcr_plot_analyze(res, method = 'delta_delta_ct', ...)
-    return(gg)
-  } else {
-    return(res)
-  }
+                   # calculate the averages
+                   dct <- .pcr_average(norm, group_var)
+
+                   # calculate the error
+                   error <- .pcr_sd(norm, group_var)
+                 } else {
+                   stop("mode should be one of 'separate_tube' or 'same_tube'.")
+                 }
+
+                 # calculate the ddct
+                 group_ref <- subset(dct, unique(group_var) == reference_group)
+                 ddct <- .pcr_normalize(dct, group_ref)
+
+                 # calculate the relative expression
+                 rel_expr <- .pcr_relative(ddct)
+
+                 # calculate the error bars
+                 upper <- .pcr_relative(ddct - error)
+                 lower <- .pcr_relative(ddct + error)
+
+                 # make a data.frame
+                 data.frame(
+                   group = unique(group_var),
+                   gene = '',
+                   normalized = dct,
+                   calibrated = ddct,
+                   relative_expression = rel_expr,
+                   error = error,
+                   lower = lower,
+                   upper = upper
+                 )
+               })
+
+  # format results into a data.frame
+  res <- do.call(rbind, res)
+  rownames(res) <- NULL
+  res$gene <- rep(names(goi), each = length(unique(group_var)))
+
+  return(res)
 }
-
 #' Calculate the delta_ct model
 #'
 #' Uses the \eqn{C_T} values and a reference group to calculate the delta \eqn{C_T}
@@ -192,46 +212,60 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group,
 #' @importFrom dplyr mutate full_join
 #'
 #' @export
-pcr_dct <- function(df, group_var, reference_gene, reference_group,
+pcr_dct <- function(df, group_var, reference_group,
                     mode = 'separate_tube', plot = FALSE, ...) {
-  if(mode == 'separate_tube') {
-    # average ct and calibrate to a reference group
-    ave <- .pcr_average(df, group_var = group_var)
-    dct <- .pcr_calibrate(ave, reference_group = reference_group)
-  } else if(mode == 'same_tube') {
-    # calibrate ct and average
-  dct <- .pcr_calibrate(df, reference_group = reference_group)
-    dct <- .pcr_average(dct, group_var = group_var)
-  }
+  # apply the calculations
+  res <- apply(df,
+               MARGIN = 2,
+               FUN = function(x) {
+                 if (mode == 'separate_tube') {
+                   # calculate the averages
+                   x_ave <- .pcr_average(x, group_var)
+                   group_ref <- subset(x_ave, unique(group_var) == reference_group)
+                   dct <- .pcr_normalize(x_ave, group_ref)
 
-  # retain calibrated values
-  # calculate the fold change
-  calib <- gather(dct, gene, calibrated, -group) %>%
-    mutate(fold_change = 2 ^ -calibrated)
+                   # calculate the standard deviations
+                   error <- .pcr_sd(x, group_var)
 
-  if(mode == 'separate_tube') {
-    # calculate the standard deviation from ct values
-    sds <- .pcr_sd(df, group_var = group_var, tidy = TRUE)
-  } else if(mode == 'same_tube') {
-    # calibrate ct values to a reference group
-    # calculated sd from calibrated values
-    dct <- .pcr_calibrate(df, reference_group = reference_group)
-    sds <- .pcr_sd(dct, group_var = group_var, tidy = TRUE)
-  }
+                 } else if (mode == 'same_tube') {
+                   # normalize first
+                   group_ref <- subset(x, group_var == reference_group)
+                   norm <- .pcr_normalize(x, group_ref)
 
-  # join data frame and calculate intervals
-  res <- full_join(calib, sds) %>%
-    mutate(lower = 2 ^ -(calibrated + error),
-           upper = 2 ^ -(calibrated - error))
+                   # calculate the averages
+                   dct <- .pcr_average(norm, group_var)
 
-  # return
-  # return plot when plot == TRUE
-  if(plot == TRUE) {
-    gg <- .pcr_plot_analyze(res, method = 'delta_ct', ...)
-    return(gg)
-  } else {
-    return(res)
-  }
+                   # calculate the error
+                   error <- .pcr_sd(norm, group_var)
+                 } else {
+                   stop("mode should be one of 'separate_tube' or 'same_tube'.")
+                 }
+
+                 # calculate the relative expression
+                 rel_expr <- .pcr_relative(dct)
+
+                 # calculate the error bars
+                 upper <- .pcr_relative(dct - error)
+                 lower <- .pcr_relative(dct + error)
+
+                 # make a data.frame
+                 data.frame(
+                   group = unique(group_var),
+                   gene = '',
+                   calibrated = dct,
+                   fold_change = rel_expr,
+                   error = error,
+                   lower = lower,
+                   upper = upper
+                 )
+               })
+
+  # format results into a data.frame
+  res <- do.call(rbind, res)
+  rownames(res) <- NULL
+  res$gene <- rep(names(df), each = length(unique(group_var)))
+
+  return(res)
 }
 
 #' Calculate the standard curve model
@@ -322,57 +356,69 @@ pcr_dct <- function(df, group_var, reference_gene, reference_group,
 pcr_curve <- function(df, group_var, reference_gene, reference_group,
                       mode = 'separate_tube', intercept, slope,
                       plot = FALSE, ...) {
-  # calculate the amount of rna in samples
-  amounts <- .pcr_amount(df,
-                        intercept = intercept,
-                        slope = slope)
-  if(mode == 'separate_tube') {
-    # average amounts and normalize by a reference_gene
-    ave <- .pcr_average(amounts, group_var = group_var)
-    norm <- .pcr_normalize(ave,
-                           reference_gene = reference_gene,
-                           mode = 'divide')
-  } else if(mode == 'same_tube') {
-    # normalize amounts and average
-    norm <- .pcr_normalize(amounts,
-                           reference_gene = reference_gene,
-                           mode = 'divide')
-    norm <- .pcr_average(norm, group_var = group_var)
-  }
+  amounts <- mapply(function(d, a, b) .pcr_amount(d, a, b),
+                    d = df, a = intercept, b = slope)
+  amounts <- as.data.frame(amounts)
 
-  # retain normalized amounts
-  normalized <- gather(norm, gene, normalized, -group)
+  # extract the reference gene and genes of interest
+  ref <- subset(amounts, select = reference_gene, drop = TRUE)
+  goi <- subset(amounts, select = names(amounts) != reference_gene)
 
-  # calibrate to a reference_group
-  calib <- .pcr_calibrate(norm, reference_group = reference_group,
-                          mode = 'divide', tidy = TRUE)
+  # apply the calculations
+  res <- apply(goi,
+               MARGIN = 2,
+               FUN = function(x) {
+                 if (mode == 'separate_tube') {
+                   # calculate the averages
+                   x_ave <- .pcr_average(x, group_var)
+                   ref_ave <- .pcr_average(ref, group_var)
 
-  if(mode == 'separate_tube') {
-    # calculate cv from amounts
-    cv <- .pcr_cv(amounts, group_var = group_var)
-    error <- .pcr_error(cv, reference_gene = reference_gene, tidy = TRUE)
-  } else if(mode == 'same_tube') {
-    # calculate cv from normalized amounts
-    norm <- .pcr_normalize(amounts,
-                           reference_gene = reference_gene,
-                           mode = 'divide')
-    error <- .pcr_cv(norm, group_var = group_var, tidy = TRUE)
-  }
-  # join data.frames and calculate intervals
-  res <- full_join(normalized, calib) %>%
-    full_join(error) %>%
-    mutate(lower = calibrated - error,
-           upper = calibrated + error,
-           error = error * normalized)
+                   # calculate the normalized values
+                   norm <- .pcr_normalize(x_ave, ref_ave, mode = 'divide')
 
-  # return
-  # return plot when plot == TRUE
-  if(plot == TRUE) {
-    gg <- .pcr_plot_analyze(res, method = 'relative_curve', ...)
-    return(gg)
-  } else {
-    return(res)
-  }
+                   # calculate the standard deviations
+                   x_cv <- .pcr_cv(x, group_var)
+                   ref_cv <- .pcr_cv(ref, group_var)
+
+                   # calculate the error terms
+                   error <- .pcr_error(x_cv, ref_cv)
+                 } else if (mode == 'same_tube') {
+                   # normalize first
+                   norm <- .pcr_normalize(x, ref, mode = 'divide')
+
+                   # calculate the error
+                   error <- .pcr_cv(norm, group_var)
+                 } else {
+                   stop("mode should be one of 'separate_tube' or 'same_tube'.")
+                 }
+
+                 # calculate the calibrated values
+                 group_ref <- subset(norm, unique(group_var) == reference_group)
+                 calib <- .pcr_normalize(norm, group_ref, mode = 'divide')
+
+                 # calculate the error bars
+                 upper <- calib + error
+                 lower <- calib - error
+                 error <- error * norm
+
+                 # make a data.frame
+                 data.frame(
+                   group = unique(group_var),
+                   gene = '',
+                   normalized = norm,
+                   calibrated = calib,
+                   error = error,
+                   lower = lower,
+                   upper = upper
+                 )
+               })
+
+  # format results into a data.frame
+  res <- do.call(rbind, res)
+  rownames(res) <- NULL
+  res$gene <- rep(names(goi), each = length(unique(group_var)))
+
+  return(res)
 }
 
 #' Apply qPCR analysis methods
