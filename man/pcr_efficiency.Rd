@@ -7,20 +7,22 @@
 pcr_efficiency(df, amount, reference_gene, plot = FALSE)
 }
 \arguments{
-\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
-in rows rows. Each sample are replicates of a known input/dilution given by amount}
+\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and
+samples in rows rows. Each sample are replicates of a known input/dilution
+given by amount}
 
 \item{amount}{A numeric vector of the input amounts or dilutions. The length
 of this vector should equal the row number of df}
 
-\item{reference_gene}{A character string of the column name of a control gene}
+\item{reference_gene}{A character string of the column name of a control
+gene}
 
-\item{plot}{A logical (default FALSE) to indicate whether to return a data.frame
-or a plot}
+\item{plot}{A logical (default FALSE) to indicate whether to return a
+data.frame or a plot}
 }
 \value{
-When plot is FALSE returns a data.frame of 4 columns describing the line
-between the \eqn{\Delta C_T} of target genes and the log of amount
+When plot is FALSE returns a data.frame of 4 columns describing the
+line between the \eqn{\Delta C_T} of target genes and the log of amount
 \itemize{
   \item gene The column names of df. reference_gene is dropped
   \item intercept The intercept of the line
@@ -41,18 +43,19 @@ Fortunately, regardless of the method used in the analysis of qPCR
 data, The quality assessment are done in a similar way. It requires an
 experiment similar to that of calculating the standard curve. Serial
 dilutions of the genes of interest and controls are used as input to the
-reaction and different calculations are made. The amplification efficiency is
-approximated be the linear trend between the difference between the \eqn{C_T}
-value of a gene of interest and a control/reference (\eqn{\Delta C_T}) and
-the log input amount. This piece of information is required when using the
-\eqn{\Delta \Delta C_T} model. Typically, the slope of the curve should be very
-small and the \eqn{R^2} value should be very close to one. Other analysis
-methods are recommended when this is not the case.
+reaction and different calculations are made. The amplification efficiency
+is approximated be the linear trend between the difference between the
+\eqn{C_T} value of a gene of interest and a control/reference
+(\eqn{\Delta C_T}) and the log input amount. This piece of information is
+required when using the \eqn{\Delta \Delta C_T} model. Typically, the slope
+of the curve should be very small and the \eqn{R^2} value should be very
+close to one. Other analysis methods are recommended when this is not the
+case.
 }
 \examples{
 # locate and read file
 fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-ct3 <- readr::read_csv(fl)
+ct3 <- read.csv(fl)
 
 # make amount/dilution variable
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)

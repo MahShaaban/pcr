@@ -2,7 +2,7 @@ context("test testing functions")
 
 test_that("pcr_test runs the t.test correctly", {
   fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
-  ct4 <- readr::read_csv(fl)
+  ct4 <- read.csv(fl)
 
   # make group variable
   group <- rep(c('control', 'treatment'), each = 12)
@@ -32,12 +32,21 @@ test_that("pcr_test runs the t.test correctly", {
   expect_equal(res$p_value, tt$p.value)
   expect_equal(res$lower, tt$conf.int[1])
   expect_equal(res$upper, tt$conf.int[2])
+
+  group <- rep(c('control', 'control2', 'treatment', 'treatment2'),
+               each = 6)
+  expect_error(
+    pcr_ttest(ct4,
+              group_var = group,
+              reference_gene = 'ref',
+              reference_group = 'control')
+  )
 })
 
 
 test_that("pcr_test runs the wilcox.test correctly", {
   fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
-  ct4 <- readr::read_csv(fl)
+  ct4 <- read.csv(fl)
 
   # make group variable
   group <- rep(c('control', 'treatment'), each = 12)
@@ -63,15 +72,24 @@ test_that("pcr_test runs the wilcox.test correctly", {
 
   wt <- wilcox.test(norm ~ group, conf.int = TRUE)
 
-  expect_equal(res$estimate, unname( wt$estimate))
+  expect_equal(res$estimate, unname(wt$estimate))
   expect_equal(res$p_value, wt$p.value)
   expect_equal(res$lower, wt$conf.int[1])
   expect_equal(res$upper, wt$conf.int[2])
+
+  group <- rep(c('control', 'control2', 'treatment', 'treatment2'),
+               each = 6)
+  expect_error(
+    pcr_wilcox(ct4,
+              group_var = group,
+              reference_gene = 'ref',
+              reference_group = 'control')
+  )
 })
 
 test_that("pcr_test runs the lm correctly", {
   fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
-  ct4 <- readr::read_csv(fl)
+  ct4 <- read.csv(fl)
 
   # make group variable
   group <- rep(c('control', 'treatment'), each = 12)
@@ -107,7 +125,7 @@ test_that("pcr_test runs the lm correctly", {
 
 test_that("pcr_test runs the lm correctly with multiple groups", {
   fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
-  ct4 <- readr::read_csv(fl)
+  ct4 <- read.csv(fl)
 
   # make group variable
   group <- rep(c('control', 'treatment'), each = 12)
@@ -136,7 +154,7 @@ test_that("pcr_test runs the lm correctly with multiple groups", {
 
 test_that("pcr_test runs the lm correctly with a model matrix", {
   fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
-  ct4 <- readr::read_csv(fl)
+  ct4 <- read.csv(fl)
 
   # make a model matrix
   group <- rep(c('control', 'treatment'), each = 12)
@@ -158,7 +176,7 @@ test_that("pcr_test runs the lm correctly with a model matrix", {
 
 test_that("pcr_test runs the lm to adjust for separate runs", {
   fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
-  ct4 <- readr::read_csv(fl)
+  ct4 <- read.csv(fl)
 
   # make a model matrix
   group <- rep(c('control', 'treatment'), each = 12)
@@ -181,7 +199,7 @@ test_that("pcr_test runs the lm to adjust for separate runs", {
 
 test_that("pcr_test runs the lm to adjust for rna quality", {
   fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
-  ct4 <- readr::read_csv(fl)
+  ct4 <- read.csv(fl)
 
   # make a model matrix
   group <- rep(c('control', 'treatment'), each = 12)
@@ -204,7 +222,7 @@ test_that("pcr_test runs the lm to adjust for rna quality", {
 
 test_that("pcr_test returns lm objects", {
   fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
-  ct4 <- readr::read_csv(fl)
+  ct4 <- read.csv(fl)
 
   # make group variable
   group <- rep(c('control', 'treatment'), each = 12)
@@ -225,7 +243,7 @@ test_that("pcr_test returns lm objects", {
 
 test_that("pcr_test returns htest objects with wilcox test", {
   fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
-  ct4 <- readr::read_csv(fl)
+  ct4 <- read.csv(fl)
 
   # make group variable
   group <- rep(c('control', 'treatment'), each = 12)
@@ -245,7 +263,7 @@ test_that("pcr_test returns htest objects with wilcox test", {
 
 test_that("pcr_test returns htest objects with t.test test", {
   fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
-  ct4 <- readr::read_csv(fl)
+  ct4 <- read.csv(fl)
 
   # make group variable
   group <- rep(c('control', 'treatment'), each = 12)

@@ -3,16 +3,18 @@
 #' Uses the \eqn{C_T} values from a serial dilution experiment to calculate the
 #' amplification efficiency of a PCR reaction.
 #'
-#' @param df A data.frame of \eqn{C_T} values with genes in the columns and samples
-#' in rows rows. Each sample are replicates of a known input/dilution given by amount
+#' @param df A data.frame of \eqn{C_T} values with genes in the columns and
+#' samples in rows rows. Each sample are replicates of a known input/dilution
+#' given by amount
 #' @param amount A numeric vector of the input amounts or dilutions. The length
 #' of this vector should equal the row number of df
-#' @param reference_gene A character string of the column name of a control gene
-#' @param plot A logical (default FALSE) to indicate whether to return a data.frame
-#' or a plot
+#' @param reference_gene A character string of the column name of a control
+#' gene
+#' @param plot A logical (default FALSE) to indicate whether to return a
+#' data.frame or a plot
 #'
-#' @return When plot is FALSE returns a data.frame of 4 columns describing the line
-#' between the \eqn{\Delta C_T} of target genes and the log of amount
+#' @return When plot is FALSE returns a data.frame of 4 columns describing the
+#' line between the \eqn{\Delta C_T} of target genes and the log of amount
 #' \itemize{
 #'   \item gene The column names of df. reference_gene is dropped
 #'   \item intercept The intercept of the line
@@ -28,13 +30,14 @@
 #' data, The quality assessment are done in a similar way. It requires an
 #' experiment similar to that of calculating the standard curve. Serial
 #' dilutions of the genes of interest and controls are used as input to the
-#' reaction and different calculations are made. The amplification efficiency is
-#' approximated be the linear trend between the difference between the \eqn{C_T}
-#' value of a gene of interest and a control/reference (\eqn{\Delta C_T}) and
-#' the log input amount. This piece of information is required when using the
-#' \eqn{\Delta \Delta C_T} model. Typically, the slope of the curve should be very
-#' small and the \eqn{R^2} value should be very close to one. Other analysis
-#' methods are recommended when this is not the case.
+#' reaction and different calculations are made. The amplification efficiency
+#' is approximated be the linear trend between the difference between the
+#' \eqn{C_T} value of a gene of interest and a control/reference
+#' (\eqn{\Delta C_T}) and the log input amount. This piece of information is
+#' required when using the \eqn{\Delta \Delta C_T} model. Typically, the slope
+#' of the curve should be very small and the \eqn{R^2} value should be very
+#' close to one. Other analysis methods are recommended when this is not the
+#' case.
 #'
 #' @references Livak, Kenneth J, and Thomas D Schmittgen. 2001. “Analysis of
 #' Relative Gene Expression Data Using Real-Time Quantitative PCR and the
@@ -44,7 +47,7 @@
 #' @examples
 #' # locate and read file
 #' fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-#' ct3 <- readr::read_csv(fl)
+#' ct3 <- read.csv(fl)
 #'
 #' # make amount/dilution variable
 #' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
@@ -62,18 +65,42 @@
 #'
 #' @export
 pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
-
   # return data when plot is false
-  if(plot == TRUE) {
-    gg <- .pcr_plot_assess(df, amount, reference_gene, method = 'efficiency')
+  if (plot) {
+    gg <- .pcr_plot_assess(df,
+                           amount,
+                           reference_gene,
+                           method = 'efficiency')
 
     return(gg)
-  } else if(plot == FALSE) {
-    # calculate delta_ct
-    dct <- .pcr_normalize(df, reference_gene = reference_gene)
+  } else {
+    # extract the reference gene and genes of interest
+    ref <- subset(df, select = reference_gene, drop = TRUE)
+    goi <- subset(df, select = names(df) != reference_gene)
+
+    # normalize the genes of interest by a reference gene
+    dct <- apply(goi,
+                 MARGIN = 2,
+                 FUN = function(x) {
+                   .pcr_normalize(x, ref)
+                 })
 
     # calculate trend; intercep, slop and r_squared
-    trend <- .pcr_trend(dct, amount = amount)
+    trend <- apply(dct,
+                   MARGIN = 2,
+                   FUN = function(x) {
+                     data.frame(
+                       gene = '',
+                       intercept = .pcr_intercept(x, amount),
+                       slope = .pcr_slope(x, amount),
+                       r_squared = .pcr_rsquared(x, amount)
+                     )
+                   })
+
+    # make a data.frame
+    trend <- do.call(rbind, trend)
+    trend$gene <- names(goi)
+    rownames(trend) <- NULL
 
     return(trend)
   }
@@ -86,8 +113,8 @@ pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
 #'
 #' @inheritParams pcr_efficiency
 #'
-#' @return When plot is FALSE returns a data.frame of 4 columns describing the line
-#' between the \eqn{C_T} of each gene and the log of amount
+#' @return When plot is FALSE returns a data.frame of 4 columns describing the
+#' line between the \eqn{C_T} of each gene and the log of amount
 #' \itemize{
 #'   \item gene The column names of df
 #'   \item intercept The intercept of the line
@@ -116,7 +143,7 @@ pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
 #' @examples
 #' # locate and read file
 #' fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-#' ct3 <- readr::read_csv(fl)
+#' ct3 <- read.csv(fl)
 #'
 #' # make amount/dilution variable
 #' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
@@ -133,21 +160,38 @@ pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
 #' @export
 pcr_standard <- function(df, amount, plot = FALSE) {
   # return data when plot is false
-  # when plot == TRUE
-  # plot a standard curve for each gene
-  if(plot == TRUE) {
-    .pcr_plot_assess(df, amount, method = 'standard_curve')
-    } else if(plot == FALSE) {
-      # calculate trend; intercep, slop and r_squared
-      trend <- .pcr_trend(df, amount)
+  if (plot) {
+    gg <- .pcr_plot_assess(df,
+                           amount,
+                           method = 'standard_curve')
 
-      return(trend)
-    }
+    return(gg)
+  } else {
+    # calculate trend; intercep, slop and r_squared
+    trend <- apply(df,
+                   MARGIN = 2,
+                   FUN = function(x) {
+                     data.frame(
+                       gene = '',
+                       intercept = .pcr_intercept(x, amount),
+                       slope = .pcr_slope(x, amount),
+                       r_squared = .pcr_rsquared(x, amount)
+                     )
+                   })
+
+    # make a data.frame
+    trend <- do.call(rbind, trend)
+    trend$gene <- names(df)
+    rownames(trend) <- NULL
+
+    return(trend)
+  }
 }
 
 #' Assess qPCR data quality
 #'
-#' A unified interface to invoke different quality assessment methods of qPCR data.
+#' A unified interface to invoke different quality assessment methods of qPCR
+#' data.
 #'
 #' @inheritParams pcr_efficiency
 #' @param method A character string; 'standard_curve' (default) or 'efficiency'
@@ -169,7 +213,7 @@ pcr_standard <- function(df, amount, plot = FALSE) {
 #' @examples
 #' #' # locate and read file
 #' fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-#' ct3 <- readr::read_csv(fl)
+#' ct3 <- read.csv(fl)
 #'
 #' # make amount/dilution variable
 #' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)

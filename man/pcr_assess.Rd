@@ -7,8 +7,9 @@
 pcr_assess(df, method = "standard_curve", ...)
 }
 \arguments{
-\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
-in rows rows. Each sample are replicates of a known input/dilution given by amount}
+\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and
+samples in rows rows. Each sample are replicates of a known input/dilution
+given by amount}
 
 \item{method}{A character string; 'standard_curve' (default) or 'efficiency'
 for invoking a certain quality assessment model}
@@ -20,7 +21,8 @@ A data.frame or a plot. For details; \link{pcr_standard} and
 \link{pcr_efficiency}
 }
 \description{
-A unified interface to invoke different quality assessment methods of qPCR data.
+A unified interface to invoke different quality assessment methods of qPCR
+data.
 }
 \details{
 The different quality assessment methods can be invoked using the
@@ -35,7 +37,7 @@ calculating the standard curve analysis model.
 \examples{
 #' # locate and read file
 fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-ct3 <- readr::read_csv(fl)
+ct3 <- read.csv(fl)
 
 # make amount/dilution variable
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)

@@ -14,13 +14,7 @@ test_that("pcr_efficiency calculates the correct intercept and slope", {
   c <- coef(lm(x ~ log_amount))
 
   expect_equal(unname(c), unlist(res[, 2:3], use.names = FALSE))
-})
 
-test_that("pcr_efficiency retruns a plot", {
-  # make amount/dilution variable
-  amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
-
-  # calculate the standard curve
   gg <- pcr_efficiency(ct3,
                        amount = amount,
                        reference_gene = 'GAPDH',
@@ -40,18 +34,8 @@ test_that("pcr_standard calculates the correct intercept and slope", {
 
   c <- coef(lm(ct3$c_myc ~ log_amount))
 
-  #expect_equal(unlist(res[1, 2:3], use.names = FALSE), unname(c))
+  expect_equal(unlist(res[1, 2:3], use.names = FALSE), unname(c))
 
-  c <- coef(lm(ct3$GAPDH ~ log_amount))
-
-  #expect_equal(unlist(res[2, 2:3], use.names = FALSE), unname(c))
-})
-
-test_that("pcr_standard retruns a plot", {
-  # make amount/dilution variable
-  amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
-
-  # calculate the standard curve
   gg <- pcr_standard(ct3,
                      amount = amount,
                      plot = TRUE)

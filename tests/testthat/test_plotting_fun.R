@@ -12,6 +12,19 @@ test_that(".pcr_plot_analyze returns a ggplot", {
   gg <- .pcr_plot_analyze(res, method = 'delta_delta_ct')
 
   expect_identical(class(gg), c("gg", "ggplot"))
+
+  ct1$c_myc2 <- ct1$c_myc
+  res2 <- pcr_ddct(ct1,
+                  group_var = group_var,
+                  reference_gene = 'GAPDH',
+                  reference_group = 'brain')
+  gg <- .pcr_plot_analyze(res2, method = 'delta_delta_ct')
+
+  expect_identical(class(gg), c("gg", "ggplot"))
+
+  gg <- .pcr_plot_analyze(res2, method = 'delta_delta_ct', facets = TRUE)
+
+  expect_identical(class(gg), c("gg", "ggplot"))
 })
 
 test_that(".pcr_plot_analyze returns a dodge columns plot", {
@@ -23,9 +36,6 @@ test_that(".pcr_plot_analyze returns a dodge columns plot", {
                   group_var = group_var,
                   reference_gene = 'GAPDH',
                   reference_group = 'brain')
-
-  res <- bind_rows(res,
-                   mutate(res, gene = 'c_myc2'))
 
   gg <- .pcr_plot_analyze(res, method = 'delta_delta_ct')
 
@@ -41,9 +51,6 @@ test_that(".pcr_plot_analyze returns a faceted plot", {
                   group_var = group_var,
                   reference_gene = 'GAPDH',
                   reference_group = 'brain')
-
-  res <- bind_rows(res,
-                   mutate(res, gene = 'c_myc2'))
 
   gg <- .pcr_plot_analyze(res, method = 'delta_delta_ct', facets = TRUE)
 

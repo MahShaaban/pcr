@@ -112,7 +112,7 @@ The following chunk of code locates a dataset of $C_T$ values of two genes from 
 # default mode delta_delta_ct
 ## locate and read raw ct data
 fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-ct1 <- readr::read_csv(fl)
+ct1 <- read.csv(fl)
 
 ## add grouping variable
 group_var <- rep(c('brain', 'kidney'), each = 6)
@@ -134,7 +134,7 @@ The previous analysis makes a few assumptions that will be explained later in th
 ```{r assess}
 ## locate and read data
 fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-ct3 <- readr::read_csv(fl)
+ct3 <- read.csv(fl)
 
 ## make a vector of RNA amounts
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
@@ -391,7 +391,7 @@ library(cowplot)
 ```{r calculate_efficiency}
 ## locate and read data
 fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-ct3 <- readr::read_csv(fl)
+ct3 <- read.csv(fl)
 
 ## make a vector of RNA amounts
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
@@ -401,7 +401,7 @@ res <- pcr_assess(ct3,
                   amount = amount,
                   reference_gene = 'GAPDH',
                   method = 'efficiency')
-knitr::kable(res, caption = 'Figure 7: amplification efficiency of c-myc')
+knitr::kable(res, caption = 'Table 7: amplification efficiency of c-myc')
 ```
 
 The output of `pcr_assess` is a `data.frame` of 4 columns and *n* rows equals the input genes except for the reference. For each gene an *intercept*, *slope* and $R^2$ is calculated for a the difference between it and the reference ($\Delta C_T$) (Table 7). 
@@ -431,7 +431,7 @@ To calculate the standard curve for individual genes, `pcr_assess` takes a `data
 res <- pcr_assess(ct3,
                   amount = amount,
                   method = 'standard_curve')
-knitr::kable(res, caption = 'Figure 8: Standard curves of c-myc and GAPDH')
+knitr::kable(res, caption = 'Table 8: Standard curves of c-myc and GAPDH')
 ```
 
 The output put is similar to the previous call, except when 'standard_curve' is passed to `method` curves are calculated for individual genes, column `gene` (Table 8). 
@@ -468,7 +468,7 @@ The following code chunk applies this method to a `data.frame` of 12 samples fro
 # default mode delta_delta_ct
 ## locate and read raw ct data
 fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-ct1 <- readr::read_csv(fl)
+ct1 <- read.csv(fl)
 
 ## add grouping variable
 group_var <- rep(c('brain', 'kidney'), each = 6)
@@ -480,7 +480,7 @@ res1 <- pcr_analyze(ct1,
   reference_gene = 'GAPDH',
   reference_group = 'brain')
 
-knitr::kable(res1, caption = 'Figure 9: Double delta $C_T$ method (separate tubes)')
+knitr::kable(res1, caption = 'Table 9: Double delta $C_T$ method (separate tubes)')
 ```
 
 The output of `pcr_analyze` is 8 columns; contains the calculations of each gene in each group and the error terms (Table 9). This analysis uses the default `mode`, 'separate_tube' as the input dataset came for an experiment where the target `r names(ct1)[1]` and the control gene `r names(ct1)[2]` were ran in separate tubes.  
@@ -496,7 +496,7 @@ res2 <- pcr_analyze(ct2,
   reference_group = 'brain',
   mode = 'same_tube')
 
-knitr::kable(res2, caption = 'Figure 10: Double delta $C_T$ method (same tube)')
+knitr::kable(res2, caption = 'Table 10: Double delta $C_T$ method (same tube)')
 ```
 
 The only difference here is that the average of the $C_T$ values for the target gene `r names(ct1)[1]` is calculated after normalizing by the reference gene `r names(ct1)[2]`. The rest of the calculations are expected to be slightly different than the previous case (Table 10).  
@@ -536,7 +536,7 @@ This method is a variation of the double delta $C_T$ model. It can be used to ca
 ## example to check fold change of control gens
 ## locate and read file
 fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-ct1 <- readr::read_csv(fl)
+ct1 <- read.csv(fl)
 
 ## make a data.frame of two identical columns
 pcr_hk <- data.frame(
@@ -559,7 +559,7 @@ res <- pcr_analyze(pcr_hk,
             reference_group = 'brain',
             method = 'delta_ct')
 
-knitr::kable(res, caption = 'Figure 11: Delta $C_T$ method')
+knitr::kable(res, caption = 'Table 11: Delta $C_T$ method')
 ```
 
 Similarly, the output contains the calculated model and the error terms (Table 11). The difference here will be skipping the normalization step and calibrating the $C_T$ values of all genes to  a `reference_group`.  
@@ -593,7 +593,7 @@ res1 <- pcr_analyze(ct1,
                    slope = slope,
                    method = 'relative_curve')
 
-knitr::kable(res1, caption = 'Figure 12: Standard curve method (separate tubes)')
+knitr::kable(res1, caption = 'Table 12: Standard curve method (separate tubes)')
 ```
 
 The output of `pcr_analyze` is the same as explained before. The calculated averages and error term of target genes in each group relative to the reference gene and group (Table 12).   
@@ -611,7 +611,7 @@ res2 <- pcr_analyze(ct2,
                    method = 'relative_curve',
                    mode = 'same_tube')
 
-knitr::kable(res2, caption = 'Figure 13: Standard curve method (same tube)')
+knitr::kable(res2, caption = 'Table 13: Standard curve method (same tube)')
 ```
 
 The output is similar to that described earlier (Table 13).  
@@ -660,7 +660,7 @@ Here, we used a dataset `ct4` of 48 samples and two gene columns `r names(ct4)[1
 ```{r testing_data}
 # locate and read data
 fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
-ct4 <- readr::read_csv(fl)
+ct4 <- read.csv(fl)
 
 # make group variable
 group <- rep(c('control', 'treatment'), each = 12)
@@ -692,7 +692,7 @@ tst1 <- pcr_test(ct4,
          reference_group = 'control',
          test = 't.test')
 
-knitr::kable(tst1, caption = 'Figure 14: t-test summary')
+knitr::kable(tst1, caption = 'Table 14: t-test summary')
 ```
 
 When the argument `test` is set to 't.test' a simple two-group *t*-test is carried out and an `estimate` for the difference between groups for the change in the target relative to a control gene is provided. In addition, a `p_vale`, a `lower` and `upper` 95% confidence intervals are provided as well (Table 14).  
@@ -705,7 +705,7 @@ tst2 <- pcr_test(ct4,
          reference_group = 'control',
          test = 'wilcox.test')
 
-knitr::kable(tst2, caption = 'Figure 15: Wilcoxon test summary')
+knitr::kable(tst2, caption = 'Table 15: Wilcoxon test summary')
 ```
 
 When the argument `test` is set to 'wilcox.test', Wilcoxon test method is used instead and similar output is provided (Table 15).  
@@ -720,7 +720,7 @@ tst3 <- pcr_test(ct4,
          reference_group = 'control',
          test = 'lm')
 
-knitr::kable(tst3, caption = 'Figure 16: Linear regression summary')
+knitr::kable(tst3, caption = 'Table 16: Linear regression summary')
 ```
 
 The output of the `test`, 'lm' contains an extra column `term` to show the different comparison terms used to calculate the results (Table 16).  
@@ -749,7 +749,7 @@ res <- pcr_test(ct4,
                 model_matrix = mm,
                 test = 'lm')
 
-knitr::kable(res, caption = "Figure 17: Testing advanced hypotheses")
+knitr::kable(res, caption = "Table 17: Testing advanced hypotheses")
 ```
 
 In this case, the `estimate` effect of the interaction term between `dose` and `group` is very small and the `p_value` is very large (Table 17).  
@@ -772,7 +772,7 @@ res <- pcr_test(ct4,
                 model_matrix = mm,
                 test = 'lm')
 
-knitr::kable(res, caption = "Figure 18: Check the effect of varying RNA quality")
+knitr::kable(res, caption = "Table 18: Check the effect of varying RNA quality")
 ```
 
 The randomly generated `quality` seems to influence the results as indicated by the big `estimate` for the term 'model_matrixgroupcontrol:quality' and its `p_value` (Table 18).  
@@ -794,7 +794,7 @@ res <- pcr_test(ct4,
                 model_matrix = mm,
                 test = 'lm')
 
-knitr::kable(res, caption = "Figure 19: Combining data from multiple qPCR runs")
+knitr::kable(res, caption = "Table 19: Combining data from multiple qPCR runs")
 ```
 
 Here, we constructed a variable `run` to simulate a situation in which a dataset was generated in three separate runs. By including `run` in a `model_matrix`, its effect can be estimated. In this case, the `estimate` are very small and the `p_value` are very large, so it can be ignored (Table 19).  

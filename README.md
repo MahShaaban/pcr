@@ -9,7 +9,7 @@
 
 # Overview  
 
-Quantitative real-time PCR is an imprtant technique in medical and biomedical applicaitons. The `pcr` package provides a unified interface for quality assessing, analyzing and testing qPCR data for statistical significance. The aim of this document is to describe the different methods and modes used to relatively quantify gene expression of qPCR and their implemenation in the `pcr` package.  
+Quantitative real-time PCR is an important technique in medical and biomedical applications. The `pcr` package provides a unified interface for quality assessing, analyzing and testing qPCR data for statistical significance. The aim of this document is to describe the different methods and modes used to relatively quantify gene expression of qPCR and their implementation in the `pcr` package.  
 
 # Getting started 
 
@@ -32,7 +32,7 @@ devtools::install_github('MahShaaban/pcr')
 library(pcr)
 ```
 
-The following chunck of code locates a dataset of CT values of two genes from 12 different samples and performs a quick analysis to obtain the expression of a target gene **c-myc** normalized by a control GAPDH in the **Kidney** samples relative to the brain samples. `pcr_analyze` provides differnt methods, the default one that is used here is 'delta_delta_ct' applies the popular Double Delta CT method.  
+The following chunk of code locates a dataset of CT values of two genes from 12 different samples and performs a quick analysis to obtain the expression of a target gene **c-myc** normalized by a control GAPDH in the **Kidney** samples relative to the brain samples. `pcr_analyze` provides different methods, the default one that is used here is 'delta_delta_ct' applies the popular Double Delta CT method.  
 
 ```r
 # default mode delta_delta_ct
@@ -53,9 +53,9 @@ res <- pcr_analyze(ct1,
 res
 ```
 
-The output of `pcr_analyze` is explained in the documnetation of the function `?pcr_analyze` and the method it calls `?pcr_ddct`. Briefly, the input includes the CT value of c-myc `normalized` to the control GAPDH, The `calibrated` value of c-myc in the kidney relative to the brain samples and the final `relative_expression` of c-myc. In addition, an `error` term and a `lower` and `upper` intervals are provided.  
+The output of `pcr_analyze` is explained in the documentation of the function `?pcr_analyze` and the method it calls `?pcr_ddct`. Briefly, the input includes the CT value of c-myc `normalized` to the control GAPDH, The `calibrated` value of c-myc in the kidney relative to the brain samples and the final `relative_expression` of c-myc. In addition, an `error` term and a `lower` and `upper` intervals are provided.  
 
-The previous analysis makes a few assumptions. One of which is a perfect amplification efficiency of the PCR reation. To assess the validity of this assumption, `pcr_assess` provides a method called `efficiency`. The input `data.frame` is the CT values of c-myc and GAPDH at different input amounts/dilutions.  
+The previous analysis makes a few assumptions. One of which is a perfect amplification efficiency of the PCR reaction. To assess the validity of this assumption, `pcr_assess` provides a method called `efficiency`. The input `data.frame` is the CT values of c-myc and GAPDH at different input amounts/dilutions.  
 
 ```r
 ## locate and read data
@@ -73,7 +73,7 @@ res <- pcr_assess(ct3,
 res
 ```
 
-In the case of using the Double Delta C_T, the assumption of the amplification efficiency is critical for the reliability of the model. In particulare, the *slope* and the *R^2* of the line between the log input amount and Delta C_T or differnce between the CT value of the target **c-myc** and GAPDH. Typically, The *slope* should be very small (less than 0.01). The `slope` here is appropriate, so the assumption holds true.  
+In the case of using the Double Delta C_T, the assumption of the amplification efficiency is critical for the reliability of the model. In particular, the *slope* and the *R^2* of the line between the log input amount and Delta C_T or difference between the CT value of the target **c-myc** and GAPDH. Typically, The *slope* should be very small (less than 0.01). The `slope` here is appropriate, so the assumption holds true.  
 
 ### Other analysis methods `?pcr_analyze`  
 
@@ -90,7 +90,7 @@ In the case of using the Double Delta C_T, the assumption of the amplification e
 ```r
 browseVignettes("pcr")
 ```
-Alternatively, the vingette can be found online, [here](http://rpubs.com/MahShaaban/pcr).
+Alternatively, the vignette can be found online, [here](http://rpubs.com/MahShaaban/pcr).
 
 ## Citation  
 

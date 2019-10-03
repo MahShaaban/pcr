@@ -1,5 +1,5 @@
 Package: pcr
-Version: 1.1.2
+Version: 1.2.0
 Title: Analyzing Real-Time Quantitative PCR Data
 Description: Calculates the amplification efficiency and curves from real-time 
   quantitative PCR (Polymerase Chain Reaction) data. Estimates the relative 
@@ -8,22 +8,17 @@ Description: Calculates the amplification efficiency and curves from real-time
   statistical significance using two-group tests and linear regression 
   Yuan et al. (2006) <doi: 10.1186/1471-2105-7-85>.
 Authors@R: person("Mahmoud", "Ahmed",
-  email = "mahmoud.s.fahmy@students.kasralainy.edu.eg",
-  role = c("aut", "cre"))
+    email = "mahmoud.s.fahmy@students.kasralainy.edu.eg",
+    role = c("aut", "cre"),
+    comment = c(ORCID = "0000-0002-4377-6541"))
 Maintainer: Mahmoud Ahmed <mahmoud.s.fahmy@students.kasralainy.edu.eg>
 URL: https://github.com/MahShaaban/pcr
 BugReports: https://github.com/MahShaaban/pcr/issues
 Depends: R (>= 3.4.0)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1
-Imports: devtools,
-  magrittr,
-  dplyr,
-  tidyr,
-  purrr,
-  readr,
-  ggplot2
+RoxygenNote: 6.1.1
+Imports: ggplot2
 Suggests: testthat,
     knitr,
     rmarkdown,

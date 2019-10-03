@@ -4,16 +4,18 @@
 \alias{pcr_ttest}
 \title{t-test qPCR data}
 \usage{
-pcr_ttest(df, group_var, reference_gene, reference_group, tidy = TRUE, ...)
+pcr_ttest(df, group_var, reference_gene, reference_group, tidy = TRUE,
+  ...)
 }
 \arguments{
-\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
-in rows rows}
+\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and
+samples in rows rows}
 
 \item{group_var}{A character vector of a grouping variable. The length of
 this variable should equal the number of rows of df}
 
-\item{reference_gene}{A character string of the column name of a control gene}
+\item{reference_gene}{A character string of the column name of a control
+gene}
 
 \item{reference_group}{A character string of the control group in group_var}
 
@@ -39,7 +41,7 @@ t-test qPCR data
 \examples{
 # locate and read data
 fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
-ct4 <- readr::read_csv(fl)
+ct4 <- read.csv(fl)
 
 # make group variable
 group <- rep(c('control', 'treatment'), each = 12)

@@ -7,8 +7,8 @@
 pcr_analyze(df, method = "delta_delta_ct", ...)
 }
 \arguments{
-\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
-in rows rows}
+\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and
+samples in rows rows}
 
 \item{method}{A character string; 'delta_delta_ct' default, 'delta_ct' or
 'relative_curve' for invoking a certain analysis model}
@@ -34,7 +34,7 @@ the corresponding functions directly: \link{pcr_ddct}, \link{pcr_dct} or
 # applying the delta delta ct method
 ## locate and read raw ct data
 fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-ct1 <- readr::read_csv(fl)
+ct1 <- read.csv(fl)
 
 # add grouping variable
 group_var <- rep(c('brain', 'kidney'), each = 6)
@@ -77,7 +77,7 @@ pcr_analyze(pcr_hk,
 # applying the standard curve method
 # locate and read file
 fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-ct3 <- readr::read_csv(fl)
+ct3 <- read.csv(fl)
 
 # make a vector of RNA amounts
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
