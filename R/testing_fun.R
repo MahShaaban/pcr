@@ -164,12 +164,16 @@ pcr_ttest <- function(df, group_var, reference_gene, reference_group,
     # adjust the reference group
     group_levels <- unique(group_var)
 
-    if(length(group_levels) != 2) {
+    if (length(group_levels) != 2) {
       stop('t.test is only applied to two group comparisons.')
     }
 
     ref_group <- group_levels[group_levels != reference_group]
     group_var <- relevel(factor(group_var), ref = ref_group)
+  } else {
+    if (length(levels(group_var)) != 2) {
+      stop('t.test is only applied to two group comparisons.')
+    }
   }
 
   # extract the reference gene and genes of interest
@@ -255,12 +259,16 @@ pcr_wilcox <- function(df, group_var, reference_gene, reference_group,
     # adjust the reference group
     group_levels <- unique(group_var)
 
-    if(length(group_levels) != 2) {
+    if (length(group_levels) != 2) {
       stop('wilcox.test is only applied to two group comparisons.')
     }
 
     ref_group <- group_levels[group_levels != reference_group]
     group_var <- relevel(factor(group_var), ref = ref_group)
+  } else {
+    if (length(levels(group_var)) != 2) {
+      stop('t.test is only applied to two group comparisons.')
+    }
   }
 
   # extract the reference gene and genes of interest

@@ -37,9 +37,9 @@ pcr:::.pcr_plot_assess(ct3,
 
 # plot amplification efficiency
 pcr:::.pcr_plot_assess(ct3,
-                amount = amount,
-                reference_gene = 'GAPDH',
-                method = 'efficiency')
+                       amount = amount,
+                       reference_gene = 'GAPDH',
+                       method = 'efficiency')
 
 }
 \keyword{internal}

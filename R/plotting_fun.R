@@ -69,17 +69,19 @@
 #' @importFrom ggplot2 ggplot geom_col geom_errorbar aes_string facet_wrap
 
 .pcr_plot_analyze <- function(df, method, facets = FALSE) {
+  # switch to a value/column to plot
   y <- switch (method,
                'delta_delta_ct' = 'relative_expression',
                'delta_ct' = 'fold_change',
                'relative_curve' = 'calibrated'
   )
 
-  if(length(unique(df$gene)) == 1) {
+  # make plot
+  if (length(unique(df$gene)) == 1) {
     gg <- ggplot(df, aes_string(x = 'group', y = y)) +
       geom_col() +
       geom_errorbar(aes_string(ymin = 'lower', ymax = 'upper'))
-  } else if(facets == TRUE) {
+  } else if (facets == TRUE) {
     gg <- ggplot(df, aes_string(x = 'group', y = y)) +
       geom_col() +
       geom_errorbar(aes_string(ymin = 'lower', ymax = 'upper')) +
@@ -134,18 +136,19 @@
       ref <- subset(df, select = reference_gene, drop = TRUE)
       goi <- subset(df, select = names(df) != reference_gene)
 
-      # apply the calculations
+      # normalize the genes of interest by the reference gene
       dct <- apply(goi,
                    MARGIN = 2,
                    FUN = function(x) {
                      .pcr_normalize(x, ref)
                    })
 
+      # make a data.frame from amounts, dct values and gene names
       df <- data.frame(x = rep(log10(amount), times = ncol(dct)),
                        y = unlist(as.numeric(dct), use.names = FALSE),
                        gene = rep(colnames(dct), each = nrow(dct)))
 
-      # make efficiency plot
+      # make plot
       gg <- ggplot(df, aes(x = df$x, y = df$y)) +
         geom_point() +
         facet_wrap(~df$gene) +
@@ -154,11 +157,12 @@
       return(gg)
     },
     'standard_curve' = {
-      # calculate trend; intercep, slop and r_squared
+      # make a data.frame of amounts, ct values and gene names
       df <- data.frame(x = rep(log10(amount), times = ncol(df)),
                        y = unlist(df, use.names = FALSE),
                        gene = rep(colnames(df), each = nrow(df)))
 
+      # make plot
       gg <- ggplot(df, aes(x = df$x, y = df$y)) +
         geom_point() +
         facet_wrap(~df$gene)

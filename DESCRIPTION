@@ -8,8 +8,9 @@ Description: Calculates the amplification efficiency and curves from real-time
   statistical significance using two-group tests and linear regression 
   Yuan et al. (2006) <doi: 10.1186/1471-2105-7-85>.
 Authors@R: person("Mahmoud", "Ahmed",
-  email = "mahmoud.s.fahmy@students.kasralainy.edu.eg",
-  role = c("aut", "cre"))
+    email = "mahmoud.s.fahmy@students.kasralainy.edu.eg",
+    role = c("aut", "cre"),
+    comment = c(ORCID = "0000-0002-4377-6541"))
 Maintainer: Mahmoud Ahmed <mahmoud.s.fahmy@students.kasralainy.edu.eg>
 URL: https://github.com/MahShaaban/pcr
 BugReports: https://github.com/MahShaaban/pcr/issues

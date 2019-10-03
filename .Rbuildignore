@@ -1,3 +1,6 @@
+^LICENSE\.md$
+^Meta$
+^doc$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.git/$

@@ -66,8 +66,11 @@
 #' @export
 pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
   # return data when plot is false
-  if(plot == TRUE) {
-    gg <- .pcr_plot_assess(df, amount, reference_gene, method = 'efficiency')
+  if (plot) {
+    gg <- .pcr_plot_assess(df,
+                           amount,
+                           reference_gene,
+                           method = 'efficiency')
 
     return(gg)
   } else {
@@ -75,7 +78,7 @@ pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
     ref <- subset(df, select = reference_gene, drop = TRUE)
     goi <- subset(df, select = names(df) != reference_gene)
 
-    # apply the calculations
+    # normalize the genes of interest by a reference gene
     dct <- apply(goi,
                  MARGIN = 2,
                  FUN = function(x) {
@@ -94,6 +97,7 @@ pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
                      )
                    })
 
+    # make a data.frame
     trend <- do.call(rbind, trend)
     trend$gene <- names(goi)
     rownames(trend) <- NULL
@@ -156,8 +160,10 @@ pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
 #' @export
 pcr_standard <- function(df, amount, plot = FALSE) {
   # return data when plot is false
-  if(plot == TRUE) {
-    gg <- .pcr_plot_assess(df, amount, method = 'standard_curve')
+  if (plot) {
+    gg <- .pcr_plot_assess(df,
+                           amount,
+                           method = 'standard_curve')
 
     return(gg)
   } else {
@@ -173,6 +179,7 @@ pcr_standard <- function(df, amount, plot = FALSE) {
                      )
                    })
 
+    # make a data.frame
     trend <- do.call(rbind, trend)
     trend$gene <- names(df)
     rownames(trend) <- NULL

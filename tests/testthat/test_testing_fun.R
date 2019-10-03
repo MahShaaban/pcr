@@ -32,6 +32,15 @@ test_that("pcr_test runs the t.test correctly", {
   expect_equal(res$p_value, tt$p.value)
   expect_equal(res$lower, tt$conf.int[1])
   expect_equal(res$upper, tt$conf.int[2])
+
+  group <- rep(c('control', 'control2', 'treatment', 'treatment2'),
+               each = 6)
+  expect_error(
+    pcr_ttest(ct4,
+              group_var = group,
+              reference_gene = 'ref',
+              reference_group = 'control')
+  )
 })
 
 
@@ -67,6 +76,15 @@ test_that("pcr_test runs the wilcox.test correctly", {
   expect_equal(res$p_value, wt$p.value)
   expect_equal(res$lower, wt$conf.int[1])
   expect_equal(res$upper, wt$conf.int[2])
+
+  group <- rep(c('control', 'control2', 'treatment', 'treatment2'),
+               each = 6)
+  expect_error(
+    pcr_wilcox(ct4,
+              group_var = group,
+              reference_gene = 'ref',
+              reference_group = 'control')
+  )
 })
 
 test_that("pcr_test runs the lm correctly", {

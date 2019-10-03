@@ -1,7 +1,3 @@
-# cRegulome 0.0.0.9000
-
-  - under development
-
 # pcr 1.0.1
 
   - available on CRAN
@@ -18,3 +14,10 @@
 # pcr 1.1.2
   
   - Remove dependency on broom 
+
+# pcr 1.2.0
+ 
+  - Reduce dependencies to base R and stats
+  - Rewrite internal functions
+  - Add LICENSE.md file
+  - Fix typos in the vignette and readme

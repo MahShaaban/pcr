@@ -14,6 +14,34 @@ test_that("pcr_ddct works", {
   expect_equal(ncol(res), 8)
   expect_equal(nrow(res), length(unique(group_var)))
   expect_equal(unique(res$gene), setdiff(names(ct1), 'GAPDH'))
+
+
+  res2 <- pcr_ddct(ct1,
+                   group_var = group_var,
+                   reference_gene = 'GAPDH',
+                   reference_group = 'brain',
+                   mode = 'same_tube')
+
+  expect_s3_class(res2, 'data.frame')
+  expect_equal(ncol(res2), 8)
+  expect_equal(nrow(res2), length(unique(group_var)))
+  expect_equal(unique(res2$gene), setdiff(names(ct1), 'GAPDH'))
+
+  expect_error(
+    pcr_ddct(ct1,
+             group_var = group_var,
+             reference_gene = 'GAPDH',
+             reference_group = 'brain',
+             mode = 'same')
+  )
+
+  gg <- pcr_ddct(ct1,
+                 group_var = group_var,
+                 reference_gene = 'GAPDH',
+                 reference_group = 'brain',
+                 plot = TRUE)
+
+  expect_identical(class(gg), c("gg", "ggplot"))
 })
 
 test_that("pcr_dct works", {
@@ -29,6 +57,30 @@ test_that("pcr_dct works", {
   expect_equal(ncol(res), 7)
   expect_equal(nrow(res), length(unique(group_var))*length(unique(names(ct1))))
   expect_equal(unique(res$gene), names(ct1))
+
+  res2 <- pcr_dct(ct1,
+                  group_var = group_var,
+                  reference_group = 'brain',
+                  mode = 'same_tube')
+
+  expect_s3_class(res2, 'data.frame')
+  expect_equal(ncol(res2), 7)
+  expect_equal(nrow(res2), length(unique(group_var))*length(unique(names(ct1))))
+  expect_equal(unique(res2$gene), names(ct1))
+
+  expect_error(
+    pcr_dct(ct1,
+            group_var = group_var,
+            reference_group = 'brain',
+            mode = 'same')
+  )
+
+  gg <- pcr_dct(ct1,
+                group_var = group_var,
+                reference_group = 'brain',
+                plot = TRUE)
+
+  expect_identical(class(gg), c("gg", "ggplot"))
 })
 
 test_that("pcr_curve in separate_tube mode", {
@@ -47,14 +99,47 @@ test_that("pcr_curve in separate_tube mode", {
 
   # calculate standard amounts and error
   res <- pcr_curve(ct1,
-                   group_var = group_var,
-                   reference_gene = 'GAPDH',
-                   reference_group = 'brain',
-                   intercept = intercept,
-                   slope = slope)
+                    group_var = group_var,
+                    reference_gene = 'GAPDH',
+                    reference_group = 'brain',
+                    intercept = intercept,
+                    slope = slope)
 
   expect_s3_class(res, 'data.frame')
   expect_equal(ncol(res), 7)
   expect_equal(nrow(res), length(unique(group_var)))
   expect_equal(unique(res$gene), setdiff(names(ct1), 'GAPDH'))
+
+  res2 <- pcr_curve(ct1,
+                    group_var = group_var,
+                    reference_gene = 'GAPDH',
+                    reference_group = 'brain',
+                    intercept = intercept,
+                    slope = slope,
+                    mode = 'same_tube')
+
+  expect_s3_class(res2, 'data.frame')
+  expect_equal(ncol(res2), 7)
+  expect_equal(nrow(res2), length(unique(group_var)))
+  expect_equal(unique(res2$gene), setdiff(names(ct1), 'GAPDH'))
+
+  expect_error(
+    pcr_curve(ct1,
+              group_var = group_var,
+              reference_gene = 'GAPDH',
+              reference_group = 'brain',
+              intercept = intercept,
+              slope = slope,
+              mode = 'same')
+  )
+
+  gg <- pcr_curve(ct1,
+                  group_var = group_var,
+                  reference_gene = 'GAPDH',
+                  reference_group = 'brain',
+                  intercept = intercept,
+                  slope = slope,
+                  plot = TRUE)
+
+  expect_identical(class(gg), c("gg", "ggplot"))
 })

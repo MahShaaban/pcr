@@ -14,6 +14,12 @@ test_that("pcr_efficiency calculates the correct intercept and slope", {
   c <- coef(lm(x ~ log_amount))
 
   expect_equal(unname(c), unlist(res[, 2:3], use.names = FALSE))
+
+  gg <- pcr_efficiency(ct3,
+                       amount = amount,
+                       reference_gene = 'GAPDH',
+                       plot = TRUE)
+  expect_identical(class(gg), c("gg", "ggplot"))
 })
 
 test_that("pcr_standard calculates the correct intercept and slope", {
@@ -29,6 +35,12 @@ test_that("pcr_standard calculates the correct intercept and slope", {
   c <- coef(lm(ct3$c_myc ~ log_amount))
 
   expect_equal(unlist(res[1, 2:3], use.names = FALSE), unname(c))
+
+  gg <- pcr_standard(ct3,
+                     amount = amount,
+                     plot = TRUE)
+
+  expect_identical(class(gg), c("gg", "ggplot"))
 })
 
 test_that("pcr_assess calls the correct methods", {

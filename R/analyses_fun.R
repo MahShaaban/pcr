@@ -390,8 +390,12 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group,
                    # normalize first
                    norm <- .pcr_normalize(x, ref, mode = 'divide')
 
+
                    # calculate the error
                    error <- .pcr_cv(norm, group_var)
+
+                   # average normalized values
+                   norm <- .pcr_average(norm, group_var)
                  } else {
                    stop("mode should be one of 'separate_tube' or 'same_tube'.")
                  }
