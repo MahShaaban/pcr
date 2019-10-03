@@ -2,45 +2,28 @@
 % Please edit documentation in R/helper_fun.R
 \name{.pcr_normalize}
 \alias{.pcr_normalize}
-\title{Normalize values by a column}
+\title{Normalize vector by another}
 \usage{
-.pcr_normalize(df, reference_gene, mode = "subtract", tidy = FALSE)
+.pcr_normalize(vec, ref, mode = "subtract")
 }
 \arguments{
-\item{df}{A data.frame}
+\item{vec}{A vector of numerics}
 
-\item{reference_gene}{A character string of the name of the column
-corresponding to the reference gene}
+\item{ref}{A numeric vector}
 
-\item{mode}{A character string of the normalization mode to be used. Default
-is 'subtract'. Other possible modes include 'divide'}
-
-\item{tidy}{A logical, default FALSE. When TRUE returns a tidy data.frame}
+\item{mode}{Either 'subtract' or 'divide'}
 }
 \value{
-A data.frame with a column for each of the original columns after
-subtraction or division to a reference_gene/column which is dropped.
-The function ignores non numeric columns. When tidy is TRUE it
-returns a tidy data.frame with the columns: gene and normalized.
+A vector of numerics
 }
 \description{
-Uses subtraction or division to normalize values in all columns to a certain
-specified column
-}
-\details{
-Used to normalize ct or input amounts (or their averages) by a
-a reference_gene/column
+Normalize vector by another
 }
 \examples{
-# locate and read raw ct data
-fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-ct1 <- read.csv(fl)
-
-# normalize the ct values
-.pcr_normalize(ct1, reference_gene = 'GAPDH')
-
-# normalize by division
-.pcr_normalize(ct1, reference_gene = 'GAPDH', mode = 'divide')
+vec <- rnorm(6, 30, 1)
+ref <- rnorm(6, 30, .1)
+pcr:::.pcr_normalize(vec, ref)
+pcr:::.pcr_normalize(vec, ref, mode = 'divide')
 
 }
 \keyword{internal}

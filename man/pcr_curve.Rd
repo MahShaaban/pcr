@@ -8,13 +8,14 @@ pcr_curve(df, group_var, reference_gene, reference_group,
   mode = "separate_tube", intercept, slope, plot = FALSE, ...)
 }
 \arguments{
-\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
-in rows rows}
+\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and
+samples in rows rows}
 
 \item{group_var}{A character vector of a grouping variable. The length of
 this variable should equal the number of rows of df}
 
-\item{reference_gene}{A character string of the column name of a control gene}
+\item{reference_gene}{A character string of the column name of a control
+gene}
 
 \item{reference_group}{A character string of the control group in group_var}
 
@@ -69,10 +70,10 @@ and a slope. Secondly, these intercepts and slopes are used to calculate the
 \examples{
 # locate and read file
 fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-ct3 <- readr::read_csv(fl)
+ct3 <- read.csv(fl)
 
 fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-ct1 <- readr::read_csv(fl)
+ct1 <- read.csv(fl)
 
 # make a vector of RNA amounts
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)

@@ -7,8 +7,8 @@
 pcr_test(df, test = "t.test", ...)
 }
 \arguments{
-\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
-in rows rows}
+\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and
+samples in rows rows}
 
 \item{test}{A character string; 't.test' default, 'wilcox.test' or 'lm'}
 
@@ -29,17 +29,18 @@ consult \code{\link[stats]{t.test}}, \code{\link[stats]{wilcox.test}}
 and \code{\link[stats]{lm}}
 }
 \description{
-A unified interface to different statistical significance tests for qPCR data
+A unified interface to different statistical significance tests for qPCR
+data
 }
 \details{
 The simple t-test can be used to test the significance of the
-difference between two conditions \eqn{\Delta C_T}. t-test assumes in addition,
- that the input \eqn{C_T} values are normally distributed and the variance
- between conditions are comparable.
-Wilcoxon test can be used when sample size is small and those two last
-assumptions are hard to achieve.
+difference between two conditions \eqn{\Delta C_T}. t-test assumes in
+addition, that the input \eqn{C_T} values are normally distributed and the
+variance between conditions are comparable. Wilcoxon test can be used when
+sample size is small and those two last assumptions are hard to achieve.
 
-Two use the linear regression here. A null hypothesis is formulated as following,
+Two use the linear regression here. A null hypothesis is formulated as
+following,
 \deqn{
   C_{T, target, treatment} - C_{T, control, treatment} =
   C_{T, target, control} - C_{T, control, control}
@@ -52,7 +53,7 @@ This is exactly the \eqn{\Delta\Delta C_T} as explained earlier. So the
 \examples{
 # locate and read data
 fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
-ct4 <- readr::read_csv(fl)
+ct4 <- read.csv(fl)
 
 # make group variable
 group <- rep(c('control', 'treatment'), each = 12)

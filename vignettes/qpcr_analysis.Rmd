@@ -112,7 +112,7 @@ The following chunk of code locates a dataset of $C_T$ values of two genes from 
 # default mode delta_delta_ct
 ## locate and read raw ct data
 fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-ct1 <- readr::read_csv(fl)
+ct1 <- read.csv(fl)
 
 ## add grouping variable
 group_var <- rep(c('brain', 'kidney'), each = 6)
@@ -134,7 +134,7 @@ The previous analysis makes a few assumptions that will be explained later in th
 ```{r assess}
 ## locate and read data
 fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-ct3 <- readr::read_csv(fl)
+ct3 <- read.csv(fl)
 
 ## make a vector of RNA amounts
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
@@ -391,7 +391,7 @@ library(cowplot)
 ```{r calculate_efficiency}
 ## locate and read data
 fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-ct3 <- readr::read_csv(fl)
+ct3 <- read.csv(fl)
 
 ## make a vector of RNA amounts
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
@@ -468,7 +468,7 @@ The following code chunk applies this method to a `data.frame` of 12 samples fro
 # default mode delta_delta_ct
 ## locate and read raw ct data
 fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-ct1 <- readr::read_csv(fl)
+ct1 <- read.csv(fl)
 
 ## add grouping variable
 group_var <- rep(c('brain', 'kidney'), each = 6)
@@ -536,7 +536,7 @@ This method is a variation of the double delta $C_T$ model. It can be used to ca
 ## example to check fold change of control gens
 ## locate and read file
 fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-ct1 <- readr::read_csv(fl)
+ct1 <- read.csv(fl)
 
 ## make a data.frame of two identical columns
 pcr_hk <- data.frame(
@@ -660,7 +660,7 @@ Here, we used a dataset `ct4` of 48 samples and two gene columns `r names(ct4)[1
 ```{r testing_data}
 # locate and read data
 fl <- system.file('extdata', 'ct4.csv', package = 'pcr')
-ct4 <- readr::read_csv(fl)
+ct4 <- read.csv(fl)
 
 # make group variable
 group <- rep(c('control', 'treatment'), each = 12)

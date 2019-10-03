@@ -1,3 +1,19 @@
+#' Get vector average by a variable
+#'
+#' @param vec A vector of numerics
+#' @param var A grouping variable
+#'
+#' @return A vector of numerics
+#'
+#' @keywords internal
+#'
+#' @examples
+#' vec <- rnorm(6, 30, 1)
+#' var <- rep(c('group1', 'group2'), 3)
+#' pcr:::.pcr_average(vec, var)
+#'
+#' @importFrom stats aggregate
+
 .pcr_average <- function(vec, var) {
   res <- aggregate(vec,
                    by = list(var),
@@ -5,9 +21,20 @@
   return(res$x)
 }
 
-vec <- rnorm(6, 30, 1)
-var <- rep(c('group1', 'group2'), 3)
-.pcr_average(vec, var)
+#' Get vector standard deviation by a variable
+#'
+#' @inheritParams .pcr_average
+#'
+#' @return A vector of numerics
+#'
+#' @keywords internal
+#'
+#' @examples
+#' vec <- rnorm(6, 30, 1)
+#' var <- rep(c('group1', 'group2'), 3)
+#' pcr:::.pcr_sd(vec, var)
+#'
+#' @importFrom stats aggregate sd
 
 .pcr_sd <- function(vec, var) {
   res <- aggregate(vec,
@@ -16,9 +43,20 @@ var <- rep(c('group1', 'group2'), 3)
   return(res$x)
 }
 
-vec <- rnorm(6, 30, 1)
-var <- rep(c('group1', 'group2'), 3)
-.pcr_sd(vec, var)
+#' Get vector coefficient of variance by a variable
+#'
+#' @inheritParams .pcr_average
+#'
+#' @return A vector of numerics
+#'
+#' @keywords internal
+#'
+#' @examples
+#' vec <- rnorm(6, 30, 1)
+#' var <- rep(c('group1', 'group2'), 3)
+#' pcr:::.pcr_cv(vec, var)
+#'
+#' @importFrom stats aggregate sd
 
 .pcr_cv <- function(vec, var) {
   res <- aggregate(vec,
@@ -27,9 +65,23 @@ var <- rep(c('group1', 'group2'), 3)
   return(res$x)
 }
 
-vec <- rnorm(6, 30, 1)
-var <- rep(c('group1', 'group2'), 3)
-.pcr_cv(vec, var)
+#' Normalize vector by another
+#'
+#' @inheritParams .pcr_average
+#' @param ref A numeric vector
+#' @param mode Either 'subtract' or 'divide'
+#'
+#' @return A vector of numerics
+#'
+#' @keywords internal
+#'
+#' @examples
+#' vec <- rnorm(6, 30, 1)
+#' ref <- rnorm(6, 30, .1)
+#' pcr:::.pcr_normalize(vec, ref)
+#' pcr:::.pcr_normalize(vec, ref, mode = 'divide')
+#'
+#' @importFrom stats aggregate sd
 
 .pcr_normalize <- function(vec, ref, mode = 'subtract') {
   if (mode == 'subtract') {
@@ -42,44 +94,95 @@ var <- rep(c('group1', 'group2'), 3)
   return(res)
 }
 
-vec <- rnorm(6, 30, 1)
-ref <- rnorm(6, 30, .1)
-.pcr_normalize(vec, ref)
-.pcr_normalize(vec, ref, mode = 'divide')
+#' Propage two vectors
+#'
+#' @inheritParams .pcr_average
+#' @inheritParams .pcr_normalize
+#'
+#' @return A vector of numerics
+#'
+#' @keywords internal
+#'
+#' @examples
+#' vec <- rnorm(6, 30, 1)
+#' ref <- rnorm(6, 30, .1)
+#' pcr:::.pcr_error(vec, ref)
 
 .pcr_error <- function(vec, ref) {
   res <- sqrt(vec^2 + ref^2)
   return(res)
 }
 
-vec <- rnorm(2, 30, 1)
-ref <- rnorm(2, 30, .1)
-.pcr_error(vec, ref)
+#' Calculate the amounts
+#'
+#' @inheritParams .pcr_average
+#' @param a A numeric
+#' @param b A numeric
+#'
+#' @return A vector of numerics
+#'
+#' @keywords internal
+#'
+#' @examples
+#' vec <- rnorm(6, 30, 1)
+#' pcr:::.pcr_amount(vec, 1, 1)
 
 .pcr_amount <- function(vec, a, b) {
   res <- 10 ^ ((vec - a)/b)
   return(res)
 }
 
-vec <- rnorm(6, 30, 1)
-.pcr_amount(vec, 1, 1)
+#' Raise two to a vector power
+#'
+#' @inheritParams .pcr_average
+#'
+#' @return A numeric
+#'
+#' @keywords internal
+#'
+#' @examples
+#' vec <- rnorm(6, 30, 1)
+#' pcr:::.pcr_relative(vec)
 
 .pcr_relative <- function(vec) {
   res <- 2 ^ (-vec)
   return(res)
 }
 
-vec <- rnorm(6, 30, 1)
-.pcr_amount(vec, 1, 1)
+#' Calculate R squared
+#'
+#' @inheritParams .pcr_average
+#'
+#' @return A numeric
+#'
+#' @keywords internal
+#'
+#' @examples
+#' vec <- rnorm(6, 30, 1)
+#' var <- rep(c(.1, .5), 3)
+#' pcr:::.pcr_rsquared(vec, var)
+#'
+#' @importFrom stats cor
 
 .pcr_rsquared <- function(vec, var) {
   res <- cor(vec, log10(var))^2
   return(res)
 }
 
-vec <- rnorm(6, 30, 1)
-var <- rep(c(.1, .5), 3)
-.pcr_rsquared(vec, var)
+#' Calculate the intercept of a line
+#'
+#' @inheritParams .pcr_average
+#'
+#' @return A numeric
+#'
+#' @keywords internal
+#'
+#' @examples
+#' vec <- rnorm(6, 30, 1)
+#' var <- rep(c(.1, .5), 3)
+#' pcr:::.pcr_intercept(vec, var)
+#'
+#' @importFrom stats lm coefficients
 
 .pcr_intercept <- function(vec, var) {
   ll <- lm(vec ~ log10(var))
@@ -87,16 +190,23 @@ var <- rep(c(.1, .5), 3)
   return(res[[1]])
 }
 
-vec <- rnorm(6, 30, 1)
-var <- rep(c(.1, .5), 3)
-.pcr_intercept(vec, var)
+#' Calculate the slope of a line
+#'
+#' @inheritParams .pcr_average
+#'
+#' @return A numeric
+#'
+#' @keywords internal
+#'
+#' @examples
+#' vec <- rnorm(6, 30, 1)
+#' var <- rep(c(.1, .5), 3)
+#' pcr:::.pcr_slope(vec, var)
+#'
+#' @importFrom stats lm coefficients
 
-.pcr_slop <- function(vec, var) {
+.pcr_slope <- function(vec, var) {
   ll <- lm(vec ~ log10(var))
   res <- coefficients(ll)
   return(res[[2]])
 }
-
-vec <- rnorm(6, 30, 1)
-var <- rep(c(.1, .5), 3)
-.pcr_slop(vec, var)

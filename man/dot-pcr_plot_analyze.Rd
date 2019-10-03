@@ -23,7 +23,7 @@ Plotting function
 \examples{
 ## locate and read raw ct data
 fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-ct1 <- readr::read_csv(fl)
+ct1 <- read.csv(fl)
 
 # add grouping variable
 group_var <- rep(c('brain', 'kidney'), each = 6)
@@ -35,7 +35,7 @@ df <- pcr_ddct(ct1,
                reference_group = 'brain')
 
 # make a plot
-.pcr_plot_analyze(df, method = 'delta_delta_ct')
+pcr:::.pcr_plot_analyze(df, method = 'delta_delta_ct')
 
 # make a data.frame of two identical columns
 pcr_hk <- data.frame(
@@ -49,13 +49,13 @@ df <- pcr_dct(pcr_hk,
               reference_group = 'brain')
 
 # make a plot
-.pcr_plot_analyze(df, method = 'delta_ct')
-.pcr_plot_analyze(df, method = 'delta_ct', facet = TRUE)
+pcr:::.pcr_plot_analyze(df, method = 'delta_ct')
+pcr:::.pcr_plot_analyze(df, method = 'delta_ct', facet = TRUE)
 
 # calculate curve
 # locate and read data
 fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-ct3 <- readr::read_csv(fl)
+ct3 <- read.csv(fl)
 
 # make a vector of RNA amounts
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
@@ -75,6 +75,7 @@ df <- pcr_curve(ct1,
                 slope = slope)
 
 # make a plot
-.pcr_plot_analyze(df, method = 'relative_curve')
+pcr:::.pcr_plot_analyze(df, method = 'relative_curve')
 
 }
+\keyword{internal}

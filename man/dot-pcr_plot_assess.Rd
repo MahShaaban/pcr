@@ -24,21 +24,22 @@ Plot quality assessment graphs
 \examples{
 # locate and read file
 fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-ct3 <- readr::read_csv(fl)
+ct3 <- read.csv(fl)
 
 # make amount/dilution variable
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
 
 # plot the standard curves
-.pcr_plot_assess(ct3,
+pcr:::.pcr_plot_assess(ct3,
                 amount = amount,
                 reference_gene = 'GAPDH',
                 method = 'standard_curve')
 
 # plot amplification efficiency
-.pcr_plot_assess(ct3,
+pcr:::.pcr_plot_assess(ct3,
                 amount = amount,
                 reference_gene = 'GAPDH',
                 method = 'efficiency')
 
 }
+\keyword{internal}

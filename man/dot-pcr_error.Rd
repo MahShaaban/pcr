@@ -2,46 +2,24 @@
 % Please edit documentation in R/helper_fun.R
 \name{.pcr_error}
 \alias{.pcr_error}
-\title{Calculate error terms}
+\title{Propage two vectors}
 \usage{
-.pcr_error(df, reference_gene, tidy = FALSE)
+.pcr_error(vec, ref)
 }
 \arguments{
-\item{df}{A data.frame}
+\item{vec}{A vector of numerics}
 
-\item{reference_gene}{A character string of the name of the column
-corresponding to the reference gene}
-
-\item{tidy}{A logical, default FALSE. When TRUE returns a tidy data.frame}
+\item{ref}{A numeric vector}
 }
 \value{
-A data.frame with a column for each of the original columns after
-taking the square root of the squared standard deviations of a target gene
-and a reference_gene/column which is dropped. The function ignores
-non numeric columns. When tidy is TRUE the returns a tidy data.frame with
-the columns: gene and error as well as any non numeric columns such as a
-grouping variable group/amount.
+A vector of numerics
 }
 \description{
-Uses a specified column as a reference to calculate the error between it
-and another column.
-}
-\details{
-Used to sum the error of a gene and a reference_gene/column
+Propage two vectors
 }
 \examples{
-# locate and read raw ct data
-fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-ct1 <- read.csv(fl)
-
-# add grouping variable
-group_var <- rep(c('brain', 'kidney'), each = 6)
-
-# calculate standard deviations
-sds <- .pcr_sd(ct1, group_var = group_var)
-
-# calculate errors
-.pcr_error(sds, reference_gene = 'GAPDH')
-
+vec <- rnorm(6, 30, 1)
+ref <- rnorm(6, 30, .1)
+pcr:::.pcr_error(vec, ref)
 }
 \keyword{internal}

@@ -1,14 +1,15 @@
 #' Calculate the delta_delta_ct model
 #'
-#' Uses the \eqn{C_T} values and a reference gene and a group to calculate the delta
-#' delta \eqn{C_T} model to estimate the normalized relative expression of target
-#' genes.
+#' Uses the \eqn{C_T} values and a reference gene and a group to calculate the
+#' delta delta \eqn{C_T} model to estimate the normalized relative expression
+#' of target genes.
 #'
-#' @param df A data.frame of \eqn{C_T} values with genes in the columns and samples
-#' in rows rows
+#' @param df A data.frame of \eqn{C_T} values with genes in the columns and
+#' samples in rows rows
 #' @param group_var A character vector of a grouping variable. The length of
 #' this variable should equal the number of rows of df
-#' @param reference_gene A character string of the column name of a control gene
+#' @param reference_gene A character string of the column name of a control
+#' gene
 #' @param reference_group A character string of the control group in group_var
 #' @param mode A character string of; 'separate_tube' (default) or 'same_tube'.
 #' This is to indicate whether the different genes were run in separate or the
@@ -20,10 +21,10 @@
 #' \itemize{
 #'   \item group The unique entries in group_var
 #'   \item gene The column names of df. reference_gene is dropped
-#'   \item normalized The \eqn{C_T} value (or the average \eqn{C_T} value) of target genes
-#'   after subtracting that of the reference_gene
-#'   \item calibrated The normalized average \eqn{C_T} value of target genes after
-#'   subtracting that of the reference_group
+#'   \item normalized The \eqn{C_T} value (or the average \eqn{C_T} value) of
+#'   target genes after subtracting that of the reference_gene
+#'   \item calibrated The normalized average \eqn{C_T} value of target genes
+#'   after subtracting that of the reference_group
 #'   \item relative_expression The expression of target genes normalized by
 #'   a reference_gene and calibrated by a reference_group
 #'   \item error The standard deviation of the relative_expression
@@ -36,21 +37,21 @@
 #' default in dodge bars. When the argument facet is TRUE a separate panel is
 #'  drawn for each gene.
 #'
-#' @details The comparative \eqn{C_T} methods assume that the cDNA templates of the
-#'  gene/s of interest as well as the control/reference gene have similar
-#'  amplification efficiency. And that this amplification efficiency is near
-#'  perfect. Meaning, at a certain threshold during the linear portion of the
-#'  PCR reaction, the amount of the gene of the interest and the control double
-#'   each cycle. Another assumptions is that, the expression difference between
-#'   two genes or two samples can be captured by subtracting one (gene or
-#'   sample of interest) from another (reference).  This final assumption
-#'   requires also that these references don't change with the treatment or
-#'   the course in question.
+#' @details The comparative \eqn{C_T} methods assume that the cDNA templates of
+#' the gene/s of interest as well as the control/reference gene have similar
+#' amplification efficiency. And that this amplification efficiency is near
+#' perfect. Meaning, at a certain threshold during the linear portion of the
+#' PCR reaction, the amount of the gene of the interest and the control double
+#' each cycle. Another assumptions is that, the expression difference between
+#' two genes or two samples can be captured by subtracting one (gene or sample
+#' of interest) from another (reference).  This final assumption requires also
+#' that these references don't change with the treatment or the course in
+#' question.
 #'
 #' @examples
 #' ## locate and read raw ct data
 #' fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-#' ct1 <- readr::read_csv(fl)
+#' ct1 <- read.csv(fl)
 #'
 #' # add grouping variable
 #' group_var <- rep(c('brain', 'kidney'), each = 6)
@@ -67,10 +68,6 @@
 #'          reference_gene = 'GAPDH',
 #'          reference_group = 'brain',
 #'          plot = TRUE)
-#'
-#' @importFrom magrittr %>%
-#' @importFrom tidyr gather
-#' @importFrom dplyr mutate full_join
 #'
 #' @export
 pcr_ddct <- function(df, group_var, reference_gene, reference_group,
@@ -139,8 +136,16 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group,
   rownames(res) <- NULL
   res$gene <- rep(names(goi), each = length(unique(group_var)))
 
-  return(res)
+  # return
+  # return plot when plot == TRUE
+  if (plot) {
+    gg <- .pcr_plot_analyze(res, method = 'delta_delta_ct', ...)
+    return(gg)
+  } else {
+    return(res)
+  }
 }
+
 #' Calculate the delta_ct model
 #'
 #' Uses the \eqn{C_T} values and a reference group to calculate the delta \eqn{C_T}
@@ -178,7 +183,7 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group,
 #' @examples
 #' # locate and read file
 #' fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-#' ct1 <- readr::read_csv(fl)
+#' ct1 <- read.csv(fl)
 #'
 #' # make a data.frame of two identical columns
 #' pcr_hk <- data.frame(
@@ -206,10 +211,6 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group,
 #'         reference_group = 'brain',
 #'         plot = TRUE,
 #'         facet = TRUE)
-#'
-#' @importFrom magrittr %>%
-#' @importFrom tidyr gather
-#' @importFrom dplyr mutate full_join
 #'
 #' @export
 pcr_dct <- function(df, group_var, reference_group,
@@ -265,7 +266,14 @@ pcr_dct <- function(df, group_var, reference_group,
   rownames(res) <- NULL
   res$gene <- rep(names(df), each = length(unique(group_var)))
 
-  return(res)
+  # return
+  # return plot when plot == TRUE
+  if (plot) {
+    gg <- .pcr_plot_analyze(res, method = 'delta_ct', ...)
+    return(gg)
+  } else {
+    return(res)
+  }
 }
 
 #' Calculate the standard curve model
@@ -315,10 +323,10 @@ pcr_dct <- function(df, group_var, reference_group,
 #' @examples
 #' # locate and read file
 #' fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-#' ct3 <- readr::read_csv(fl)
+#' ct3 <- read.csv(fl)
 #'
 #' fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-#' ct1 <- readr::read_csv(fl)
+#' ct1 <- read.csv(fl)
 #'
 #' # make a vector of RNA amounts
 #' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
@@ -347,10 +355,6 @@ pcr_dct <- function(df, group_var, reference_group,
 #'           intercept = intercept,
 #'           slope = slope,
 #'           plot = TRUE)
-#'
-#' @importFrom magrittr %>%
-#' @importFrom tidyr gather
-#' @importFrom dplyr full_join mutate
 #'
 #' @export
 pcr_curve <- function(df, group_var, reference_gene, reference_group,
@@ -418,7 +422,14 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group,
   rownames(res) <- NULL
   res$gene <- rep(names(goi), each = length(unique(group_var)))
 
-  return(res)
+  # return
+  # return plot when plot == TRUE
+  if (plot) {
+    gg <- .pcr_plot_analyze(res, method = 'relative_curve', ...)
+    return(gg)
+  } else {
+    return(res)
+  }
 }
 
 #' Apply qPCR analysis methods
@@ -450,7 +461,7 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group,
 #' # applying the delta delta ct method
 #' ## locate and read raw ct data
 #' fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-#' ct1 <- readr::read_csv(fl)
+#' ct1 <- read.csv(fl)
 #'
 #' # add grouping variable
 #' group_var <- rep(c('brain', 'kidney'), each = 6)
@@ -493,7 +504,7 @@ pcr_curve <- function(df, group_var, reference_gene, reference_group,
 #' # applying the standard curve method
 #' # locate and read file
 #' fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-#' ct3 <- readr::read_csv(fl)
+#' ct3 <- read.csv(fl)
 #'
 #' # make a vector of RNA amounts
 #' amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
@@ -529,4 +540,3 @@ pcr_analyze <- function(df, method = 'delta_delta_ct', ...) {
          'delta_ct' = pcr_dct(df, ...),
          'relative_curve' = pcr_curve(df, ...))
 }
-

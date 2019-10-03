@@ -2,58 +2,25 @@
 % Please edit documentation in R/helper_fun.R
 \name{.pcr_average}
 \alias{.pcr_average}
-\title{Average values by a variable}
+\title{Get vector average by a variable}
 \usage{
-.pcr_average(df, var, tidy = FALSE)
+.pcr_average(vec, var)
 }
 \arguments{
-\item{df}{A data.frame}
+\item{vec}{A vector of numerics}
 
-\item{var}{A vector or length equals the number or rows of df}
-
-\item{tidy}{A logical, default FALSE. When TRUE returns a tidy data.frame}
+\item{var}{A grouping variable}
 }
 \value{
-A data.frame with a column for the grouping variable; var and one
-for each of the original columns. When tidy is TRUE the returns a tidy
-data.frame with 3 columns; var, gene and average.
+A vector of numerics
 }
 \description{
-Uses a group_by statement to average values in a data.fram by a variable
-}
-\details{
-Used to average ct or input amounts (or their averages) by a
-grouping variable; group_var for experimental groups or amount for serial
-dilutions.
+Get vector average by a variable
 }
 \examples{
-# using a group_var variabale
-# locate and read raw ct data
-fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-ct1 <- read.csv(fl)
-
-# add grouping variable
-group_var <- rep(c('brain', 'kidney'), each = 6)
-
-# calculate averages
-.pcr_average(ct1, var = group_var)
-
-# calculate averages and return a tidy data.frame
-.pcr_average(ct1, var = group_var, tidy = TRUE)
-
-# using a amount variable
-# locate and read raw ct data
-fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-ct3 <- read.csv(fl)
-
-# add amount variable
-amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)
-
-# calculate averages
-.pcr_average(ct3, var = amount)
-
-# calculate averages and return a tidy data.frame
-.pcr_average(ct3, var = amount, tidy = TRUE)
+vec <- rnorm(6, 30, 1)
+var <- rep(c('group1', 'group2'), 3)
+pcr:::.pcr_average(vec, var)
 
 }
 \keyword{internal}

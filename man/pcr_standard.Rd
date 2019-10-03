@@ -7,18 +7,19 @@
 pcr_standard(df, amount, plot = FALSE)
 }
 \arguments{
-\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
-in rows rows. Each sample are replicates of a known input/dilution given by amount}
+\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and
+samples in rows rows. Each sample are replicates of a known input/dilution
+given by amount}
 
 \item{amount}{A numeric vector of the input amounts or dilutions. The length
 of this vector should equal the row number of df}
 
-\item{plot}{A logical (default FALSE) to indicate whether to return a data.frame
-or a plot}
+\item{plot}{A logical (default FALSE) to indicate whether to return a
+data.frame or a plot}
 }
 \value{
-When plot is FALSE returns a data.frame of 4 columns describing the line
-between the \eqn{C_T} of each gene and the log of amount
+When plot is FALSE returns a data.frame of 4 columns describing the
+line between the \eqn{C_T} of each gene and the log of amount
 \itemize{
   \item gene The column names of df
   \item intercept The intercept of the line
@@ -47,7 +48,7 @@ input amount. In this case, a separate slope and intercept are required for
 \examples{
 # locate and read file
 fl <- system.file('extdata', 'ct3.csv', package = 'pcr')
-ct3 <- readr::read_csv(fl)
+ct3 <- read.csv(fl)
 
 # make amount/dilution variable
 amount <- rep(c(1, .5, .2, .1, .05, .02, .01), each = 3)

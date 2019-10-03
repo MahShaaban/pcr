@@ -4,17 +4,15 @@
 \alias{pcr_dct}
 \title{Calculate the delta_ct model}
 \usage{
-pcr_dct(df, group_var, reference_gene, reference_group,
-  mode = "separate_tube", plot = FALSE, ...)
+pcr_dct(df, group_var, reference_group, mode = "separate_tube",
+  plot = FALSE, ...)
 }
 \arguments{
-\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and samples
-in rows rows}
+\item{df}{A data.frame of \eqn{C_T} values with genes in the columns and
+samples in rows rows}
 
 \item{group_var}{A character vector of a grouping variable. The length of
 this variable should equal the number of rows of df}
-
-\item{reference_gene}{A character string of the column name of a control gene}
 
 \item{reference_group}{A character string of the control group in group_var}
 
@@ -57,7 +55,7 @@ compare and choosing a control/reference genes.
 \examples{
 # locate and read file
 fl <- system.file('extdata', 'ct1.csv', package = 'pcr')
-ct1 <- readr::read_csv(fl)
+ct1 <- read.csv(fl)
 
 # make a data.frame of two identical columns
 pcr_hk <- data.frame(
