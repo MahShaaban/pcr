@@ -17,7 +17,8 @@
 .pcr_average <- function(vec, var) {
   res <- aggregate(vec,
                    by = list(var),
-                   FUN = mean)
+                   FUN = mean,
+                   na.rm = TRUE)
   return(res$x)
 }
 
@@ -39,7 +40,8 @@
 .pcr_sd <- function(vec, var) {
   res <- aggregate(vec,
                    by = list(var),
-                   FUN = sd)
+                   FUN = sd,
+                   na.rm = TRUE)
   return(res$x)
 }
 
