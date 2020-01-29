@@ -18,6 +18,7 @@
   res <- aggregate(vec,
                    by = list(var),
                    FUN = mean)
+  res <- res[order(unique(var)),]
   return(res$x)
 }
 
@@ -40,6 +41,7 @@
   res <- aggregate(vec,
                    by = list(var),
                    FUN = sd)
+  res <- res[order(unique(var)),]
   return(res$x)
 }
 
@@ -62,6 +64,7 @@
   res <- aggregate(vec,
                    by = list(var),
                    FUN = function(x) sd(x)/mean(x))
+  res <- res[order(unique(var)),]               
   return(res$x)
 }
 
