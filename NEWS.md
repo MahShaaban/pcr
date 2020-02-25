@@ -21,3 +21,7 @@
   - Rewrite internal functions
   - Add LICENSE.md file
   - Fix typos in the vignette and readme
+
+# pcr 1.2.1
+  
+  - Fix a bug with ordering results when using `aggregate`
