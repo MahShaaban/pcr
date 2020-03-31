@@ -72,6 +72,10 @@
 #' @export
 pcr_ddct <- function(df, group_var, reference_gene, reference_group,
                      mode = 'separate_tube', plot = FALSE, ...) {
+  # order data.frame and group var
+  df <- df[order(group_var),]
+  group_var <- group_var[order(group_var)]
+
   # extract the reference gene and genes of interest
   ref <- subset(df, select = reference_gene, drop = TRUE)
   goi <- subset(df, select = names(df) != reference_gene)
@@ -215,6 +219,10 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group,
 #' @export
 pcr_dct <- function(df, group_var, reference_group,
                     mode = 'separate_tube', plot = FALSE, ...) {
+  # order data.frame and group var
+  df <- df[order(group_var),]
+  group_var <- group_var[order(group_var)]
+
   # apply the calculations
   res <- apply(df,
                MARGIN = 2,
@@ -360,6 +368,10 @@ pcr_dct <- function(df, group_var, reference_group,
 pcr_curve <- function(df, group_var, reference_gene, reference_group,
                       mode = 'separate_tube', intercept, slope,
                       plot = FALSE, ...) {
+  # order data.frame and group var
+  df <- df[order(group_var),]
+  group_var <- group_var[order(group_var)]
+
   amounts <- mapply(function(d, a, b) .pcr_amount(d, a, b),
                     d = df, a = intercept, b = slope)
   amounts <- as.data.frame(amounts)

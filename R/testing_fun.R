@@ -159,6 +159,10 @@ pcr_test <- function(df, test = 't.test', ...) {
 #' @export
 pcr_ttest <- function(df, group_var, reference_gene, reference_group,
                       tidy = TRUE, ...) {
+  # order data.frame and group var
+  df <- df[order(group_var),]
+  group_var <- group_var[order(group_var)]
+
   # only if group_var is not a factor
   if (!is.factor(group_var)) {
     # adjust the reference group
@@ -254,6 +258,10 @@ pcr_ttest <- function(df, group_var, reference_gene, reference_group,
 #' @export
 pcr_wilcox <- function(df, group_var, reference_gene, reference_group,
                        tidy = TRUE, ...) {
+  # order data.frame and group var
+  df <- df[order(group_var),]
+  group_var <- group_var[order(group_var)]
+
   # only if group_var is not a factor
   if (!is.factor(group_var)) {
     # adjust the reference group

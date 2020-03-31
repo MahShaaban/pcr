@@ -4,8 +4,17 @@
 \alias{pcr_curve}
 \title{Calculate the standard curve model}
 \usage{
-pcr_curve(df, group_var, reference_gene, reference_group,
-  mode = "separate_tube", intercept, slope, plot = FALSE, ...)
+pcr_curve(
+  df,
+  group_var,
+  reference_gene,
+  reference_group,
+  mode = "separate_tube",
+  intercept,
+  slope,
+  plot = FALSE,
+  ...
+)
 }
 \arguments{
 \item{df}{A data.frame of \eqn{C_T} values with genes in the columns and

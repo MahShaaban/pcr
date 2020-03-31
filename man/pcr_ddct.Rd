@@ -4,8 +4,15 @@
 \alias{pcr_ddct}
 \title{Calculate the delta_delta_ct model}
 \usage{
-pcr_ddct(df, group_var, reference_gene, reference_group,
-  mode = "separate_tube", plot = FALSE, ...)
+pcr_ddct(
+  df,
+  group_var,
+  reference_gene,
+  reference_group,
+  mode = "separate_tube",
+  plot = FALSE,
+  ...
+)
 }
 \arguments{
 \item{df}{A data.frame of \eqn{C_T} values with genes in the columns and

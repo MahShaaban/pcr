@@ -4,8 +4,16 @@
 \alias{pcr_lm}
 \title{Linear regression qPCR data}
 \usage{
-pcr_lm(df, group_var, reference_gene, reference_group,
-  model_matrix = NULL, mode = "subtract", tidy = TRUE, ...)
+pcr_lm(
+  df,
+  group_var,
+  reference_gene,
+  reference_group,
+  model_matrix = NULL,
+  mode = "subtract",
+  tidy = TRUE,
+  ...
+)
 }
 \arguments{
 \item{df}{A data.frame of \eqn{C_T} values with genes in the columns and

@@ -143,3 +143,73 @@ test_that("pcr_curve in separate_tube mode", {
 
   expect_identical(class(gg), c("gg", "ggplot"))
 })
+
+test_that('pcr_analyze work for more than two genes', {
+  set.seed(123)
+  ct <- data.frame(
+    geneA = rnorm(9, 30, 1),
+    geneC = rnorm(9, 25, 1),
+    geneB = rnorm(9, 20, 1)
+  )
+  var <- rep(c('group1', 'group2', 'group3'), 3)
+
+  res <- pcr_analyze(ct,
+                     group_var = var,
+                     reference_gene = 'geneA',
+                     reference_group = 'group1')
+  a <- pcr_analyze(ct[, c('geneA', 'geneC')],
+                   group_var = var,
+                   reference_gene = 'geneA',
+                   reference_group = 'group1')
+  b <- pcr_analyze(ct[, c('geneA', 'geneB')],
+                   group_var = var,
+                   reference_gene = 'geneA',
+                   reference_group = 'group1')
+
+  expect_equal(rbind(a, b), res)
+})
+
+test_that('pcr_analyze respects order', {
+  # create a data.frame
+  set.seed(123)
+  ct <- data.frame(
+    geneA = rnorm(9, 30, 1),
+    geneB = rnorm(9, 25, 1),
+    geneC = rnorm(9, 20, 1)
+  )
+
+  # create a grouping variable
+  var <- rep(c('group1', 'group2', 'group3'), each = 3)
+
+  # run pcr_analyze
+  res1 <- pcr_analyze(ct,
+                      group_var = var,
+                      reference_gene = 'geneA',
+                      reference_group = 'group1')
+
+  # change the columns order and retun pcr_analyze
+  ind <- sample(1:ncol(ct))
+  ct <- ct[, ind]
+
+  res2 <- pcr_analyze(ct,
+                      group_var = var,
+                      reference_gene = 'geneA',
+                      reference_group = 'group1')
+
+  expect_true(all(res1[order(res1$group, res1$gene),]==
+                    res2[order(res2$group, res2$gene),]))
+
+  # change the rows order and rerun pcr_analyze
+  ind <- sample(1:nrow(ct))
+  ct <- ct[ind,]
+  var <- var[ind]
+
+  res3 <- pcr_analyze(ct,
+                      group_var = var,
+                      reference_gene = 'geneA',
+                      reference_group = 'group1')
+
+  expect_true(all(res1[order(res1$group, res1$gene),]==
+                    res3[order(res3$group, res3$gene),]))
+})
+

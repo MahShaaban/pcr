@@ -3,7 +3,6 @@
 \docType{package}
 \name{pcr}
 \alias{pcr}
-\alias{pcr-package}
 \title{\code{pcr} package}
 \description{
 Analyzing real-time quantitative PCR data

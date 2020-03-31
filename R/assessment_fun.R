@@ -65,6 +65,10 @@
 #'
 #' @export
 pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
+  # order data.frame and group var
+  df <- df[order(amount),]
+  amount <- amount[order(amount)]
+
   # return data when plot is false
   if (plot) {
     gg <- .pcr_plot_assess(df,
@@ -159,6 +163,10 @@ pcr_efficiency <- function(df, amount, reference_gene, plot = FALSE) {
 #'
 #' @export
 pcr_standard <- function(df, amount, plot = FALSE) {
+  # order data.frame and group var
+  df <- df[order(amount),]
+  amount <- amount[order(amount)]
+
   # return data when plot is false
   if (plot) {
     gg <- .pcr_plot_assess(df,
