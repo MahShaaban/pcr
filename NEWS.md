@@ -25,3 +25,8 @@
 # pcr 1.2.1
   
   - Fix a bug with ordering results when using `aggregate`
+
+# pcr 1.2.2
+
+  - Fix a bug with ordering results when more than two groups are used
+  
