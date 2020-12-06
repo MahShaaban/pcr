@@ -148,9 +148,14 @@
 #' pcr:::.pcr_relative(vec)
 
 .pcr_relative_mod <- function(vec, amp_eff, col_name) {
-  a_e <- amp_eff %>% select(contains(col_name))
-  res <- a_e[1,1] ^ (-vec)
-  return(res)
+  if (amp_eff) {
+      a_e <- amp_eff %>% select(contains(col_name))
+      res <- a_e[1,1] ^ (-vec)
+      return(res)
+  } else {
+      res <- 2 ^ (-vec)
+      return(res)
+  }
 }                  
                    
 #' Calculate R squared
