@@ -147,11 +147,12 @@
 #' vec <- rnorm(6, 30, 1)
 #' pcr:::.pcr_relative(vec)
 
-.pcr_relative <- function(vec) {
-  res <- 2 ^ (-vec)
+.pcr_relative_mod <- function(vec, amp_eff, col_name) {
+  a_e <- amp_eff %>% select(contains(col_name))
+  res <- a_e[1,1] ^ (-vec)
   return(res)
-}
-
+}                  
+                   
 #' Calculate R squared
 #'
 #' @inheritParams .pcr_average
