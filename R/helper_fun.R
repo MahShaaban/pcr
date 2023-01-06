@@ -171,11 +171,8 @@
     if(anyNA(vec)){
       warning(paste0(sum(is.na(vec)), sep = " ",
                      "NAs detected. Ensure samples are still in dynamic range"))
-      na_indices <- which(is.na(vec))
-      vec <- vec[-na_indices]
-      var <- var[-na_indices]
     }
-    res <- cor(vec, log10(var))^2
+    res <- cor(vec, log10(var), use = "complete.obs")^2
     return(res)
 }
 
