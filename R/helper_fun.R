@@ -168,12 +168,16 @@
 #' @importFrom stats cor
 
 .pcr_rsquared <- function(vec, var) {
-    if(anyNA(vec)){
-      warning(paste0(sum(is.na(vec)), sep = " ",
-                     "NAs detected. Ensure samples are still in dynamic range"))
-    }
-    res <- cor(vec, log10(var), use = "complete.obs")^2
-    return(res)
+  if(anyNA(vec)){
+    warning(paste0(sum(is.na(vec)),
+                   sep = " ",
+                   "NAs detected. ",
+                   "Ensure samples are still in the dynamic range"))
+  }
+  res <- cor(vec,
+             log10(var),
+             use = "complete.obs")^2
+  return(res)
 }
 
 #' Calculate the intercept of a line
