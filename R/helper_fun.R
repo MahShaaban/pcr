@@ -170,8 +170,7 @@
 .pcr_rsquared <- function(vec, var) {
   if(anyNA(vec)){
     warning(paste0(sum(is.na(vec)),
-                   sep = " ",
-                   "NAs detected. ",
+                   " NAs detected. ",
                    "Ensure samples are still in the dynamic range"))
   }
   res <- cor(vec,
