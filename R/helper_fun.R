@@ -168,7 +168,14 @@
 #' @importFrom stats cor
 
 .pcr_rsquared <- function(vec, var) {
-  res <- cor(vec, log10(var))^2
+  if(anyNA(vec)){
+    warning(paste0(sum(is.na(vec)),
+                   " NAs detected. ",
+                   "Ensure samples are still in the dynamic range"))
+  }
+  res <- cor(vec,
+             log10(var),
+             use = "complete.obs")^2
   return(res)
 }
 
