@@ -70,7 +70,7 @@
 #'          plot = TRUE)
 #'
 #' @export
-pcr_ddct <- function(df, group_var, reference_gene, reference_group,
+pcr_ddct <- function(df, group_var, reference_gene, reference_group, amplification_efficiency,
                      mode = 'separate_tube', plot = FALSE, ...) {
   # order data.frame and group var
   df <- df[order(group_var),]
@@ -84,6 +84,9 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group,
   res <- apply(goi,
                MARGIN = 2,
                FUN = function(x) {
+                 # get the name of the column that x points to
+                 col_name = names(goi)[which(goi == x, arr.ind=T)[, "col"]]
+                 
                  if (mode == 'separate_tube') {
                    # calculate the averages
                    x_ave <- .pcr_average(x, group_var)
@@ -116,11 +119,11 @@ pcr_ddct <- function(df, group_var, reference_gene, reference_group,
                  ddct <- .pcr_normalize(dct, group_ref)
 
                  # calculate the relative expression
-                 rel_expr <- .pcr_relative(ddct)
+                 rel_expr <- .pcr_relative(ddct, amplification_efficiency, col_name)
 
                  # calculate the error bars
-                 upper <- .pcr_relative(ddct - error)
-                 lower <- .pcr_relative(ddct + error)
+                 upper <- .pcr_relative(ddct - error, amplification_efficiency, col_name)
+                 lower <- .pcr_relative(ddct + error, amplification_efficiency, col_name)
 
                  # make a data.frame
                  data.frame(
