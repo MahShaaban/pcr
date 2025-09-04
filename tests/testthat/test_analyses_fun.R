@@ -41,7 +41,7 @@ test_that("pcr_ddct works", {
                  reference_group = 'brain',
                  plot = TRUE)
 
-  expect_identical(class(gg), c("gg", "ggplot"))
+  expect_true(ggplot2::is_ggplot(gg))
 })
 
 test_that("pcr_dct works", {
@@ -80,7 +80,7 @@ test_that("pcr_dct works", {
                 reference_group = 'brain',
                 plot = TRUE)
 
-  expect_identical(class(gg), c("gg", "ggplot"))
+  expect_true(ggplot2::is_ggplot(gg))
 })
 
 test_that("pcr_curve in separate_tube mode", {
@@ -141,7 +141,7 @@ test_that("pcr_curve in separate_tube mode", {
                   slope = slope,
                   plot = TRUE)
 
-  expect_identical(class(gg), c("gg", "ggplot"))
+  expect_true(ggplot2::is_ggplot(gg))
 })
 
 test_that('pcr_analyze work for more than two genes', {

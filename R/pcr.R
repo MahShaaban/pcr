@@ -9,6 +9,6 @@
 #' statistical significance using two-group tests and linear regression
 #' Yuan et al. (2006) <doi: 10.1186/1471-2105-7-85>.
 #'
-#' @docType package
 #' @name pcr
-NULL
+"_PACKAGE"
+

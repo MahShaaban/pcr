@@ -4,11 +4,13 @@
 \name{ct3}
 \alias{ct3}
 \title{\eqn{C_T} values from qPCR (Serial dilutions)}
-\format{A data.frame with 21 rows and 2 variables:
+\format{
+A data.frame with 21 rows and 2 variables:
 \describe{
   \item{c_myc}{\eqn{C_T} values of the target gene \strong{c-myc}}
   \item{GAPDH}{\eqn{C_T} values of the control gene \strong{GAPDH}}
-}}
+}
+}
 \source{
 \url{http://www3.appliedbiosystems.com/cms/groups/mcb_support/documents/generaldocuments/cms_040980.pdf}
 }

@@ -2,6 +2,7 @@
 % Please edit documentation in R/pcr.R
 \docType{package}
 \name{pcr}
+\alias{pcr-package}
 \alias{pcr}
 \title{\code{pcr} package}
 \description{
@@ -14,4 +15,16 @@ expression from PCR data using the double delta CT and the standard curve
 methods Livak & Schmittgen (2001) <doi:10.1006/meth.2001.1262>. Tests for
 statistical significance using two-group tests and linear regression
 Yuan et al. (2006) <doi: 10.1186/1471-2105-7-85>.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/MahShaaban/pcr}
+  \item Report bugs at \url{https://github.com/MahShaaban/pcr/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Mahmoud Ahmed \email{mahmoud.s.fahmy@students.kasralainy.edu.eg} (\href{https://orcid.org/0000-0002-4377-6541}{ORCID})
+
 }

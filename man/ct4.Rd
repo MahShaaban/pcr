@@ -4,11 +4,13 @@
 \name{ct4}
 \alias{ct4}
 \title{\eqn{C_T} values from qPCR (Serial dilutions)}
-\format{A data.frame with 24 rows and 2 variables:
+\format{
+A data.frame with 24 rows and 2 variables:
 \describe{
   \item{ref}{\eqn{C_T} values of the reference gene}
   \item{target}{\eqn{C_T} values of the target gene}
-}}
+}
+}
 \source{
 \url{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1395339/}
 }

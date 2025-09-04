@@ -66,7 +66,8 @@
 #' # make a plot
 #' pcr:::.pcr_plot_analyze(df, method = 'relative_curve')
 #'
-#' @importFrom ggplot2 ggplot geom_col geom_errorbar aes_string facet_wrap
+#' @importFrom ggplot2 ggplot geom_col geom_errorbar aes facet_wrap
+#' @importFrom rlang .data
 
 .pcr_plot_analyze <- function(df, method, facets = FALSE) {
   # switch to a value/column to plot
@@ -78,18 +79,18 @@
 
   # make plot
   if (length(unique(df$gene)) == 1) {
-    gg <- ggplot(df, aes_string(x = 'group', y = y)) +
+    gg <- ggplot(df, aes(x = .data$group, y = y)) +
       geom_col() +
-      geom_errorbar(aes_string(ymin = 'lower', ymax = 'upper'))
+      geom_errorbar(aes(ymin = .data$lower, ymax = .data$upper))
   } else if (facets == TRUE) {
-    gg <- ggplot(df, aes_string(x = 'group', y = y)) +
+    gg <- ggplot(df, aes(x = .data$group, y = y)) +
       geom_col() +
-      geom_errorbar(aes_string(ymin = 'lower', ymax = 'upper')) +
+      geom_errorbar(aes(ymin = .data$lower, ymax = .data$upper)) +
       facet_wrap(~ gene)
   } else {
-    gg <- ggplot(df, aes_string(x = 'group', y = y, fill = 'gene')) +
+    gg <- ggplot(df, aes(x = .data$group, y = y, fill = 'gene')) +
       geom_col(position = 'dodge') +
-      geom_errorbar(aes_string(ymin = 'lower', ymax = 'upper'),
+      geom_errorbar(aes(ymin = .data$lower, ymax = .data$upper),
                     position = 'dodge')
   }
 

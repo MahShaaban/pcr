@@ -11,7 +11,7 @@ test_that(".pcr_plot_analyze returns a ggplot", {
                   reference_group = 'brain')
   gg <- .pcr_plot_analyze(res, method = 'delta_delta_ct')
 
-  expect_identical(class(gg), c("gg", "ggplot"))
+  expect_true(ggplot2::is_ggplot(gg))
 
   ct1$c_myc2 <- ct1$c_myc
   res2 <- pcr_ddct(ct1,
@@ -20,11 +20,11 @@ test_that(".pcr_plot_analyze returns a ggplot", {
                   reference_group = 'brain')
   gg <- .pcr_plot_analyze(res2, method = 'delta_delta_ct')
 
-  expect_identical(class(gg), c("gg", "ggplot"))
+  expect_true(ggplot2::is_ggplot(gg))
 
   gg <- .pcr_plot_analyze(res2, method = 'delta_delta_ct', facets = TRUE)
 
-  expect_identical(class(gg), c("gg", "ggplot"))
+  expect_true(ggplot2::is_ggplot(gg))
 })
 
 test_that(".pcr_plot_analyze returns a dodge columns plot", {
@@ -39,7 +39,7 @@ test_that(".pcr_plot_analyze returns a dodge columns plot", {
 
   gg <- .pcr_plot_analyze(res, method = 'delta_delta_ct')
 
-  expect_identical(class(gg), c("gg", "ggplot"))
+  expect_true(ggplot2::is_ggplot(gg))
 })
 
 test_that(".pcr_plot_analyze returns a faceted plot", {
@@ -54,7 +54,7 @@ test_that(".pcr_plot_analyze returns a faceted plot", {
 
   gg <- .pcr_plot_analyze(res, method = 'delta_delta_ct', facets = TRUE)
 
-  expect_identical(class(gg), c("gg", "ggplot"))
+  expect_true(ggplot2::is_ggplot(gg))
 })
 
 test_that('.pcr_plot_assess returns an efficiency plot', {
@@ -65,7 +65,7 @@ test_that('.pcr_plot_assess returns an efficiency plot', {
                         amount,
                         reference_gene = 'GAPDH',
                         method = 'efficiency')
-  expect_identical(class(gg), c("gg", "ggplot"))
+  expect_true(ggplot2::is_ggplot(gg))
 })
 
 test_that('.pcr_plot_assess returns standard_curve plots', {
@@ -76,5 +76,5 @@ test_that('.pcr_plot_assess returns standard_curve plots', {
                         amount,
                         reference_gene = 'GAPDH',
                         method = 'standard_curve')
-  expect_identical(class(gg), c("gg", "ggplot"))
+  expect_true(ggplot2::is_ggplot(gg))
 })

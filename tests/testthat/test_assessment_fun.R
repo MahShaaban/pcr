@@ -19,7 +19,7 @@ test_that("pcr_efficiency calculates the correct intercept and slope", {
                        amount = amount,
                        reference_gene = 'GAPDH',
                        plot = TRUE)
-  expect_identical(class(gg), c("gg", "ggplot"))
+  expect_true(ggplot2::is_ggplot(gg))
 })
 
 test_that("pcr_standard calculates the correct intercept and slope", {
@@ -40,7 +40,7 @@ test_that("pcr_standard calculates the correct intercept and slope", {
                      amount = amount,
                      plot = TRUE)
 
-  expect_identical(class(gg), c("gg", "ggplot"))
+  expect_true(ggplot2::is_ggplot(gg))
 })
 
 test_that("pcr_assess calls the correct methods", {
